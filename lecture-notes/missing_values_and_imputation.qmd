@@ -20,7 +20,7 @@ We note that there are a few missing values in the dataset and we will now try t
 
 > Each study season, Adélie penguin study nests (n = 30) were distributed equally between the three study islands, with 10 nests located on each island. Gentoo penguin study nests (n = 30) were all located on Biscoe Island, while chinstrap penguin study nests (n = 15) were all located on Dream Island (Fig. 1c). The reduced sample size for chinstraps was due to the overall smaller number of individuals breeding at rookeries on Dream Island. Each season, study nests, where pairs of adults were present, were individually marked and chosen before the onset of egg-laying, and consistently monitored. When study nests were found at the one-egg stage, both adults were captured to obtain blood samples used for molecular sexing and SI analyses, and measurements of structural size and body mass. At the time of capture, each adult penguin was quickly blood sampled (~1 ml) from the brachial vein using a sterile 3 ml syringe and heparinized infusion needle. Collected blood was stored in 1.5 ml micro-centrifuge tubes that were kept cool. In the field, a small amount of whole blood was smeared on clean filter paper stored in a 1.5 ml micro-centrifuge tube for molecular sexing. Measurements of culmen length and depth (using dial calipers $\pm$60.1 mm), right flipper (using a ruler 61 mm), and body mass (using 5 kg $\pm$ 625 g or 10 kg $\pm$ 650 g Pesola spring scales and a weigh bag) were obtained to quantify body size variation. After handling, individuals at study nests were further monitored to ensure the pair reached clutch completion, i.e., two eggs.
 
-Now that we have information about how the data was collected we can start to think about reasons for missing values. But first we need to understand more generally how values can become missing. Missing values are usually categorized into three different patterns: Missing Completely At Random (MCAR), Missing At Random (MAR), and Not Missing At Random (NMAR). In this course we will only focus on the first form, MCAR, and assume that it holds. For those who are interested there is a short section at the end of this chapter that introduces the other types of missingess and methods to deal with them.
+Now that we have information about how the data was collected we can start to think about reasons for missing values. But first we need to understand more generally how values can become missing. Missing values are usually categorized into three different patterns: Missing Completely At Random (MCAR), Missing At Random (MAR), and Missing Not At Random (MNAR). In this course we will only focus on the first form, MCAR, and assume that it holds. For those who are interested there is a short section at the end of this chapter that introduces the other types of missingess and methods to deal with them.
 
 ## Handling missing values when MCAR
 
@@ -77,7 +77,7 @@ In this section we introduce the other types of missing values. This is beyond t
 
 Values that are "missing at random" are missing because of some reason that is recorded in the data. In our example, the penguins body weight is measured by using a scale and a weigh bag. Maybe penguins with longer flippers are harder to fit in the weigh bag, making the researchers more prone to failing weighing penguins with long flippers. Or maybe female penguins are harder to gather a blood sample from due to smaller brachial veins. This results in a missingness patterns in the `body_weight_g` and `sex` variables that can to some extent be explained by the flipper length or sex of the penguin. Thus the missingness pattern *depends* on our data and we can use it to better make educated guesses while imputing.
 
-### Not missing at random (MNAR)
+### Missing Not At Random (MNAR)
 
 Not missing at random happens when values are systematically missing, but we have not observed the reason for why the specific values are missing. For example, if some of the penguins are of poor health the researchers may choose to not weigh the penguin to avoid the extra stress of being put in the weigh bag. This results in missing values of body weight but there is no record of penguin health in the data that can help us explain the missingness.  
 
@@ -137,9 +137,9 @@ penguins |>
 
 Regression imputation is a useful tool that you already know how to do if you have completed the regression chapters. 
 
-### Multiple imputation
+### Advanced imputation
 
-Multiple imputation is the most popular imputation. It consists of sampling from the distribution of observed values to create new dataset. It is a conceptually more difficult method, but if you are interested you can have a look at the [mice package](https://cran.r-project.org/web/packages/mice/index.html) in R.
+For missing data, more advanced approaches such as *multiple imputation* (MI) create several plausible datasets and combine the results. A common practical method is *multiple imputation by chained equations* (MICE), which imputes variables one at a time using simple models. See this [book chapter](https://stefvanbuuren.name/fimd/sec-nutshell.html) on MI for more information, and the rest of the book for further details on MICE and how to effectively it. The methods discussed there are implemented in R in the [mice package](https://cran.r-project.org/web/packages/mice/index.html).
 
 ## Summary 
 
