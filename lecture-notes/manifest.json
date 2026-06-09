@@ -1,0 +1,598 @@
+{
+  "version": 1,
+  "locale": "en_US",
+  "platform": "4.6.0",
+  "metadata": {
+    "appmode": "static",
+    "primary_rmd": null,
+    "primary_html": "lecture-notes/_book/basic_statistics.html",
+    "content_category": "site",
+    "has_parameters": false
+  },
+  "packages": null,
+  "files": {
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-12-1.png": {
+      "checksum": "67ad55973201af7f8a3ca2dc30681524"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-13-1.png": {
+      "checksum": "883b23e3d2e584368454faf00eb1f699"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-15-1.png": {
+      "checksum": "ef5322b373111e6d24e305c23e39243a"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-3-1.png": {
+      "checksum": "cda80ff42d9e66428035df673ad27071"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "55f73e7bedce21d8e2e8abf964e0b0a5"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "08113f8df6c0661f7c3f442b22825dcd"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-7-1.png": {
+      "checksum": "17f86d3bda8c7068afa5ab2aea76f47d"
+    },
+    "lecture-notes/_book/basic_statistics_files/figure-html/unnamed-chunk-9-1.png": {
+      "checksum": "48a8c2af6a9b3ca3222a53c32d5ec897"
+    },
+    "lecture-notes/_book/basic_statistics.html": {
+      "checksum": "8715409886b5d9395b161ab212386280"
+    },
+    "lecture-notes/_book/custom.css": {
+      "checksum": "52238c8a5bd1303c4bbbbdca7ff93cdd"
+    },
+    "lecture-notes/_book/eda.html": {
+      "checksum": "fe92a8cddbb04600ea0400a84402cb0d"
+    },
+    "lecture-notes/_book/hypothesis_testing_files/figure-html/unnamed-chunk-10-1.png": {
+      "checksum": "7ade4a371abe27759f96b70f59bcf9fd"
+    },
+    "lecture-notes/_book/hypothesis_testing_files/figure-html/unnamed-chunk-14-1.png": {
+      "checksum": "7dcc30263f6288e12fe7cd6b6c5f02b0"
+    },
+    "lecture-notes/_book/hypothesis_testing_files/figure-html/unnamed-chunk-3-1.png": {
+      "checksum": "58d7a3a42269a0920679361d58b29ba5"
+    },
+    "lecture-notes/_book/hypothesis_testing_files/figure-html/unnamed-chunk-7-1.png": {
+      "checksum": "62c4c35adf8797880fb2b55ed09f4b83"
+    },
+    "lecture-notes/_book/hypothesis_testing_files/figure-html/unnamed-chunk-9-1.png": {
+      "checksum": "425a88e7a180e65138e364693d380d53"
+    },
+    "lecture-notes/_book/hypothesis_testing.html": {
+      "checksum": "c3e0839b5d161f99c5ed5bd85b0799b8"
+    },
+    "lecture-notes/_book/index.html": {
+      "checksum": "91c981b73eedd9493cf11006f7387a59"
+    },
+    "lecture-notes/_book/inference_and_prediction.html": {
+      "checksum": "2843a51ed913f018cd8abfbc3ea5b64f"
+    },
+    "lecture-notes/_book/introduction_to_r.html": {
+      "checksum": "2b54017434f93c7a0025fa4ec4d6e145"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-1-1.png": {
+      "checksum": "deeb6f4147ce123b799e7b6f7a735eae"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-12-1.png": {
+      "checksum": "47d4c662d572e2ddd23d80e0d1d2f8dd"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-16-1.png": {
+      "checksum": "c5bc5638ae1670af3842ea0d0b7da484"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-17-1.png": {
+      "checksum": "3e16f27bb800750f90188cdf5c9e9050"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-19-1.png": {
+      "checksum": "648ff97ee2c38abbc34e5fc77c586503"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-2-1.png": {
+      "checksum": "fef9d2cc00ac6ceaecfee1480ac47a9b"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-22-1.png": {
+      "checksum": "baf17929300d397b898d3d5b3523e197"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "534c16510329e5dd9d67cedc8d9faf2f"
+    },
+    "lecture-notes/_book/linear_regression_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "227abb9f75896ed2076142dac66f0a74"
+    },
+    "lecture-notes/_book/linear_regression_multiple_files/figure-html/unnamed-chunk-14-1.png": {
+      "checksum": "07cb00760c43359c0d2da21402c5b7e1"
+    },
+    "lecture-notes/_book/linear_regression_multiple_files/figure-html/unnamed-chunk-3-1.png": {
+      "checksum": "48b0706713357af0a4d00d8d3e1f3314"
+    },
+    "lecture-notes/_book/linear_regression_multiple_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "13d1ddb2608b6a8ecbadf5ba56fce3ec"
+    },
+    "lecture-notes/_book/linear_regression_multiple_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "67ad55973201af7f8a3ca2dc30681524"
+    },
+    "lecture-notes/_book/linear_regression_multiple_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "f9a32c265aa5a3ba8c42d94029b56a3a"
+    },
+    "lecture-notes/_book/linear_regression_multiple_files/figure-html/unnamed-chunk-7-1.png": {
+      "checksum": "16412926b8fe7284e35da6e8b06bf8d2"
+    },
+    "lecture-notes/_book/linear_regression_multiple.html": {
+      "checksum": "9d6f55f0cce4c1c0f1b4a7626a7e55a3"
+    },
+    "lecture-notes/_book/linear_regression.html": {
+      "checksum": "a91ce2d01410e4709ef6797110affa20"
+    },
+    "lecture-notes/_book/logistic_regression_files/figure-html/unnamed-chunk-2-1.png": {
+      "checksum": "3fb5b8c455fe83dbd95903f56791c2ae"
+    },
+    "lecture-notes/_book/logistic_regression_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "1f18cd27b9e2cd6e764c2717844ac6a3"
+    },
+    "lecture-notes/_book/logistic_regression_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "e54da5e71fe98882e782fc483abca9a5"
+    },
+    "lecture-notes/_book/logistic_regression_files/figure-html/unnamed-chunk-8-1.png": {
+      "checksum": "4b1ee42ca24320dfaeb93a6373fbbac9"
+    },
+    "lecture-notes/_book/logistic_regression_multiple_files/figure-html/unnamed-chunk-1-1.png": {
+      "checksum": "cd00c43ebb715de8685b978785fc4073"
+    },
+    "lecture-notes/_book/logistic_regression_multiple_files/figure-html/unnamed-chunk-11-1.png": {
+      "checksum": "035512cf1a000d70f57b54b6290e6e0b"
+    },
+    "lecture-notes/_book/logistic_regression_multiple.html": {
+      "checksum": "1d20710690bae513682ddd30c1f7bafd"
+    },
+    "lecture-notes/_book/logistic_regression.html": {
+      "checksum": "446dcb1eff32b0605dc87d0ca1dfc80e"
+    },
+    "lecture-notes/_book/missing_values_and_imputation_files/figure-html/unnamed-chunk-7-1.png": {
+      "checksum": "fb2d22074532e45b1ab3f3d72e83ef24"
+    },
+    "lecture-notes/_book/missing_values_and_imputation.html": {
+      "checksum": "6b460474f426e889075e9268c8a2b704"
+    },
+    "lecture-notes/_book/preliminaries.html": {
+      "checksum": "b856f246285584ae537813df670d6df4"
+    },
+    "lecture-notes/_book/r4ds_reading_instructions.html": {
+      "checksum": "fd20e9fdfc7b994ed0df5bfb99e95892"
+    },
+    "lecture-notes/_book/r4ds_recommended_exercises.html": {
+      "checksum": "cb09c61a143ceb4322c55d3300e3ebd6"
+    },
+    "lecture-notes/_book/search.json": {
+      "checksum": "b0707acda9f619c4349dbb63694801a0"
+    },
+    "lecture-notes/_book/site_libs/bootstrap/bootstrap-icons.css": {
+      "checksum": "2318f137d201fbf51601fa0faba6bef7"
+    },
+    "lecture-notes/_book/site_libs/bootstrap/bootstrap-icons.woff": {
+      "checksum": "1a51dfbe5467607389d603c02a77cd10"
+    },
+    "lecture-notes/_book/site_libs/bootstrap/bootstrap.min.css": {
+      "checksum": "34ac298f1e5cf1e847f58a5ce3da1558"
+    },
+    "lecture-notes/_book/site_libs/bootstrap/bootstrap.min.js": {
+      "checksum": "e2b09c06f0e714b6144a6788a28e3950"
+    },
+    "lecture-notes/_book/site_libs/clipboard/clipboard.min.js": {
+      "checksum": "15f52a1ee547f2bdd46e56747332ca2d"
+    },
+    "lecture-notes/_book/site_libs/quarto-html/anchor.min.js": {
+      "checksum": "91bcf6cd1fd88fec3f109811e5fc3546"
+    },
+    "lecture-notes/_book/site_libs/quarto-html/popper.min.js": {
+      "checksum": "3a4a291ccf3f1ea0f82b641542fd3827"
+    },
+    "lecture-notes/_book/site_libs/quarto-html/quarto-syntax-highlighting.css": {
+      "checksum": "49bff82b9355f257417faaaa77dd1607"
+    },
+    "lecture-notes/_book/site_libs/quarto-html/quarto.js": {
+      "checksum": "ff408ce28fadef1cc1d624bc4993e4fd"
+    },
+    "lecture-notes/_book/site_libs/quarto-html/tippy.css": {
+      "checksum": "ebd6f8ce46a677e1a4f5f8a8317109a9"
+    },
+    "lecture-notes/_book/site_libs/quarto-html/tippy.umd.min.js": {
+      "checksum": "d828775275749701b48bd9d958814111"
+    },
+    "lecture-notes/_book/site_libs/quarto-nav/headroom.min.js": {
+      "checksum": "ace0360e576db9b6e7df48ac68ddbbf4"
+    },
+    "lecture-notes/_book/site_libs/quarto-nav/quarto-nav.js": {
+      "checksum": "724bf5148c96bf8aec0d1b259345bfa5"
+    },
+    "lecture-notes/_book/site_libs/quarto-search/autocomplete.umd.js": {
+      "checksum": "c64544db941e048f2652217cb9a7f29c"
+    },
+    "lecture-notes/_book/site_libs/quarto-search/fuse.min.js": {
+      "checksum": "de7d60e4a6881074275feca14b84a49d"
+    },
+    "lecture-notes/_book/site_libs/quarto-search/quarto-search.js": {
+      "checksum": "95a859fa579bdb6eb81526a734238e6b"
+    },
+    "lecture-notes/_book/solutions_basic_statistics_files/figure-html/unnamed-chunk-7-1.png": {
+      "checksum": "ef5322b373111e6d24e305c23e39243a"
+    },
+    "lecture-notes/_book/solutions_basic_statistics.html": {
+      "checksum": "5af8fe3c35cbe7cc6c189cd1f8283ea5"
+    },
+    "lecture-notes/_book/solutions_hypothesis_testing_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "7dcc30263f6288e12fe7cd6b6c5f02b0"
+    },
+    "lecture-notes/_book/solutions_hypothesis_testing.html": {
+      "checksum": "3a72ba81652fa63d0c6bd7e6ceb1b965"
+    },
+    "lecture-notes/_book/solutions_introduction_to_r.html": {
+      "checksum": "f9dd9ea5e402512d45048f2770f85198"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-12-1.png": {
+      "checksum": "a33f84014e06d92f9fccf91bd6c72312"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-14-1.png": {
+      "checksum": "305e40113c5543362bf54cd8012e307a"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-16-1.png": {
+      "checksum": "6935c6d7086d9e7399ff18e36a64f139"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-18-1.png": {
+      "checksum": "183499db73dcfadf234fa697a83428c3"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-2-1.png": {
+      "checksum": "c811d6e7bd901813ed3eec832b57f548"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-3-1.png": {
+      "checksum": "bb131c922440e61ff951f375475aee13"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "6ad063463bbcd5691084c972e69c0a29"
+    },
+    "lecture-notes/_book/solutions_linear_regression_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "aada9d28116af9452fee97eb79406ccc"
+    },
+    "lecture-notes/_book/solutions_linear_regression_multiple_files/figure-html/unnamed-chunk-10-1.png": {
+      "checksum": "a65c68054f42f5dc8de16577df40f057"
+    },
+    "lecture-notes/_book/solutions_linear_regression_multiple_files/figure-html/unnamed-chunk-14-1.png": {
+      "checksum": "f0083a1167697b3953192b8ff1aa7ab4"
+    },
+    "lecture-notes/_book/solutions_linear_regression_multiple_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "421ccb2c748200e751b89f1e89a13ae2"
+    },
+    "lecture-notes/_book/solutions_linear_regression_multiple_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "e282c9166901f7725f1439e89f840ff3"
+    },
+    "lecture-notes/_book/solutions_linear_regression_multiple.html": {
+      "checksum": "ca3cc304a3f6e04f7896b58e9e69cecf"
+    },
+    "lecture-notes/_book/solutions_linear_regression.html": {
+      "checksum": "8213f8ac0f339c2383b715904c2834f4"
+    },
+    "lecture-notes/_book/solutions_logistic_regression_files/figure-html/unnamed-chunk-2-1.png": {
+      "checksum": "37417f244b24d11efb5b97437733f651"
+    },
+    "lecture-notes/_book/solutions_logistic_regression_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "84f3b26eddc0a7c71a722203c9df4e66"
+    },
+    "lecture-notes/_book/solutions_logistic_regression_multiple.html": {
+      "checksum": "d43a67403dedba994b1ce2c4043f593a"
+    },
+    "lecture-notes/_book/solutions_logistic_regression.html": {
+      "checksum": "725a6645d07f9f93b1d394328db43ffb"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_tidying.html": {
+      "checksum": "26acfef808e30cfbf6fb7c348231120a"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_transformation_files/figure-html/unnamed-chunk-23-1.png": {
+      "checksum": "f2d5c7a63e7ec21bea8d7d9906dbc894"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_transformation_files/figure-html/unnamed-chunk-26-1.png": {
+      "checksum": "26a06cdbcc49f7efc7e60ca2ef26ecef"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_transformation.html": {
+      "checksum": "9460660aadc6f85d8e27b8bb4708bc8b"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-10-1.png": {
+      "checksum": "a7ea2d28d3cf8511c9332cc1f253dcc8"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-11-1.png": {
+      "checksum": "61bd9d2a7dbac257b74a228672c15a8f"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-12-1.png": {
+      "checksum": "68d4b742e4d62d05744f4d3ed6f2c96e"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-13-1.png": {
+      "checksum": "7c8a83f5847104fc3d3050450251eaa6"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-14-1.png": {
+      "checksum": "4b9e9972aedaf027a918f141a6660e47"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-15-1.png": {
+      "checksum": "1a5d1429e42d189114b1bf9794c264b4"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-17-1.png": {
+      "checksum": "caacb1befd71b45c76bb231cd159f412"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-18-1.png": {
+      "checksum": "a5850fe7dffb4d92241a47589754b11a"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-19-1.png": {
+      "checksum": "e1037ea272f8ff4e4461acbeabbed771"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-21-1.png": {
+      "checksum": "d60d9323815406148cb2b5723322060d"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-22-1.png": {
+      "checksum": "e7b477ecabfa1c8477fd2b1a2001e805"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-23-1.png": {
+      "checksum": "a5929d8593279a851613f66ecd5be714"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-24-1.png": {
+      "checksum": "44112f09f2fc1a42be0eecb1f935c600"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-25-1.png": {
+      "checksum": "b3805bf75ea894d247c1a39607ef0b02"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-26-1.png": {
+      "checksum": "7236140facbd60e1c1e5e5f749ac3c01"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-27-1.png": {
+      "checksum": "7be83555a9679761be1ce16cbef6cfba"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "96e512c0315015008d4250436132802f"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "fb0b1a04311a52acfa2d48eb6728dcba"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "e3e3ec9592c3375b09eba3a6a8fec480"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-7-1.png": {
+      "checksum": "96e512c0315015008d4250436132802f"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-8-1.png": {
+      "checksum": "f5979396bd17f2c45fc6c3007ca0162d"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization_files/figure-html/unnamed-chunk-9-1.png": {
+      "checksum": "3cfd6b12319acd872419ce1b17ead806"
+    },
+    "lecture-notes/_book/solutions_r4ds_data_visualization.html": {
+      "checksum": "d55496b41d8dcd7fa7303a53a73e8bb5"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-10-1.png": {
+      "checksum": "56885a9cf0eb638f86b1063eb910de38"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-11-1.png": {
+      "checksum": "01673c194d1325350e48099ecfcf34ad"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-12-1.png": {
+      "checksum": "5564db536cb07152a845d825406b9070"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-13-1.png": {
+      "checksum": "71c6d20ab18482e648f890ba8070a28c"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-14-1.png": {
+      "checksum": "cdfcff4898adaa144d9e3d92963e70e8"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-15-1.png": {
+      "checksum": "901db44f53a634523d8065e47e8d01a4"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-16-1.png": {
+      "checksum": "5dd768979f4c8c9f86eed26b048115a3"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-17-1.png": {
+      "checksum": "cc58fb024b5dbb36ee16c5edffd948f7"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-18-1.png": {
+      "checksum": "6c1b9e23c8ed81d56cc9b41d260bfe5f"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-19-1.png": {
+      "checksum": "7b001177ed56b5506671ad20ad0b3cac"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-20-1.png": {
+      "checksum": "7eb52fcbc426f12d5c7161a965a63f29"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-21-1.png": {
+      "checksum": "ea6ad8ca9792089a1cc744166af8c3f1"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-22-1.png": {
+      "checksum": "67f4f272860f393c7468e6a8e0a141a0"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-23-1.png": {
+      "checksum": "05478b91710802e3beb8390a9f4b33ee"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-24-1.png": {
+      "checksum": "19b1317e0ae1467e75d58f469e4d818f"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-25-1.png": {
+      "checksum": "5f4b52eb6b06a4a914f12f1c0f854da6"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-26-1.png": {
+      "checksum": "9f77e6bb30f4fee06f706b624ddc1c6d"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-27-1.png": {
+      "checksum": "69a2757bb11fdde5287b37c5135d051d"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-28-1.png": {
+      "checksum": "ad518ec3a0202a7d825ea2956fe20d1f"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-3-1.png": {
+      "checksum": "42ff7378678d6c460219fc3f514bfdad"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-30-1.png": {
+      "checksum": "12bfcd3b98f012df517528721ea029b1"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-31-1.png": {
+      "checksum": "74551b9606e370c7713aa597fd8e91b1"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-33-1.png": {
+      "checksum": "7fd05c1e6c5f94c723bec64f4f676835"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-34-1.png": {
+      "checksum": "b03863d061d6f35ccf29c9faf20533c0"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-35-1.png": {
+      "checksum": "722e85b0e188f7e75cc721fe84062933"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-36-1.png": {
+      "checksum": "8eeec8c22df23288bf77cfff54ea9219"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-37-1.png": {
+      "checksum": "76b09c0904db368f0c00242f3d1a872c"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-38-1.png": {
+      "checksum": "9481cd4872e1f34f00c98e663f94586a"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-39-1.png": {
+      "checksum": "40602cc7219a9509d67e6883e50f0160"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-4-1.png": {
+      "checksum": "a1689083bc8fa72b5eda19acd4b7f12c"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-40-1.png": {
+      "checksum": "b1e8342dc6de4e7847e8c8ec0f6ac08a"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-41-1.png": {
+      "checksum": "a00e0447a3a7c4bee3ab5554be723d1d"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-5-1.png": {
+      "checksum": "58d183176193f4df69bc8610b098c1a3"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-6-1.png": {
+      "checksum": "51827be73c33b896beac7eff2dea6b95"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda_files/figure-html/unnamed-chunk-9-1.png": {
+      "checksum": "f499b17a61346ac1485727b2e47c254c"
+    },
+    "lecture-notes/_book/solutions_r4ds_eda.html": {
+      "checksum": "34fd02a57320ddd668ef91a0ef6cd84d"
+    },
+    "lecture-notes/_book/suggested_solutions.html": {
+      "checksum": "685ffa0493232be1abf977e935cebc0c"
+    },
+    "lecture-notes/_quarto.yml": {
+      "checksum": "bd5199b84fcfedc158ae8147985bcb42"
+    },
+    "lecture-notes/basic_statistics.qmd": {
+      "checksum": "42a0d4f8f3769825fab79c5e4a5e05af"
+    },
+    "lecture-notes/birth_3d.html": {
+      "checksum": "54aa80b9179342400cb948fed4bc3190"
+    },
+    "lecture-notes/birth_3d.qmd": {
+      "checksum": "7e26218d0cfc9abb670d09df29f3ae65"
+    },
+    "lecture-notes/cover.png": {
+      "checksum": "308012df3fa962ae61c7114806331a72"
+    },
+    "lecture-notes/custom.css": {
+      "checksum": "52238c8a5bd1303c4bbbbdca7ff93cdd"
+    },
+    "lecture-notes/datasets/abalone.csv": {
+      "checksum": "3dac2142076eb8aa62e5dd4f366efaf6"
+    },
+    "lecture-notes/datasets/birth.csv": {
+      "checksum": "fe6b38c0b127b3dc0226f58cf8b7e92d"
+    },
+    "lecture-notes/eda.qmd": {
+      "checksum": "dfef56752d5078b2f6297716eadddaae"
+    },
+    "lecture-notes/hypothesis_testing_deep_dive.qmd": {
+      "checksum": "a77b101b81ee961608d361021e47c08f"
+    },
+    "lecture-notes/hypothesis_testing.qmd": {
+      "checksum": "4aef2a22a23a71d66d88a866d1503a50"
+    },
+    "lecture-notes/index.qmd": {
+      "checksum": "3d135ee9180528a0dfa3067ed4efc352"
+    },
+    "lecture-notes/index.tex": {
+      "checksum": "846d74c2aeffdeef6eeefec68ade47f1"
+    },
+    "lecture-notes/inference_and_prediction.qmd": {
+      "checksum": "346db7226eab2d2a43178fa8352ff6ae"
+    },
+    "lecture-notes/introduction_to_r.qmd": {
+      "checksum": "b81c9395d3d5df7a328f40a9d0c32de3"
+    },
+    "lecture-notes/linear_regression_multiple.qmd": {
+      "checksum": "a7975ad918e2f532010192d9937fc3b7"
+    },
+    "lecture-notes/linear_regression.qmd": {
+      "checksum": "cb36e008bcc218eaecca17cfdd155217"
+    },
+    "lecture-notes/logistic_regression_multiple.qmd": {
+      "checksum": "056681519555c143b4008af116d2e093"
+    },
+    "lecture-notes/logistic_regression.qmd": {
+      "checksum": "efab26873f9bfdaabbd8d780c33853db"
+    },
+    "lecture-notes/missing_values_and_imputation.qmd": {
+      "checksum": "9a577c0c72bde0360788415fc56f5f24"
+    },
+    "lecture-notes/preliminaries.qmd": {
+      "checksum": "d2d8e3b21a09e8f9cf188b74ebbc4fe2"
+    },
+    "lecture-notes/r4ds_reading_instructions.qmd": {
+      "checksum": "525772cf5ea19408b1074af25ae8cacb"
+    },
+    "lecture-notes/r4ds_recommended_exercises.qmd": {
+      "checksum": "a9c54d639087e22fdba2e66673c44bba"
+    },
+    "lecture-notes/references.bib": {
+      "checksum": "32439ef1b74c40d53371dac4f5d55cf9"
+    },
+    "lecture-notes/references.qmd": {
+      "checksum": "20d3273ad995f344fa1d144ca5d3ecf1"
+    },
+    "lecture-notes/renv.lock": {
+      "checksum": "c3dda639d69232fcaf57e5f66cd120a1"
+    },
+    "lecture-notes/solutions_basic_statistics.qmd": {
+      "checksum": "858abb25797b163d7387cd4b699450b0"
+    },
+    "lecture-notes/solutions_hypothesis_testing.qmd": {
+      "checksum": "18ceca8dfae3b525a13e1ac08702f626"
+    },
+    "lecture-notes/solutions_introduction_to_r.qmd": {
+      "checksum": "b12c2cce4549020e5d00739a93550de2"
+    },
+    "lecture-notes/solutions_linear_regression_multiple.qmd": {
+      "checksum": "44060f8eb986b531706aab257cc4be51"
+    },
+    "lecture-notes/solutions_linear_regression.qmd": {
+      "checksum": "3d5a16bb8e1ab639c1d0b7d8a0b17348"
+    },
+    "lecture-notes/solutions_logistic_regression_multiple.qmd": {
+      "checksum": "8c75e8dc721c768d62018522328b1646"
+    },
+    "lecture-notes/solutions_logistic_regression.qmd": {
+      "checksum": "48937795b5f5e395f3424381c6c383c9"
+    },
+    "lecture-notes/solutions_r4ds_data_tidying.qmd": {
+      "checksum": "0485410be3adb0f52ea96ca6897e8fb9"
+    },
+    "lecture-notes/solutions_r4ds_data_transformation.qmd": {
+      "checksum": "fe50ecd313c4753783c79c62d0fd86bc"
+    },
+    "lecture-notes/solutions_r4ds_data_visualization.qmd": {
+      "checksum": "4c9588437266965d86d2c604a219ee8b"
+    },
+    "lecture-notes/solutions_r4ds_eda.qmd": {
+      "checksum": "0af977e0b88e64a778152ce9416b4540"
+    },
+    "lecture-notes/suggested_solutions.qmd": {
+      "checksum": "f70d846802cb24e8052f0c0990d071c2"
+    },
+    "license": {
+      "checksum": "8c8ea597b5ac4c4bd0aa32ef4d8c63cc"
+    },
+    "README.md": {
+      "checksum": "91af30a7a54a6cded164754a3826f80f"
+    }
+  },
+  "users": null
+}
