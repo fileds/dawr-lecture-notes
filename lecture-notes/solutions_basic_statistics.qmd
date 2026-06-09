@@ -1,0 +1,86 @@
+# Basic statistics
+
+## Variables
+
+### Exercise 1
+
+We run the `summary` function on the penguins dataset after loading `palmerpenguins`.
+
+```{r}
+library(palmerpenguins)
+summary(penguins)
+```
+
+We see that the continuous variables show summary statistics and the categorical shows counts of the different levels, like Adelie, Chinstrap, and Gentoo in the species variable. You will learn more about these concepts in the Descriptive statistics section.
+
+### Exercise 2
+
+We see that the variables have both changed to `double`, indicated by the `<dbl>` in the `glimpse` output.
+
+```{r}
+library(tidyverse)
+penguins$flipper_length_mm <- as.numeric(penguins$flipper_length_mm)
+penguins$body_mass_g <- as.numeric(penguins$body_mass_g)
+glimpse(penguins)
+summary(penguins)
+```
+
+
+## Descriptive statistics
+
+### Exercise 1
+If we don't specify `na.rm = TRUE` the `mean` function will include the missing values and the function will return a missing value, `NA`. 
+
+```{r}
+# Not specifying na.rm = TRUE
+mean(penguins$flipper_length_mm)
+```
+
+### Exercise 2
+
+Calculating the mean of a factor returns a warning saying that the argument is not numeric or logical and returns `NA`. What would the mean of a categorical (`factor`) mean? Does it make sense?
+
+```{r}
+mean(penguins$species, na.rm = TRUE)
+```
+
+### Exercise 3
+The median and the 50th percentile (or second quartile) are the same value! The median is the value that splits the data into two parts with the same number of observations and the 50th percentile is the value that puts half of the data below the value and half above. Do you see that this is two ways of saying the same thing?
+
+```{r}
+# 50th percentile
+penguins |> 
+  pull(body_mass_g) |> 
+  quantile(prob = 0.5, na.rm = TRUE)
+# Median
+penguins |> 
+  pull(body_mass_g) |> 
+  median(na.rm = TRUE)
+```
+
+
+### Exercise 4
+
+`cut`, `color`, `clarity` are categorical, the other numerical. There are no missing values.
+
+```{r}
+#| eval: false
+library(tidyverse)
+summary(diamonds)
+```
+
+## Relationships between variables
+
+### Exercise 1
+We see that the values in the matrix correspond to the colors in the correlation plot. High correlation is indicated by values close to either 1 (positive correlation) or -1 (negative correlation). 
+
+```{r}
+library(ggcorrplot)
+penguins |>
+  select(where(is.numeric)) |>
+  cor(use = "complete.obs")
+penguins |>
+  select(where(is.numeric)) |>
+  cor(use = "complete.obs") |>
+  ggcorrplot()
+```

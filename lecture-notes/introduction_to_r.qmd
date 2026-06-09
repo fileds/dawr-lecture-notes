@@ -1,0 +1,357 @@
+# Introduction to R
+
+In this course, we'll be using R, a powerful programming language designed specifically for statistical computations and data visualization. While R is not suited for building websites or games, it excels at handling data and performing statistical operations. In this course we will mostly focus on applying R for the end goal of data analysis and this chapter doesn't cover all the basics of R and programming, but it provides a foundation for the rest of the course.
+
+You may want to read the chapter Workflow: basics in [R4DS](https://r4ds.hadley.nz/) as it also covers some basic R.
+
+Before getting started, you'll need to set up R and RStudio, a popular integrated development environment (IDE) for R. You can download R from [https://www.r-project.org/about.html](https://www.r-project.org/about.html) and RStudio from [https://posit.co/products/open-source/rstudio/](https://posit.co/products/open-source/rstudio/). Once you have these installed, you're ready to go!
+
+## TL;DR
+In this chapter we cover how to perform basic calculations; load libraries (packages) into R; what objects (variables), functions, vectors, and data frames are; and how logical operators and conditionals work.
+
+## Basic calculations
+Let's start by treating R as a giant calculator. You can perform basic arithmetic operations like addition, subtraction, multiplication, and division:
+
+```{r}
+# Addition
+4 + 2
+# Subtraction
+4 - 2
+# Multiplication
+4 * 2
+# Division
+4 / 2
+```
+
+Here we used `#` to comment our code. Any text following a `#` on a line will not be executed by the program. Instead comments are used to explain the code for others (and for future you!), which comes in handy as our code gets more complicated.
+
+
+## Libraries
+Instead of writing our own code for everything, we use packages (or libraries). Packages contain pre-written code and functions. One essential package we'll use is [the tidyverse package](https://www.tidyverse.org/), a collection of packages designed for data science. It simplifies data loading, transformation, and visualization, making our data analysis tasks much more manageable.
+
+To install and load tidyverse use 
+
+```r
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+If you need to install and/or load another package, just replace `tidyverse` above with the package name.
+
+You will be learning much more about tidyverse and how to use it when you start working in R4DS, written by the creator of tidyverse, Hadley Wickham, among others. There you will also learn all you need about visualizing your data.
+
+## Exercises
+
+1. Install the `tidyverse` package using the code above. You will need it for later exercises in this chapter.
+
+## Objects
+While R can be used for simple calculations, we are often more interested in performing more complicated tasks. To achieve this we use *objects*, also called variables, to store our *values*, the results of our computations. Think of objects as labels for your data. You can store values in objects using the assignment operator, `<-`, like this
+
+```{r}
+x <- 4 * 2
+# Printing the value of x
+x
+```
+
+### Exercises
+
+1. Copy the code from above and try using `=` instead of `<-`, what happens?
+
+## Functions
+Functions are like machines that take inputs and produce outputs. You can think of a function like a vending machine: you input coins and a number for a product and your desired product comes out. The function *transforms* your input into output. Inputs are also called arguments or parameters, i.e. the coins and number are the arguments of the vending machine. Below we create a simple function called `multiply4` that takes $x$ as argument, multiplies it with 4, and then returns the result.
+
+```{r}
+# Define function
+multiply4 <- function(x) {
+  x * 4
+}
+# Use the function two times with different inputs
+multiply4(1)
+multiply4(10)
+```
+You don't need to create your own functions in this course, but you'll use plenty of them, and of course the above function is pretty useless. We can just run `1*4` or `10*4` directly in R instead of over-complicating things with a function, but it serves a good example of how functions work. 
+
+We can also save the result of our function in our own variable. Below we take the result of our function, save it in the `two_times_four` variable, and print the result plus 2
+```{r}
+two_times_four <- multiply4(2)
+print(two_times_four + 2)
+```
+
+
+### Exercises
+
+1. The code below is an extension of the `multiply4` function above, taking two arguments and multiplies them together. Copy the code and use the function to compute $36 \cdot 52$
+```{r}
+#| eval: false
+multiply <- function(x, y) {
+  x * y
+}
+```
+2. Write your own function called `subtract` that subtracts two numbers instead of multiplying them, and then use the function to compute $36 - 52$.
+3. In R it is possible to assign the parameters values by explicitly stating the parameter in the function call. Try using the `subtract` function by calling `subtract(y = 52, x = 36)`. Is the result different?
+4. Redo the previous exercise, now calling `subtract(y <- 52, x <- 36)`. What happens?
+
+
+## Vectors
+Sometimes we want to work with multiple items of the same type together. To achieve this in R, we can use vectors. A vector is declared using the `c` function (for combine). The arguments to `c` are the items we want in the vector as separate arguments. For example, if we want to store a sequence of different numbers, we can use:
+
+```{r}
+vec <- c(4, 2, 453)
+print(vec)
+```
+
+We can also store objects in vectors. Here we store three text variables (usually called *strings* in a programming context) in the same vector:
+
+```{r}
+x <- "string 1"
+y <- "string 2"
+z <- "string 3"
+vec <- c(x, y, z)
+print(vec)
+```
+
+If we want to access a specific element in a vector, we can use square brackets `[]`. The first element in a vector is accessed by `vec[1]`, the second by `vec[2]`, and so on. Below we access the first element in the vector `vec`:
+
+```{r}
+print(vec[1])
+print(vec[2])
+print(vec[3])
+```
+
+<span style="color: gray;">In other programming languages, e.g. Python, vector indices commonly start from 0. Watch out for this when moving between languages as it is a common mistake! Starting indices from 0 is more true to how a computer works, while starting from 1 is common in mathematics.</span>
+
+In this course, we'll often use vectors implicitly, especially when dealing with data frames.
+
+### Exercises
+
+1. Try the basic calculations on the two vectors `vec1 <- c(1, 2)` and `vec2 <- c(3, 4)`. What happens?
+2. Run the following code and try to understand what happens
+```{r}
+#| eval: false
+vec1 <- c(1, 2)
+vec2 <- c(3, 4)
+vec3 <- c(3, "four")`
+
+vec1 + vec2
+vec2 + vec3
+```
+
+## Matrices
+A vector stores objects in one dimension. Sometimes we encounter problems when we need to store data in two dimensions, for example when we are dealing with correlations between different variables. In this case, we can use matrices. A matrix is a two-dimensional array that stores data in rows and columns. We can create a matrix using the `matrix` function. The first argument to the function is the data we want to store in the matrix, the second argument is the number of rows, and the third argument is the number of columns. We can also specify if we want to fill the matrix by row or by column. Below we create a 3x3 matrix filled by row:
+
+```{r}
+# initialize matrix with ones on the diagonal
+m <- matrix(
+  c(1, 2, 3,
+    2, 1, 2,
+    4, 2, 1),
+  nrow = 3,
+  byrow = TRUE)
+```
+
+We can access a specific element in a matrix using square brackets `[]`. The first argument is the row index, and the second argument is the column index. We can also access a whole row or column by leaving that index blank. Below are some examples. 
+
+```{r}
+# Select first element of matrix
+m[1, 1]
+
+# Select first row of matrix
+m[1, ]
+
+# Select first column of matrix
+m[, 1]
+```
+
+Later in this chapter we will see that we may also use conditional statements to select elements in a matrix, see Section @sec-conditional-indexing
+
+## Data frames
+Tables are essential in data analysis. A table stores data in a row/column format: 
+
+| Name     | Age | Favorite Color |
+|----------|-----|----------------|
+| Alice    | 25  | Blue           |
+| Bob      | 30  | Red            |
+| Charlie  | 22  | Green          |
+
+where Name, Age, and Favorite Color are the columns and Alice, 25, Blue is the first row. We can create this table in R using the `data.frame` function:
+
+```{r}
+df <- data.frame(
+  Name = c("Alice", "Bob", "Charlie"),
+  Age = c(25, 30, 22),
+  Favorite_Color = c("Blue", "Red", "Green")
+)
+print(df)
+```
+
+Or alternatively, by using the `tibble` function. Tibbles are similar to data frames, but with some extended functionality for printing and other things which we will not cover in detail. To create a tibble, we need first need to load the `tidyverse` package:
+
+```{r}
+#| warning: false
+library(tidyverse)
+tib <- tibble(
+  Name = c("Alice", "Bob", "Charlie"),
+  Age = c(25, 30, 22),
+  Favorite_Color = c("Blue", "Red", "Green")
+)
+```
+
+If you want to access one of the columns in a data frame or tibble you can use the dollar operator, `$`, after the data frame or tibbles name. Below we access the `Name` column and print out the values in it.
+
+```{r}
+tib$Name
+```
+
+There are a number of useful functions that you can use with data frames and tibbles, in the table below you can see some of them and a description of what they do. 
+
+
+| Feature                  | Description                                                         |
+|--------------------------|---------------------------------------------------------------------|
+| glimpse()                | Display a concise overview of the data frame's structure.           |
+| summary()                | Provide summary statistics for numeric objects in the data frame.   |
+| head()                   | Display the top rows of the data frame.                             |
+| tail()                   | Display the bottom rows of the data frame.                          |
+| nrow()                   | Show the length of the data frame.                                  |
+| ncol()                   | Show the number of columns in the data frame.                       |
+| colnames() or names()    | Display column names (as character objects).                        |
+
+Here is an example of how to use them all and their output for the tibble `tib` that we defined before.
+
+```{r}
+#| warning: false
+glimpse(tib)
+summary(tib)
+head(tib)
+tail(tib)
+nrow(tib)
+ncol(tib)
+names(tib)
+```
+
+As data frames and tibbles are very similar, we will be using the words data frame and tibble interchangeably.
+
+### Exercises 
+
+1. Install and load the `palmerpenguins` package using the code below and look at the output from calling the data `penguins`. Try running `?penguins` in the console to learn more about the dataset. We will be using the `penguins` data throughout the course, so have a look at it, but there will be more time to study it in detail later. 
+```{r}
+#| eval: false
+install.packages("palmerpenguins")
+library(palmerpenguins)
+penguins
+```
+2. Access the `flipper_length_mm` column of the penguins dataset using the dollar operator, `$`. 
+3. Type the tibbles name (`penguins`) and `$`  without any space and then press tab. What do you see?
+4. Load the `tidyverse` package and apply all the above functions on `penguins`, you can copy the code and replace `tib` with `penguins`. Again, don't spend too much time, but try to understand the functions and what they do.
+
+## Logical operators and conditionals
+Logicals and conditionals are used to make decisions in our code. As their names suggest, logicals lets us define logical expressions that can either be `TRUE` or `FALSE`, while conditionals lets us define what should happen in the code if a logical is either `TRUE` or `FALSE`. For example, if it is raining when you leave your house you may want to take an umbrella, but if it's not raining you'd rather leave the umbrella at home. We can express this as a logical and a condition: IF($raining$) THEN take umbrella ELSE leave umbrella. Here IF represents a conditional, and $raining$ represents a logical.
+
+### Logical operators in R
+In R, you can use logical operators to compare values. When a logical condition is true, R returns the value`TRUE`, and when it is false `FALSE`. There are several different operators to compare values (or objects) in R:
+
+- **Equality (`==`) and Inequality (`!=`):** Check if two objects are equal or not equal using `==` and `!=`, respectively. For example:
+
+```{r}
+4 == 4
+4 == 2
+4 != 2
+```
+
+- **Greater Than (`>`), Less Than (`<`):** Compare values to check if one is greater or less than another:
+
+```{r}
+4 > 2
+4 < 2
+```
+
+- **Greater Or Equal (`>=`), Less Or Equal (`<=`):** Compare values to check if one is greater or equal or less or equal than another:
+
+```{r}
+4 > 4
+4 >= 4
+```
+
+- **Logical AND (`&`) and Logical OR (`|`):** Combine multiple conditions using `&` for AND and `|` for OR:
+
+```{r}
+is_raining <- TRUE
+has_umbrella <- TRUE
+# Testing if is raining and has umbrella
+is_raining & has_umbrella 
+
+has_raincoat <- FALSE
+# Testing if has umbrella or raincoat
+has_umbrella | has_raincoat
+```
+
+### Conditional indexing {#sec-conditional-indexing}
+We can use logical operators to select elements in a vector or matrix. When we test a logical condition on a vector, R returns a logical vector of the same length as the original vector. This logical vector can be used to index the original vector. For example, if we have a vector of numbers and we want to select only the numbers that are greater than 5, we can use the following code:
+
+```{r}
+vec <- c(1, 6, 3, 8, 2, 9)
+vec > 5
+vec[vec > 5]
+```
+
+This can also be applied to matrices, 
+
+```{r}
+# initialize matrix with ones on the diagonal
+m <- matrix(
+  c(1, 2, 3,
+    2, 1, 2,
+    4, 2, 1),
+  nrow = 3,
+  byrow = TRUE)
+# Test the elementwise condition m is equal to one
+m == 1
+# Selecting elements in m based on a condition
+m[m > 1]
+# Selecting elements in m based on multiple conditions
+m[m > 1 & m < 3]
+```
+
+Testing a condition returns another matrix of the same size, showing where the condition is true. Selecting elements returns the elements matching the statement.
+
+### Conditional statements in R
+Logical operators are useful to compare objects but the real power of logical operators shows when combined with conditional statements. Conditional statements allow you to execute different parts of the code based on logical conditions. In R, you can use `ifelse` for conditional assignment:
+
+```{r}
+is_raining <- TRUE
+# IF(is_raining) THEN bring umbrella ELSE leave umbrella
+ifelse(is_raining, "bring umbrella", "leave umbrella")
+
+is_raining <- FALSE
+ifelse(is_raining, "bring umbrella", "leave umbrella")
+```
+
+`ifelse` is useful when transforming objects, as you will learn more about later in the course. 
+
+<!-- More generally you can use `if`, `ifelse`, and `else` statements, see vending machine example below. -->
+
+
+<!-- We can also create functions that are not mathematical expressions in R. We can even make a vending machine function! -->
+
+<!-- ```{r} -->
+<!-- vending_machine_function <- function(coins, choice) -->
+<!-- { -->
+<!--   coke <- 1 -->
+<!--   coke_price <- 5 -->
+<!--   water <- 2 -->
+<!--   water_price <- 1 -->
+
+<!--   if (choice == coke & coins >= coke_price) -->
+<!--       return ("coke") -->
+<!--   else if (choice == water & coins >= water_price) -->
+<!--       return("water") -->
+<!--   else -->
+<!--     return("Not a valid choice or not enough coins") -->
+<!-- } -->
+
+<!-- vending_machine_function(5, 1) -->
+<!-- ``` -->
+
+<!-- This function is of course neither good or very useful, for example it doesn't give you any change if you input more than the price of the product and there is no actual vending machine to give you any coke.  -->
+
+In this course we will often talk about functions, inputs, parameters and arguments, and outputs, so having an idea of these concepts is useful, even if you don't need to write them yourself (you are of course free to try!).
+

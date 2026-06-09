@@ -1,0 +1,157 @@
+# Logistic regression
+
+## Setup 
+
+First we load the dataset and have a `glimpse` at it.
+
+```{r}
+#| warning: false
+library(tidyverse)
+#install.packages("mlbench") # Install to get PimaIndiansDiabetes2 dataset
+library(mlbench)
+data("PimaIndiansDiabetes2") # Using 2 because it is a corrected version.
+glimpse(PimaIndiansDiabetes2)
+```
+
+## The Pima Indians dataset
+
+### Exercise 1
+
+Our population is all women of the Pima Indian population aged 21 or older. Looking at the original paper, we can see that the study started in 1965, which we may also want to specify.
+
+### Exercise 2
+
+We see that the blood pressure seems higher in the group that were diagnosed with diabetes. In the next chapter we will see if it is a significant relationship.
+
+```{r}
+library(patchwork)
+p1 <- PimaIndiansDiabetes2 |>
+  ggplot(aes(y = pressure)) + 
+  facet_grid(~ diabetes) +
+  geom_boxplot() +
+  theme(
+    axis.text.x = element_blank(),  # Remove axis text
+    axis.ticks.x = element_blank()  # Remove axis title
+  ) +
+  labs(y = "Blood pressure")
+p2 <- PimaIndiansDiabetes2 |>
+  ggplot(aes(x = pressure, fill = diabetes)) + 
+  geom_density(alpha = 0.5) +
+  theme(
+    legend.position = "top",
+    axis.text.y = element_blank(),  # Remove axis text
+    axis.ticks.y = element_blank()  # Remove axis title
+  ) +
+  labs(
+    x = "Blood pressure",
+    y = "",
+    fill = "Diabetes"
+    )
+
+p1 + p2
+```
+
+## Using linear regression
+
+### Exercise 1
+First we formulate our hypotheses:
+
+> **H_0**: There is *no* linear relationship between mass and blood pressure in the women in the Pima Indian tribe.
+
+> **H_a**: There *is* a linear relationship between mass and blood pressure in the women in the Pima Indian tribe.
+
+Then we fit our model. 
+
+```{r}
+model <- lm(pressure ~ mass, data = PimaIndiansDiabetes2)
+summary(model)
+```
+
+From the summary output we can see that the $p$-value is very small. According to our model there is a linear relationship between mass and blood pressure. We can also visualize this to see that our results are reasonable.
+
+```{r}
+PimaIndiansDiabetes2 |> 
+  ggplot(aes(x = mass, y = pressure)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+We see a clear slope of the line. 
+
+### Exercise 2
+
+We formulate the hypotheses:
+
+> **H_0**: There is *no* linear relationship between glucose and the onset of diabetes in the women in the Pima Indian tribe.
+
+> **H_a**: There *is* a linear relationship between glucose levels and the onset of diabetes in the women in the Pima Indian tribe.
+
+As discussed in the chapter, a *linear* relationship is not right for this problem, since the outcome is binary.
+
+## Using logistic regression
+
+### Exercise 1 (a)
+
+We start by formulating the hypotheses
+
+> **H_0**: There is *no* relationship between blood pressure and being diagnosed with diabetes.
+
+> **H_a**: There *is* a relationship between blood pressure level and being diagnosed with diabetes.
+
+then fit our model
+
+```{r}
+model <- glm(diabetes ~ pressure, data = PimaIndiansDiabetes2, family = "binomial")
+summary(model)
+```
+
+We see that the $p$-value is low and that there is a significant relationship between blood pressure and diabetes at significance level 0.05.
+
+### Exercise 1 (b)
+
+We start by formulating the hypotheses
+
+> **H_0**: There is *no* relationship between body mass index and being diagnosed with diabetes.
+
+> **H_a**: There *is* a relationship between body mass index level and being diagnosed with diabetes.
+
+then fit our model
+
+```{r}
+model <- glm(diabetes ~ mass, data = PimaIndiansDiabetes2, family = "binomial")
+summary(model)
+```
+
+We see that the $p$-value is low and that there is a significant relationship between BMI and diabetes at significance level 0.05.
+
+## Prediction
+
+### Exercise 1
+
+Here are two examples of predicting the probability of being diagnosed with diabetes based on `pressure` and `mass`
+
+```{r}
+pressure_model <- glm(diabetes ~ pressure, data = PimaIndiansDiabetes2, family = "binomial")
+predict(pressure_model, data.frame(pressure = 90), type = "response")
+mass_model <- glm(diabetes ~ mass, data = PimaIndiansDiabetes2, family = "binomial")
+predict(mass_model, data.frame(mass = 25), type = "response")
+```
+
+### Exercise 2
+
+We try to find the x value (glucose level) that corresponds to 0.9 probability of being diagnosed with diabetes. According to the plot this roughly coincides with 195 mg/dl. Our prediction confirms this.
+
+```{r}
+model <- glm(diabetes ~ glucose, data = PimaIndiansDiabetes2, family = "binomial")
+predict(model, data.frame(glucose = 195), type = "response")
+```
+
+### Exercise 3
+
+Our model predicts a $\sim0.92$ probability of the onset of diabetes given a glucose level of 200 mg/dl. Our model was not trained on any data of women with diabetes, i.e. the model was not trained on any glucose levels 200 or above and is not suited for predictions outside of what was observed in the dataset. Further, the model doesn't "know" about the classification of diabetes, i.e. that glucose levels over 200 are classified as diabetes.
+
+```{r}
+model <- glm(diabetes ~ glucose, data = PimaIndiansDiabetes2, family = "binomial")
+predict(model, data.frame(glucose = 200), type = "response")
+```
+

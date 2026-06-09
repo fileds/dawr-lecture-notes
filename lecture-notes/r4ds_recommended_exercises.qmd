@@ -1,0 +1,47 @@
+# Recommended exercises
+These are the recommended exercises in R4DS with some comments. We recommend reading through these recommendations before starting the exercises as they are meant to help you learn more efficiently. Some of the exercises in the book are rather straight forward, but some are more difficult (as we also struggled with them when writing the solutions). So if you feel that you don't know where to start with an exercise or that you are stuck, consult the suggested solutions.
+
+### Data visualization {.unnumbered}
+All exercises. 
+
+* 1.2.4 Exercise 4: try using `geom_density` as well and try using `geom_density` and coloring by `cut`.
+
+### Data transformation {.unnumbered}
+
+**3.2 Rows**
+
+All exercises
+
+Read 3.3 first and use the following functions:
+* `relocate` or `select` to move columns of interest to the front of the tibble, otherwise it is hard to see the result.
+* Use `mutate` in Exercise 3 to create a new variable for speed and use that variable for sorting, i.e. `arrange`-ing. If you are having trouble figuring out the mathematical expression, remember from high school physics the relationship between time, distance, and speed. In Swedish ["SVT"-triangeln](https://sv.wikipedia.org/wiki/SVT-triangel). If you just want the answer, look at 3.3.1.
+
+**3.3 Columns**
+
+All exercises
+
+* In exercise 1, try to think about the relationship. It is not necessary to successfully create a new variable that is the same as `dep_delay`. See solutions for a suggestion of how, even though it may be beyond the scope of the course.
+* In exercise 4 for, use `?any_of` and look at the function from the `tidyselect` package. 
+
+**3.5 Groups**
+
+All exercises in 3.5
+
+* In exercise 1, remember to use `na.rm` when calculating the average.
+
+### Exploratory data analysis {.unnumbered}
+Try to do all exercises but some are quite difficult. If you get stuck consult the suggested solutions.
+
+The exercises requires some basic knowledge about [diamonds](https://en.wikipedia.org/wiki/Diamond):
+Measurements
+
+* x, y, z: The dimensions of a diamond (width, length, height)
+
+The four Cs of diamond grading
+* [Carat](https://en.wikipedia.org/wiki/Carat_(mass)): A unit of mass (like grams)
+* [Cut](https://en.wikipedia.org/wiki/Diamond_cut): Style or design, but rather symmetry, proportioning, and polishing than shape. A well cut diamond is more \*luminous\*.
+* [Clarity](https://en.wikipedia.org/wiki/Diamond_clarity): The existence and visual appearance of internal characteristics, called inclusions, and surface defects, called blemishes.
+* [Color](https://en.wikipedia.org/wiki/Diamond_color): A perfect diamond has no hue or color.
+
+### Communication {.unnumbered}
+No recommended exercises, instead practice plotting as you work with chapter 10 and assignments.

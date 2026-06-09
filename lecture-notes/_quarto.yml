@@ -1,0 +1,55 @@
+project:
+  type: book
+
+book:
+  title: "Data Analytics with R"
+  subtitle: "Lecture notes"
+  author: "Filip Edström, Joakim Wallmark"
+  date: "23/10/2024"
+  chapters:
+    - index.qmd
+    - part: preliminaries.qmd
+      chapters:
+      - introduction_to_r.qmd
+      - basic_statistics.qmd
+    - part: eda.qmd
+      chapters:
+      - r4ds_reading_instructions.qmd
+      - r4ds_recommended_exercises.qmd
+    - part: inference_and_prediction.qmd
+      chapters:
+      - hypothesis_testing.qmd
+      - linear_regression.qmd
+      - linear_regression_multiple.qmd
+      - logistic_regression.qmd
+      - logistic_regression_multiple.qmd
+      - missing_values_and_imputation.qmd
+    - part: suggested_solutions.qmd
+      chapters:
+      - solutions_introduction_to_r.qmd
+      - solutions_basic_statistics.qmd
+      - solutions_r4ds_data_visualization.qmd
+      - solutions_r4ds_data_transformation.qmd
+      - solutions_r4ds_data_tidying.qmd
+      - solutions_r4ds_eda.qmd
+      - solutions_hypothesis_testing.qmd
+      - solutions_linear_regression.qmd
+      - solutions_linear_regression_multiple.qmd
+      - solutions_logistic_regression.qmd
+      - solutions_logistic_regression_multiple.qmd
+    #- references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    css: custom.css
+    code-overflow: scroll
+    prefer-html: true
+  pdf:
+    documentclass: scrreprt
+    prefer-html: true
+
+
+

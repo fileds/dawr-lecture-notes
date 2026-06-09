@@ -1,0 +1,5 @@
+# Solutions to exercises {#sec-solutions}
+
+Here are some *suggested* solutions to the recommended exercises. There are usually many ways to solve problems using code, some ways may be better than these solutions, so if you have solved exercises in a different way doesn't mean that it is wrong. Throughout the solutions we have prioritized solving the problems in the way that we prefer to, sometimes using code or visualizations that may be outside the scope of this course. The idea is to show you the potential of R and `tidyverse` and `ggplot` specifically. This means that you are not expected to be able to solve every problem as it's solved in these solutions.
+
+If you have any questions, spot any errors, or have any suggestions for improvement in the lecture notes or solutions, please let us know by sending an email to the teachers of the course with the tag [DAwR-LN] in the subject.

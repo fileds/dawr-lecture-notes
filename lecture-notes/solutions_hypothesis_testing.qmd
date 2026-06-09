@@ -1,0 +1,175 @@
+# Hypothesis testing
+
+## Sample and population
+### Exercise 1
+The help function tells us that the penguins are observed in the Palmer Archipelago, Antarctica during 2007-2009. So the population is all Adelie, Chinstrap, and Gentoo penguins in the Palmer Archipelago, Antarctica during the years 2007-2009. Is it reasonable to believe that this population is *representative* of the current penguin population? If we believe that it is, i.e. that the measurements made between 2007 and 2009 are still valid today, we can use our dataset to say something about the population today.
+
+```r
+library(tidyverse)
+library(palmerpenguins)
+?penguins
+```
+
+## Hypothesis testing (proportions)
+
+First we need to recreate the data
+
+```{r}
+#| warning: false
+#| code-fold: true
+#| code-summary: "Code to recreate sample"
+library(tidyverse)
+
+recreate_valjarbarometern <- function(valjarbarometern_aggregate, n)
+{
+  # Calculate number of observations of each party
+  obs_per_party <- round(n * valjarbarometern_aggregate$percentage / 100)
+  
+  # Create a list of party observations
+  party_observations <- mapply(rep, valjarbarometern_aggregate$party, obs_per_party)
+  
+  # Flatten the list into a single vector
+  sample_data <- unlist(party_observations)
+  
+  # Create a data frame with the samples
+  valjarbarometern <- tibble(party = sample_data)
+  
+  return(valjarbarometern)
+}
+# Number of people in survey
+n = 3072
+
+parties <- c("V", "S", "MP", "C", "L", "KD", "M", "SD", "Other")
+# Aggregated sample
+valjarbarometern_aggregate <- tibble(
+  party = factor(parties, levels = parties), # Using levels to preserve order
+  percentage = c(7.6, 37.6, 4.3, 3.9, 3, 3.1, 19, 19.7, 1.7))
+
+valjarbarometern <- recreate_valjarbarometern(
+  valjarbarometern_aggregate, n)
+```
+
+### Exercise 1
+We simply replace MP with C:
+
+> **$H_0$**: The proportion of people who would vote for MP is *smaller* than 0.04.
+
+> **$H_a$**: The proportion of people who would vote for MP is *larger* than 0.04.
+
+### Exercise 2
+We do the test for the C party instead. 
+
+```{r}
+n_participants <- 3072 # Number of participants in survey
+n_c_voters <- valjarbarometern |> # Number of participants who answered C
+  filter(party == "C") |>
+  summarize(n = n()) |>
+  pull(n)
+p_h0 <- 0.04 # Our null hypothesis
+# Conducting hypothesis test of proportions
+prop.test(n_c_voters, n_participants, p_h0, alternative = "less")
+```
+
+We can see that the result is *not* statistically significant at significance level 0.05.
+
+### Exercise 3
+We try one of the parties with the lowest percentage, KD.
+
+```{r}
+# Note: L would also be below 4% with statistical significance
+n_participants <- 3072 # Number of participants in survey
+n_kd_voters <- valjarbarometern |> # Number of participants who answered KD
+  filter(party == "KD") |>
+  summarize(n = n()) |>
+  pull(n)
+p_h0 <- 0.04 # Our null hypothesis
+# Conducting hypothesis test of proportions
+prop.test(n_kd_voters, n_participants, p_h0, alternative = "less")
+```
+
+We see that the $p$-value is below 0.05, so the result is statistically significant at significance level 0.05.
+
+## Hypothesis test (mean)
+### Exercise 1
+We write down the hypotheses with the population explicit:
+
+> **$H_0$**: The mean flipper length of all penguins in the Palmer Archipelago during 2007-2009 was 200 mm.
+
+> **$H_a$**: The mean flipper length of all penguins in the Palmer Archipelago during 2007-2009 was *greater than* 200 mm.
+
+We then perform our t-test.
+
+```{r}
+library(palmerpenguins)
+t.test(penguins$flipper_length_mm, mu = 200, alternative = "greater")
+```
+
+Our test shows that we do not have evidence in the data that the mean flipper length of all penguins in the Palmer Archipelago during 2007-2009 was not greater than 200 mm at significance level 0.05. 
+
+
+### Exercise 2
+
+We first formulate our hypothesis, here we only do it for the test of flipper length between Gentoo and Chinstrap penguins.
+
+> **$H_0$**: Gentoo and Chinstrap penguins have the same flipper length.
+
+> **$H_a$**: Gentoo and Chinstrap penguins *do not* have the same flipper length.
+
+We then perform all the tests.
+
+```{r}
+gentoo_flipper_length <- penguins |>
+  filter(species == "Gentoo") |>
+  select(flipper_length_mm) |>
+  drop_na()
+chinstrap_flipper_length <- penguins |>
+  filter(species == "Chinstrap") |>
+  select(flipper_length_mm) |>
+  drop_na()
+adelie_flipper_length <- penguins |>
+  filter(species == "Adelie") |>
+  select(flipper_length_mm) |>
+  drop_na()
+
+t.test(gentoo_flipper_length, chinstrap_flipper_length)
+t.test(gentoo_flipper_length, adelie_flipper_length)
+t.test(chinstrap_flipper_length, adelie_flipper_length)
+```
+
+We have evidence that the flipper lengths are different between all species of penguins at significance level 0.05. Flipper length seem to be a useful variable to distinguish between different penguin species.
+
+### Exercise 3
+
+We start by visualizing using a bar chart. 
+
+```{r}
+penguins |> 
+  ggplot(aes(x = island, fill = species)) + 
+  geom_bar()
+```
+
+We see that there are a few more Chinstrap penguins than Adelie, but is the difference significant? We first formulate the hypotheses:
+
+> **$H_0$**: The proportion of Chinstrap penguins at Dream island is 0.5.
+
+> **$H_a$**: The proportion of Chinstrap penguins at Dream island is *greater than* 0.5.
+
+Then we perform the proportions test using `prop.test` with the number of chinstrap penguins and the total number of penguins at Dream island, p = 0.5 (our null hypothesis), and alternative hypothesis "greater".
+
+```{r}
+n_total <- penguins |> 
+  filter(island == "Dream") |>
+  summarize(n = n()) |> 
+  pull()
+  
+n_chinstrap <- penguins |> 
+  filter(species == "Chinstrap" & island == "Dream") |>
+  summarize(n = n()) |> 
+  pull()
+  
+prop.test(n_chinstrap, n_total, p = 0.5, alternative = "greater")
+```
+
+We see that the result is not significant. We do not have evidence in the data suggesting that there are more Chinstrap penguins than Adelie penguins at Dream island.
+
+Can you think of any issue with this test and the sample? How can we be sure that the researchers didn't try to observe the same amount of both species? It is important to ask these questions about data collection before you start your analysis.

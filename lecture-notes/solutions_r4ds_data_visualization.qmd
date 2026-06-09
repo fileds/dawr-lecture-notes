@@ -1,0 +1,340 @@
+# R4DS: Data visualization
+
+In these solutions we use the piping operator, `|>` (also `%>%`). You will encounter this later in the book, in Chapter 4.4. It is very useful to write clear and understandable code. In these exercises the only difference between using the piping operator or not is
+
+```r
+penguins |>
+  ggplot(aes(...))
+```
+
+instead of 
+
+```r
+ggplot(data = penguins, mapping = aes(...))
+```
+
+and it doesn't matter which one you choose to do for this exercise. However, as you progress in the course, piping will be good practice and therefore we use it in our solutions so you can use this as a reference later in the course. We also leave out the explicit arguments `data = ` and `mapping = ` as that is in line with the later parts of the book.
+
+
+## Setup
+
+First we need to load the necessary libraries.
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+It is also good practice to take a `glimpse` at the data before we begin, even if we are not looking at something in particular.
+
+```{r}
+glimpse(penguins)
+```
+
+That's a number of penguins. Anyway...
+
+## 2.2 First steps
+
+### Exercise 1
+```{r}
+# Using piping
+penguins |> nrow()
+penguins |> ncol()
+# Using functions with arguments
+nrow(penguins)
+ncol(penguins)
+```
+
+### Exercise 3
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point()
+```
+
+There seems to be multiple groups within the data (in this case, the different species), as there seems to be a positive correlation when bill length is 0-40 mm and another one when bill length is between 40-60 mm.
+
+### Exercise 4
+```{r}
+penguins |>
+  ggplot(aes(x = species, y = bill_depth_mm)) +
+  geom_boxplot()
+```
+
+As suspected, the bill depth is different between the different species. Box plot is a good graphic to visualize continuous data for different categories. Another option would be to do separate histograms or density plots for the different species:
+
+```{r}
+penguins |>
+  ggplot(aes(fill = species, x = bill_depth_mm)) +
+  geom_histogram(alpha = 0.5)
+```
+
+Note that we set `alpha = 0.5` to make the bins slightly transparent. Which one to do you prefer? 
+
+### Exercise 5
+We haven't defined any aesthetic mappings! Plots need at least an x or y aestethic mapped.
+
+### Exercise 6
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point(na.rm = TRUE)
+```
+
+The `na.rm` argument specifies how the plot deals with *missing values*. The default behavior is to remove the NAs, but if we specify it explicitly, like in this exercise, the plot does not output any warning. Compare with exercise 3!
+
+### Exercise 7
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point(na.rm = TRUE) +
+  labs(caption = "Data come from the palmerpenguins package")
+```
+
+Use `?labs` to see the documentation for the `labs` function.
+
+### Exercise 8
+```{r}
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(col = bill_depth_mm), na.rm = TRUE) +
+  geom_smooth()
+```
+
+Here we defined `col` only for the `geom_point`. Does it make a difference if we define it globally in `ggplot`? Spoiler: it doesn't! It only affects `geom_point`, because `geom_smooth` creates a line based on many points, so it doesn't make sense to color parts of the line.
+
+
+### Exercise 9
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = island)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+
+We now color based on the categorical variable *island* instead. Now we see that our `geom_smooth` indeed is affected, as it now creates one line for each of the different islands. 
+
+We have also set `se = FALSE`, which means that we do not see the shaded area around the curve. *se* stands for Standard Error and tells us about the uncertainty of the line at different points. We do not expect you to fully understand or know this concept now, but it can be useful to at least get an idea of whats going on.
+
+### Exercise 10
+```{r}
+# Here we use patchwork to set the plots next to each other.
+library(patchwork)
+
+p1 <- ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point() +
+  geom_smooth()
+
+p2 <- ggplot() +
+  geom_point(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_smooth(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  )
+
+p1 + p2
+```
+
+We see that it doesn't make a difference. We can define aesthetics globally in `ggplot` or locally in each `geom_`. However, it is better to define as much as possible in `ggplot`, as it makes it clear for you writing the code and someone reading the code what the plot will show. 
+
+Here we used `library(patchwork` to put the plots next to each other. You can try it out, but you don't have to use it!
+
+## 2.4 Visualizing distributions
+
+### Exercise 1
+```{r}
+penguins |>
+  ggplot(aes(y = species)) +
+  geom_bar()
+```
+
+The bars now extend horizontally. 
+
+### Exercise 2
+```{r}
+library(patchwork)
+p1 <- penguins |>
+  ggplot(aes(y = species)) +
+  geom_bar(col = "red")
+p2 <- penguins |>
+  ggplot(aes(y = species)) +
+  geom_bar(fill = "red")
+
+p1 + p2
+```
+
+`fill` is usually the more interesting property to adjust when it is applicable. Colors and fills are useful to play around with to make it easier for the reader, and sometimes ourselves. Maybe a more useful coloring is one color for each species and a colorscheme that is suitable to colorblind people? 
+
+```{r}
+# We import the ggthemes package to get the scale_fill_colorblind
+library(ggthemes)
+penguins |>
+  ggplot(aes(y = species, fill = species)) +
+  geom_bar() + 
+  scale_fill_colorblind()
+```
+
+
+### Exercise 3
+To find out, we can look at `?geom_histogram`. 
+
+> bins	
+> Number of bins. Overridden by binwidth. Defaults to 30.
+
+Selecting number of bins can affect the perception of the histogram, and of the data.
+
+```{r}
+library(patchwork)
+p1 <- penguins |>
+  ggplot(aes(fill = species, x = bill_depth_mm)) +
+  geom_histogram(bins = 50, alpha = 0.5)
+p2 <- penguins |>
+  ggplot(aes(fill = species, x = bill_depth_mm)) +
+  geom_histogram(bins = 10, alpha = 0.5)
+
+p1 + p2
+```
+
+Which one is better depends on the data and what features you are interested in. If the histogram doesn't look like you would expect, changing number of bins may be a good idea. Try using `binwidth` as well, as that may be more intuitive to derive from the data.
+
+### Exercise 4
+First it's a good idea to get a `glimpse` of the `diamonds` data. `glimpse` is a function that gives a quick overview, a *glimpse*, of a data frame. 
+
+```{r}
+glimpse(diamonds)
+```
+
+Then we can create the histogram over `carat`:
+
+```{r}
+diamonds |>
+  ggplot(aes(x = carat)) +
+  geom_histogram()
+```
+
+### Extra exercise
+```{r}
+diamonds |>
+  ggplot(aes(x = carat)) +
+  geom_density()
+```
+
+Using `geom_density` is another way of visualizing a distribution. It is less detailed than the histogram but gives a good overview of the data. It can also be useful to visualize many categories at the same time, which can get messy when using a histogram. Note however that we do not escape the problem of selecting a suitable number of bins, as something similar exists in geom_density, the parameter `bw`. We do not expect you to understand this parameter or even use it, but it is good to be aware of it.
+
+An example of multiple densities, colored by `cut`.
+
+```{r}
+diamonds |>
+  ggplot(aes(x = carat, col = cut)) +
+  geom_density() 
+```
+
+
+## 2.5 Visualizing relationships
+
+### Exercise 1
+Again we can use `glimpse` to get an overview, and get to know which kinds of variables the data frame contains:
+```{r}
+glimpse(mpg)
+```
+
+### Exercise 2
+One example using `color` and `size` at the same time.
+```{r}
+mpg |>
+  ggplot(aes(x = hwy, y = displ, col = cty, size = cyl)) +
+  geom_point()
+```
+
+Note that we cannot assign `shape` to a continuous variable! For that we need the variable to be a *factor*, as in this example
+```{r}
+mpg |>
+  ggplot(aes(x = hwy, y = displ, col = cty, shape = as.factor(cyl))) +
+  geom_point()
+```
+
+### Exercise 3
+`linewidth` doesn't have any effect on a scatterplot, `geom_point`, so it will be ignored.
+
+### Exercise 4
+It is possible to map the same variable to multiple aesthetics and it can even be useful sometimes, for example when we have a reason to use a specific color theme, but also want our plot to be easily understood by someone who is colorblind, see example below.
+
+```{r}
+mpg |>
+  ggplot(aes(x = hwy, y = displ, col = as.factor(cyl), shape = as.factor(cyl))) +
+  geom_point()
+```
+
+### Exercise 5
+As we saw in 2.2.4, exercise 3, there seemed to be groups within the scatter plot between *bill_length_mm* and *bill_depth_mm*. Now we will investigate this by coloring the plot by species.
+
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm, col = species)) +
+  geom_point()
+```
+
+Now it becomes obvious that the different species in our data was responsible for different patterns. 
+
+Interesting fact: This is an example of Simpson's paradox: when a relationship between two variables doesn't show up for the whole population (all penguins) but shows up in sub-populations (the different species). 
+
+We will try faceting as well
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm, col = species)) +
+  geom_point() +
+  facet_wrap(~species)
+```
+
+Which one do you think is most useful? 
+
+### Exercise 6
+Legends take the name from the aesthetic mapping that creates them, in this case `species`. When we manually rename a legend, as in `labs(color = "Species")`, it only affects the specified aesthetic, i.e. `color`. We can remedy this by specifying the same label for shape, as below. 
+
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm, col = species, shape = species)) +
+  geom_point() +
+  labs(color = "Species",
+       shape = "Species")
+```
+
+### Exercise 7
+```{r}
+library(patchwork)
+p1 <- penguins |>
+  ggplot(aes(x = island, fill = species)) +
+  geom_bar(position = "fill")
+p2 <- penguins |>
+  ggplot(aes(x = species, fill = island)) +
+  geom_bar(position = "fill")
+
+p1 + p2
+```
+
+In the first plot, `p1`, we can answer what fraction of the total number of penguins at each island is of a particular species. In `p2` we can answer what fraction of each species resides on which island.
+
+## 2.6 Saving your plots
+Note that it is good practice to save you plots as PDF whenever it is possible. PDF is a form of *vector graphics*, this enables you to zoom as much as you want without the image becoming "pixely". It is also good practice to always reflect on and specify `width` and `height` of your plots to make sure the format suits your needs.
+
+### Exercise 1 & 2
+The last plot is always the one to be saved. If you have multiple plots and want to save all of them, put a `ggsave` after each plot. To save as pdf, specify `.pdf` in the filename. 
+
+```r
+penguins |>
+  ggplot(aes(x = island, fill = species)) +
+  geom_bar(position = "fill")
+ggsave("species-by-island.pdf", width = 10, height = 8)
+penguins |>
+  ggplot(aes(x = species, fill = island)) +
+  geom_bar(position = "fill")
+ggsave("island-by-species.pdf", width = 10, height = 8)
+```

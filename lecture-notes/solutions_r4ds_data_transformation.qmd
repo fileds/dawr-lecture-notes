@@ -1,0 +1,436 @@
+# R4DS: Data transformation
+
+To run these solutions you need to load the necessary libraries.
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+As always, its good to take a `glimpse` at the data
+
+```{r}
+glimpse(flights)
+```
+
+That's a lot of flights! Anyway... 
+
+## 4.2 Rows
+### Exercise 1
+TO avoid extensive outputs, we only provide the code for these solutions.
+```r
+# Had an arrival delay of two or more hours
+flights |>
+  filter(arr_delay > 120)
+
+# Flew to Houston (IAH or HOU)
+flights |>
+  filter(dest == "IAH" | dest == "HOU" )
+
+# Were operated by United, American, or Delta
+# Here we use "|" for or.
+flights |>
+  filter(carrier == "UA" | carrier == "AA" | carrier == "DL")
+
+# Here we use "%in%".
+flights |>
+  filter(carrier %in% c("UA", "AA", "DL"))
+
+# Departed in summer (July, August, and September)
+flights |>
+  filter(month %in% c(7, 8, 9)) 
+
+# Arrived more than two hours late, but didn’t leave late
+flights |>
+  filter(arr_delay > 120 & dep_delay <= 0) 
+
+# Were delayed by at least an hour, but made up over 30 minutes in flight
+flights |>
+  filter(dep_delay > 60 & arr_delay < 30) 
+```
+
+In this solution we used both `|` and `%in%`. When you have multiple conditions the `%in%` operator can be more concise and easier to understand. `|` or more specifically `||` is a more traditional way of indicating *or* conditions, but this is outside of the scope of this course. 
+
+### Exercise 2
+Here we fist `arrange` by `dep_delay` in `desc`-ending order to find the flights with the longest delay. We also use `relocate`, which is introduced in 4.2.6 to move the column to the left in the tibble so it is visible in our output.
+```{r}
+flights |>
+  arrange(desc(dep_delay)) |>
+  relocate(dep_delay) |>
+  head(3)
+```
+
+Then we `arrange` by `dep_time` to find the flights that left earliest in the morning. Here we use select, also introduced in 4.2.6 to select only the column that we arranged by.
+
+```{r}
+flights |>
+  arrange(dep_time) |>
+  select(dep_time) |>
+  head(3)
+```
+
+Did you do it differently? I interpreted the question in this way, but maybe it was actually supposed to be
+```{r}
+flights |>
+  arrange(desc(dep_delay), dep_time) |>
+  relocate(dep_delay, dep_time) |>
+  head(3)
+```
+
+### Exercise 3
+Here we remember our high school physics, speed = distance / time. Remember to use `desc` to get the 
+
+```{r}
+flights |>
+  arrange(desc(distance / air_time)) |>
+  relocate(distance, air_time) |>
+  head(3)
+```
+
+A better solution would be to use `mutate` to calculate a new variable, `speed`:
+```{r}
+flights |>
+  mutate(speed = distance / air_time) |>
+  arrange(desc(speed)) |>
+  relocate(speed) |>
+  head(3)
+```
+
+### Exercise 4
+```{r}
+flights |>
+  distinct(month, day) |>
+  count()
+```
+
+We see that there are 365 distinct values and 2013 was not a leap year, so there were flights everyday of 2013. It is not necessary to use `count`, but the output is more concise.
+
+### Exercise 5 
+We simply `arrange` with (longest flights) or without (shortest flights) `desc`. 
+
+```{r}
+flights |>
+  arrange(desc(distance)) |>
+  relocate(distance) |>
+  head(3)
+```
+```{r}
+flights |>
+  arrange(distance) |>
+  relocate(distance) |>
+  head(3)
+```
+
+The shortest flight looks suspicious. Maybe there is something wrong with this entry?
+
+### Exercise 6
+It does not matter in which order we `filter` or `arrange`, but it is always preferable to `filter` as early as possible. `filter` makes the data frame shorter and means that the subsequent operations (function calls) will need to process less data, and therefore be faster. However, if you are not working with a lot of data, this will not matter much. Consider it a good practice to adhere to though.
+
+
+## 4.3 Columns
+### Exercise 1
+We would believe that `dep_delay` = `dep_time` - `sched_dep_time`. We can test this by creating a new variable called `my_dep_delay` and then compare it to `dep_delay`.
+
+```{r}
+flights |>
+  mutate(
+    my_dep_delay = dep_time - sched_dep_time,
+    dep_delay = dep_delay,
+    .keep = "used") |>
+  head(5)
+```
+
+We see that there is something wrong in our calculations. If we use `?flights` we can see that `dep_time` is stored in the format HHMM and `dep_delay` in minutes. There are several ways we can solve this, see chapter 11.4 for another, similar solution. If you are interested however, here is a solution:
+
+```{r}
+flights |>
+  mutate(
+    dep_hours = floor(dep_time / 100),
+    dep_minutes = dep_time - dep_hours * 100,
+    dep_time_minutes = 60 * dep_hours + dep_minutes,
+    sched_dep_hours = floor(sched_dep_time / 100),
+    sched_dep_minutes = sched_dep_time - sched_dep_hours * 100,
+    sched_dep_time_minutes = 60 * sched_dep_hours + sched_dep_minutes,
+    my_dep_delay = dep_time_minutes - sched_dep_time_minutes,
+    dep_delay = dep_delay,
+    .keep = "used") |>
+  relocate(dep_delay, my_dep_delay) |>
+  head(5)
+```
+
+where the `floor` function rounds down a number.
+
+
+### Exercise 2
+Here are a two suggestions where we use `names` which extracts the column names of a data frame.
+```{r}
+# Using select
+flights |>
+  select(dep_time, dep_delay, arr_time, arr_delay) |>
+  names()
+
+# Using starts_with
+flights |>
+  select(starts_with("dep") | starts_with("arr")) |>
+  names()
+
+# A unintuitive and not recommended solution, using mutate and .keep = used
+flights |>
+  mutate(
+    dep_time = dep_time, 
+    dep_delay = dep_delay, 
+    arr_time = arr_time, 
+    arr_delay = arr_delay,
+    .keep = "used") |>
+  names()
+```
+
+### Exercise 3
+Nothing seems to happen...
+```{r}
+flights |>
+  select(dep_time, dep_time) |>
+  head(3)
+```
+
+### Exercise 4
+`any_of` can be used to select any matching variables in the vector. 
+```{r}
+variables <- c("year", "month", "day", "dep_delay", "arr_delay")
+flights |>
+  select(any_of(variables)) |>
+  head(3)
+```
+produces the same result as 
+```{r}
+variables <- c("bill_depth_mm", "year", "month", "day", "dep_delay", "arr_delay")
+flights |>
+  select(any_of(variables)) |>
+  head(3)
+```
+while `all_of` would produce an error
+```{r}
+#| error: true
+variables <- c("bill_depth_mm", "year", "month", "day", "dep_delay", "arr_delay")
+flights |>
+  select(all_of(variables)) |>
+  head(3)
+```
+
+These functions may be useful if you select variables across multiple data frames.
+
+### Exercise 5
+```{r}
+flights |> 
+  select(contains("TIME")) |>
+  head(3)
+```
+
+The default behavior is to ignore case, `ignore.case = TRUE`. Set it to `FALSE` to match case
+
+```{r}
+flights |> 
+  select(contains("TIME", ignore.case = FALSE)) |>
+  head(3)
+```
+
+### Exercise 6
+```{r}
+flights |> 
+  rename(air_time_min = air_time) |>
+  relocate(air_time_min) |>
+  head(3)
+```
+
+### Exercise 7
+By `select`-ing `tailnum` we drop all other columns. Thus there is no column called `arr_delay` anymore.
+
+```{r}
+flights |> 
+  select(tailnum) |>
+  head(3)
+```
+
+
+## 4.5 Groups
+### Exercise 1
+First we will look at the carriers with the worst delays. Either by using `group_by`
+
+```r
+flights |>
+  group_by(carrier) |>
+  summarize(avg_dep_delay = mean(dep_delay, na.rm = TRUE))
+```
+
+or by using `.by`
+
+```{r}
+flights |>
+  summarize(
+    dep_delay_avg = mean(dep_delay, na.rm = TRUE),
+    .by = carrier) |>
+  head(3)
+```
+
+Note: we recommend using `.by`, at least when grouping over more variables to keep grouping tied to specific summarize. Performing multiple `summarize` with one `group_by` makes it harder to follow the code, and there is a risk that the end result is a grouped tibble, which is hard to keep track of the next time it is used.
+
+Now we'll try the challenge. First we look at the hint provided, where we use `group_by` in conjunction with the `.group` argument set to `drop`, and then try to visualize how many flights each carrier has to each destination.
+
+```{r}
+flights |>
+  group_by(carrier, dest) |>
+  summarize(
+    n = n(),
+    .groups = "drop") |>
+  ggplot(aes(x = dest, y = carrier, col = n)) + 
+  geom_tile()
+```
+
+Since several carriers only fly to a few destinations, it may be hard to disentangle if the fault is with the carrier or the airport. Do you have a better solution? I'm sure there is one! Also, wouldn't it be more reasonable to blame the `origin`? Hmm...
+
+### Exercise 2
+```{r}
+flights |>
+  slice_max(
+    dep_delay,
+    by = origin) |>
+  relocate(origin, dep_delay) |>
+  head(3)
+```
+
+Alternatively
+
+```r
+flights |>
+group_by(origin) |>
+  slice_max(dep_delay) |>
+  relocate(origin, dep_delay) |>
+  head(3)
+```
+
+### Exercise 3
+First we average `dep_delay` grouped by `hour`. Remember to use `na.rm =TRUE` to remove any missing values
+
+```{r}
+avg_delays <- flights |>
+  summarize(
+    avg_dep_delay = mean(dep_delay, na.rm = TRUE), 
+    .by = hour) |>
+  arrange(desc(avg_dep_delay))
+avg_delays |> head(5)
+```
+
+Looking at the full tibble, we can see that no flights depart at hours 2, 3, and 4, and that there seems to be something wrong with hour 1 since we have a *Not-a-Number* or `NaN`. We will ignore this now, but mention that `NaN` is used when some computation doesn't have a meaningful result, such as division by zero, e.g. 1 / 0. `NaN` are sometimes used for missing values, but `NA` is preferable in that case.
+
+Since both `hour` and `dep_delay` are numerical variables, we may use a scatter plot, `geom_point`, but in this case it may be more appealing to visualize the delays using a bar chart, `geom_bar`, or histogram, `geom_histogram` with `stat = "identity"` and `avg_dep_delay` selected as the y aesthetic. We see that this works with `geom_freqpoly` too (and `geom_density`).
+
+```{r}
+avg_delays |>
+  arrange(hour) |>
+  ggplot(aes(x = hour, y = avg_dep_delay)) + 
+  geom_histogram(stat = "identity") + 
+  geom_freqpoly(stat = "identity")
+```
+
+We see that the most delays are around 19-21.
+
+### Exercise 4
+When we `slice` using e negative value we *drop* rows instead of selecting them. `slice_min` drops from the bottom and `slice_max` drops from the top, in an ordered tibble.
+
+```{r}
+avg_delays |>
+  slice_min(
+    avg_dep_delay, 
+    n = -17)
+```
+
+### Exercise 5
+`count` counts the number of occurences of a value of a variable. If we set the `sort` parameter to `TRUE` the resulting tibble will be sorted according to the counts. Compare with `distinct`. Below we count the number of flights departing at each `hour`. 
+
+```{r}
+flights |>
+  count(
+    hour, 
+    sort = TRUE) |>
+  head(3)
+```
+
+We see that most flights depart in the morning. An interesting question is why the most delays are in the evening when most flights depart in the morning. Maybe we can look at when there are most arrivals?
+
+```{r}
+flights |>
+  mutate(arr_hour = floor(arr_time / 100)) |>
+  count(
+    arr_hour, 
+    sort = TRUE) |>
+  head(5)
+```
+
+Here we see what we expect, the hours with the most delays coincide with top 5 hours of most arrivals. It still doesn't explain why we don't have more delays at 10. To investigate this we would have to explore our data further, and possibly conclude that the answer may lie beyond the recorded data.
+
+### Exercise 6
+```{r}
+df <- tibble(
+  x = 1:5,
+  y = c("a", "b", "a", "a", "b"),
+  z = c("K", "K", "L", "L", "K")
+)
+```
+
+#### a.
+```{r}
+df |>
+  group_by(y)
+```
+
+Observe that the output is now grouped, which may be confusing if other operations are applied to `df` in a new code segment. Compare with 6 e. below.
+
+#### b.
+```{r}
+df |>
+  arrange(y)
+```
+
+The tibble is sorted according to `y` in alphabetical order.
+
+#### c.
+```{r}
+df |>
+  group_by(y) |>
+  summarize(mean_x = mean(x))
+```
+
+The mean of `x` is calculated for all values of `y`.
+
+#### d.
+```{r}
+df |>
+  group_by(y, z) |>
+  summarize(mean_x = mean(x))
+```
+
+The mean of `x` is calculated for all combinations of `y` and `z`. The output is *still* grouped by `y`.
+
+#### e.
+```{r}
+df |>
+  group_by(y, z) |>
+  summarize(
+    mean_x = mean(x),
+    .groups = "drop")
+```
+
+The mean of `x` is calculated for all combinations of `y` and `z`. The output is *not* grouped by `y`.
+
+#### f.
+```{r}
+df |>
+  group_by(y, z) |>
+  summarize(mean_x = mean(x))
+
+df |>
+  group_by(y, z) |>
+  mutate(mean_x = mean(x))
+```
+
+In the first piece of code we `summarize` over `z` and the resulting tibble only has the unique values of `z`. In the second piece of code we create a new variable with the mean value of `x` for each combination of `y` and `z`. 

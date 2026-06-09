@@ -1,0 +1,175 @@
+# Multiple logistic regression
+
+## Setup 
+
+First we load the dataset and have a `glimpse` at it.
+
+```{r}
+#| warning: false
+library(tidyverse)
+#install.packages("mlbench") # Install to get PimaIndiansDiabetes2 dataset
+library(mlbench)
+data("PimaIndiansDiabetes2") # Using 2 because it is a corrected version.
+glimpse(PimaIndiansDiabetes2)
+```
+
+## Model selection
+### Exercise 1
+
+We fit the two models and use the `AIC` function
+
+```{r}
+# Pressure model
+model <- glm(diabetes ~ pressure, data = PimaIndiansDiabetes2, family = "binomial")
+AIC(model)
+# Triceps model
+model <- glm(diabetes ~ triceps, data = PimaIndiansDiabetes2, family = "binomial")
+AIC(model)
+```
+
+We see that `triceps` has much lower AIC and comparing to the result in the lecture notes including `pressure` barely improves the model!
+
+### Exercise 2
+
+We fit the model with all three predictors and look at the AIC value and the VIF value
+
+```{r}
+model <- glm(diabetes ~ pressure + mass + triceps, data = PimaIndiansDiabetes2, family = "binomial")
+summary(model)
+```
+
+We see that the AIC is lower than using only `pressure` and `triceps`, but the $p$-value for `triceps` is now over 0.05, indicating that the relationship is not statistically significant at significance level 0.05. However, the $p$-value is low so we can keep it in our model, but it may be reasonable to use only one of BMI and tricep skin fold thickness as both are measurements relating to body fat.
+
+We also calculate the VIF value to see if we have multicollinearity
+
+```{r}
+# warning: false
+library(car)
+vif(model)
+```
+
+We see that all values are below 5, so we do not need to remove any variable because of multicollinearity.
+
+### Model selection strategies
+#### Exercise 1
+See Assignment 2.
+
+## Accuracy
+
+### Exercise 1
+
+We see that the accuracy is the same, with or without `pressure`. In this case the simpler model, not including `pressure` is the better option.
+
+```{r}
+model <- PimaIndiansDiabetes2 |> 
+  glm(formula = diabetes ~ ., family = "binomial")
+
+# Calculating the accuracy
+PimaIndiansDiabetes2 |> 
+  # Calculated the predicted probabilities for all observations
+  mutate(predicted_prob = model |> predict(PimaIndiansDiabetes2, type = "response")) |> 
+  # Predicting the outcome
+  mutate(predicted_outcome = ifelse(predicted_prob > 0.5, "pos", "neg")) |> 
+  # Dropping predictions with missing values
+  filter(!is.na(predicted_outcome)) |>
+  # Summarizing (Accuracy = # Correct predictions / # Total predictions
+  summarize(accuracy = mean(predicted_outcome == diabetes))
+```
+
+### Exercise 2
+
+We leave this one to you.
+
+### Exercise 3
+
+Using this seed the accuracy is the same. 
+
+```{r}
+# code-fold: true
+# comment: Code
+# Set seed for reproducibility
+set.seed(42) 
+
+# Create an index to keep track of subjects
+pima <- PimaIndiansDiabetes2 |> 
+  drop_na() |> # Using only complete observations
+  mutate(index = 1:n())
+
+# Create training and testing set
+training_set <- pima |> 
+  sample_frac(0.8) # Use 80% of the data in training set
+test_set <- pima |> 
+  anti_join(training_set, by = "index")
+
+# Train model on training set
+model <- training_set |> 
+  glm(formula = diabetes ~ ., family = "binomial")
+
+# Evaluate model by accuracy on test set
+predictions <- model |> 
+  predict(test_set, type = "response")
+test_set |> 
+  mutate(prediction = ifelse(predictions > 0.5, "pos", "neg")) |> 
+  drop_na() |> # Dropping predictions with missing values
+  summarize(accuracy = sum(prediction == diabetes) / n())
+
+model <- training_set |> 
+  glm(formula = diabetes ~ . - pressure, family = "binomial")
+
+# Evaluate model by accuracy on test set
+predictions <- model |> 
+  predict(test_set, type = "response")
+test_set |> 
+  mutate(prediction = ifelse(predictions > 0.5, "pos", "neg")) |> 
+  drop_na() |> # Dropping predictions with missing values
+  summarize(accuracy = mean(prediction == diabetes))
+```
+
+With a different seed the full model has a higher accuracy.
+
+```{r}
+# code-fold: true
+# comment: Code
+# Set seed for reproducibility
+set.seed(44) 
+
+# Create an index to keep track of subjects
+pima <- PimaIndiansDiabetes2 |> 
+  drop_na() |> # Using only complete observations
+  mutate(index = 1:n())
+
+# Create training and testing set
+training_set <- pima |> 
+  sample_frac(0.8) # Use 80% of the data in training set
+test_set <- pima |> 
+  anti_join(training_set, by = "index")
+
+# Train model on training set
+model <- training_set |> 
+  glm(formula = diabetes ~ ., family = "binomial")
+
+# Evaluate model by accuracy on test set
+predictions <- model |> 
+  predict(test_set, type = "response")
+test_set |> 
+  mutate(prediction = ifelse(predictions > 0.5, "pos", "neg")) |> 
+  summarize(accuracy = sum(prediction == diabetes) / n())
+
+model <- training_set |> 
+  glm(formula = diabetes ~ . - pressure, family = "binomial")
+
+# Evaluate model by accuracy on test set
+predictions <- model |> 
+  predict(test_set, type = "response")
+test_set |> 
+  mutate(prediction = ifelse(predictions > 0.5, "pos", "neg")) |> 
+  summarize(accuracy = sum(prediction == diabetes) / n())
+```
+
+To properly study accuracy it is good to use more than one train-test combination or using k-fold validation [cross-validation]('https://en.wikipedia.org/wiki/Cross-validation_(statistics)'). However, this is beyond the scope of this course. 
+
+We see that including `pressure` doesn't seem to improve our accuracy much, suggesting it is better to go for the smaller, less complex model.
+
+### Exercise 4
+
+The model would achieve an accuracy of 90% since $\text{Accuracy} = \#\text{Correct predictions} / \#\text{Total predictions} = 90 / 100 = 0.9 = 90 \%$.

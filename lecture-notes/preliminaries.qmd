@@ -1,0 +1,2 @@
+# Preliminaries
+In these two chapters we will introduce some preliminary knowledge that is foundational to the course. You don't have to know everything in these two chapters in detail, but it is good if you are familiar with them. Both chapters starts with a "TL;DR", or "Too Long; Didn't Read", which summarizes the chapters. This gives you a glance at the chapter, so you get an idea if you are familiar with the concepts or if you need to spend more time on it. 

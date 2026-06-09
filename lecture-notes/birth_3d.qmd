@@ -1,0 +1,69 @@
+---
+format: html
+embed-resources: true
+---
+
+```{r}
+#| warning: false
+#| code-fold: true
+#| comment: "Code you do not need to understand"
+library(tidyverse)
+library(plotly)
+
+# Loading data
+birth <- read_csv("datasets/birth.csv") # Remember to set the correct path
+# Recoding sex as factor
+birth <- birth |>  mutate(sex = as.factor(ifelse(sex == 1, "Male", "Female")))
+
+# Fit the multiple linear regression model
+model <- lm(birth_weight_g ~ weight_kg + length_cm, data = birth)
+
+# Create a grid of values for weight_kg and length_cm
+weight_kg_range <- seq(min(birth$weight_kg), max(birth$weight_kg), length.out = 50)
+length_cm_range <- seq(min(birth$length_cm), max(birth$length_cm), length.out = 50)
+grid <- expand.grid(weight_kg = weight_kg_range, length_cm = length_cm_range)
+
+# Predict birth_weight_g for the grid
+grid$birth_weight_g <- predict(model, newdata = grid)
+
+# Create 3D scatter plot
+p <- plot_ly(
+  birth, 
+  x = ~length_cm, 
+  y = ~weight_kg, 
+  z = ~birth_weight_g, 
+  type = 'scatter3d', 
+  mode = 'markers', 
+  size = 1)
+
+# Add regression surface
+p <- p |> 
+  add_surface(
+    x = ~length_cm_range, 
+    y = ~weight_kg_range, 
+    z = ~matrix(grid$birth_weight_g, nrow = 50), 
+    opacity = 0.5)
+
+p <- p |> 
+  colorbar(title = "<b>Birth weight (g)</b>") |>
+  layout(
+    scene = list(
+      xaxis = list(title="Weight (kg)"), 
+      yaxis = list(title="Length (cm)"),
+      zaxis = list(title="Birth weight (g)")))
+
+# VIEW: birth_weight_g ~ length_cm perspective
+#p <- p |> 
+#  layout(scene = list(camera = list(eye = list(x = -1.25, y = 0, z = 0))))
+
+# VIEW: birth_weight_g ~ weight_kg perspective
+#p <- p |> 
+#  layout(scene = list(camera = list(eye = list(x = 0, y = 1.25, z = 0))))
+
+# VIEW: birth_weight_g ~ weight_kg perspective
+#p <- p |> 
+#  layout(scene = list(camera = list(eye = list(x = 0, y = 0, z = 1.25))))
+
+# Show the plot
+p
+```

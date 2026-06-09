@@ -1,0 +1,126 @@
+# Statistical inference, deep dive
+Up to this point, we've been looking into datasets and learning about the variables and relationships in them. To take our analysis beyond datasets to knowledge about the world, we need to use *statistical inference*. Statistical inference enables us to make educated guesses, *inferences*, about entire populations based on what we have found in our sample, our dataset.
+
+<!-- [^inference]: Statistical inference can sometimes be tricky to understand. Essentially, statistical inference takes place whenever we learn something from data. We *infer* knowledge *from data*. -->
+
+## Sample and population
+To better understand what a sample and a population is let's take our `penguins` example again. In our dataset we have 152 observations of Adelie penguins.
+
+```{r}
+#| warning: false
+library(tidyverse)
+library(palmerpenguins)
+# Only chinstraps
+adelies <- penguins |> filter(species == "Adelie")
+adelies |> nrow()
+```
+
+These 152 penguins that are recorded in our dataset constitutes our *sample*. From here, we take a look at the mean weight (g) of male Adelie penguins. 
+
+```{r}
+# Mean weight of male Adelie penguins 
+male_weights <- adelies |> 
+  filter(sex == "male") |> 
+  pull(body_mass_g)
+mean_weight <- mean(male_weights, na.rm = TRUE)
+mean_weight
+```
+
+Now we know the mean weight in our sample. Maybe we can use our sample to draw conclusions about the mean in the entire *population* of Adelie penguins, even those not present in our sample? This is what *statistical inference* is about. That is, we want to use the information in our sample to *infer* something about all Adelie penguins. In a different setting with some other type of data, we may be interested in doing inference about other parameters. For example, the population standard deviation or the effect that one variable has on another one in the population. 
+
+## Statistical inference and hypothesis testing
+To do inference we usually perform what we call a *hypothesis test*. For this, we need to formulate two types of hypothesis:
+
+-   A null hypothesis ($H_0$): This is a statement that we are trying to find evidence *against*. For instance, $H_0$ might state that a new drug has no effect on a certain medical condition compared to a placebo.
+-   An alternative hypothesis ($H_a$): This is what we want to prove. Using the same drug example, $H_a$ might state that the drug does have an effect on the medical condition.
+
+Going back to our Penguin example case, let us assume we want to look for evidence that the male mean weight is larger than 4000g. Then our null hypothesis is that the population mean weight is equal to 4000, and the alternative hypothesis that the population mean weight is larger than 4000g. We got a sample mean of 4043.493g, so of course that is more than 4000g, but is it enough evidence to conclude that the population mean is actually larger than 4000g? Did we just get slightly above 4000 by chance? 
+
+To answer this, we need to think about the sample mean, `mean_weight`, as a *random variable*. Every random variable has a distribution, and the distribution of something random in a sample, in this case the mean weight of male penguins, is typically referred to as the *sampling distribution*.  
+
+In hypothesis testing, we use our knowledge and assumptions about this sampling distribution to calculate the probability that we would get the sample mean we got (4043.493g), if the null hypothesis (a mean weight was 4000g) was actually true. This probability is referred to as the *p-value*. If this p-value is *low enough*, we conclude that we have evidence that the population mean weight is actually larger than 4000g.
+
+So how low is low enough? This is decided by the significance level $\alpha$. This is typically decided before conducting the study, and common choices for $\alpha$ are 5\% or 1\%.
+
+- If the p-value is less than $\alpha$, we reject the null hypothesis in favor of the alternative. In our example, this would mean that, statistically, we have evidence for a mean weight above 4000g at a significance level of $\alpha$.
+- If the p-value is greater than $\alpha$, we do not reject the null hypothesis, suggesting that there isn't enough statistical evidence to support $H_a$. In our case, we would not have enough evidence that the mean weight is above 4000g at a significance level of $\alpha$.
+
+## Random variables and their distributions
+So what do we actually know about the sampling distribution of the sample mean when $H_0$ is true? Of course the sample mean, `mean_weight`, will be different depending on which penguins we managed to capture and measure in our sample. If we were to repeat the same procedure later using a random new set of penguins, we would likely get a different sample mean. Below we plot the approximated sampling distribution of the mean weight of male Adelie penguins.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Code"
+# Parameters for the normal distribution
+# Hypothesized population mean
+h0_mu <- 4000 # The Greek letter "mu" is commonly used for the mean
+# Standard deviation of sample mean
+n_observations <- length(male_weights) # Number of observations of male Adelie penguins
+sigma <- sd(male_weights) / sqrt(n_observations) # The Greek letter "sigma" is commonly used for the standard deviation
+# Plot
+ggplot(tibble(x=c(3870, 4130)), aes(x=x)) + 
+  theme_minimal() +
+  stat_function(
+    fun=dnorm, 
+    args=list(mean=h0_mu, sd=sigma), 
+    geom="line"
+  ) +
+  geom_vline(linetype = "dotted", aes(xintercept = h0_mu)) +
+  labs(
+    x = "Mean weight of Adelie penguins (g)",
+    y = ""
+  ) 
+```
+For all averages/means, if the sample size is large enough, the sampling distribution will be close to a *normal distribution* like the one above. Normal distributions are *symmetric* with the same shape on both sides of the true mean in the population (4000g in this case if $H_0$ is true). The most likely sample mean is the hypothesized mean of 4000g, but most of the time we would get a sample mean slightly above or below the true mean in our actual sample. 
+
+Since we can approximate this distribution based on our data and our null hypothesis, we can can use the `t.test()` function to calculate the probability to get a sample mean of $4043.493$g or larger, if $H_0$ is true. `t.test()` is made specifically for inference about means. It takes the data sample, in our case the weights of the male penguins, the mean under $H_0$, in our case 4000g, and the direction of the alternative hypothesis. Here we specify `"greater"`, as we want the probability for weights greater than 4000g. That is, we want to see if we can prove that the population mean is greater than 4000g.
+
+```{r}
+#| echo: false
+#| eval: false
+pnorm(mean_weight, mean = h0_mu, sd = sigma, lower.tail = FALSE)
+```
+
+```{r}
+t.test(male_weights, mu = 4000, alternative = "greater")
+```
+From the output we see that the p-value, the probability of the observing a mean penguin weight of 4125g or more larger if our null hypothesis of 4000g would be true, is about $14$\%. We have visualized this probability in purple in the plot below.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Code"
+ggplot(tibble(x=c(3870, 4130)), aes(x=x)) + 
+  theme_minimal() +
+  stat_function(
+    fun=dnorm, 
+    args=list(mean=h0_mu, sd=sigma), 
+    geom="line"
+  ) +
+  # Add the shaded region for weight > 4100
+  stat_function(
+    fun=dnorm,
+    args=list(mean=h0_mu, sd=sigma),
+    geom="area",
+    fill="purple",   
+    alpha=0.5,
+    xlim=c(mean_weight, 4130) 
+  ) +
+  geom_vline(linetype = "dotted", aes(xintercept = h0_mu)) +
+  labs(
+    x = "Mean weight of Adelie penguins (g)",
+    y = ""
+  )
+```
+So is 14\% low enough for us to have evidence against the null hypothesis? Can we conclude that the mean weight of male Adelie penguins is above 4000g? On a 5\% significance level, we can not, since we would need our p-value to be lower than 5\%.
+
+A few important things to note in general about hypothesis testing:
+
+- A larger sample (more observations in our dataset) makes it easier to reject the null hypothesis. In our example above, the same sample mean would have rejected $H_0$ if we had enough observations to support it.
+- Failing to reject the null hypothesis doesn't prove the null hypothesis is true. It only suggests that there isn't enough statistical evidence against it.
+- A significantly small p-value doesn't mean the difference between the mean under $H_0$ and the actual population mean is large, only that it's likely not due to chance.
+
+In this course we will not go into depth into the theory on hypothesis testing. Instead, we will let R perform the computations for us. However, it is good to at least be familiar with the underlying concepts as they are fundamental to statistical inference. In practical applications, the outcome of hypothesis testing should be combined with domain knowledge and other information to make informed decisions or answer research questions. 
+
+<!-- **Type I and Type II Errors**: -->
+<!-- - **Type I Error**: When you incorrectly reject a true null hypothesis. The probability of committing this error is \( \alpha \). -->
+<!-- - **Type II Error**: When you fail to reject a false null hypothesis. The probability of committing this error is denoted by \( \beta \). The power of a test, 1 - \( \beta \), is the probability of rejecting a false null hypothesis. -->

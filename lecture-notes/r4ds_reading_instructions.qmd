@@ -1,0 +1,19 @@
+# Reading instructions
+
+## Introduction {.unnumbered}
+Recommended
+
+## Whole game {.unnumbered}
+This chapter covers everything needed for Exploratory Data Analysis (EDA). 
+
+* Chapters "Data visualization" and "Data transformation" are recommended.
+* The chapter is "Data tidying" is recommended as tidy data and pivoting are important concepts. However, there are no recommended exercises on this chapter, and it won't covered in the assignments.
+* The "Workflow: " chapters can be considered optional. If you are new to coding or R they provide useful tips to how to improve your workflow.
+* The chapter "Data import" can be skipped if you know how to use the `read_csv` function. 
+
+## Visualize {.unnumbered}
+This chapter covers how to visualize data and EDA, which is an important part of data analysis.
+
+* Chapter "Layers" gives a deeper understanding for visualizing with `ggplot`. It can be considered optional, but chapter "Exploratory data analysis" and "Communication" builds on some of the content in this chapter.
+* Chapter "Exploratory data analysis" is essential to the course.
+* Chapter "Communication" is much like chapter "Layers", it helps you create better visualizations. Make sure you read 11.2 and 11.4, the rest can be considered optional.

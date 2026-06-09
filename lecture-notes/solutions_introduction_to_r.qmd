@@ -1,0 +1,139 @@
+# Introduction to R
+
+## Objects
+
+### Exercise 1
+In R it is possible to use `=` and `<-` to assign values to objects, but `<-` is the preferred way. `=` is used to assign function parameters a value, which you will encounter later.
+
+## Functions
+
+### Exercise 1
+```{r}
+multiply <- function(x, y) {
+  x * y
+}
+
+multiply(36, 52)
+```
+
+### Exercise 2
+
+Make sure you know which variable appears on what sign of the minus sign when using the function.
+
+```{r}
+subtraction <- function(x, y) {
+  x - y
+}
+
+subtraction(36, 52)
+```
+
+### Exercise 3
+
+Here we see the usage of `=` in assigning function parameters values. 
+
+```{r}
+subtraction(y = 52, x = 36)
+```
+
+### Exercise 4
+
+```{r}
+subtraction(y <- 52, x <- 36)
+```
+
+Instead of passing x and y as parameters to the function, `<-` sets the values of the objects `x` and `y` to 36 and 52 respectively, which we can see by printing the variables: 
+
+```{r}
+x
+y
+```
+
+The output is the same as the following code
+
+```{r}
+x <- 36
+y <- 52
+
+subtraction(y, x)
+```
+
+**Never use `<-` inside a function call.**
+
+## Vectors
+
+### Exercise 1
+
+The operations, $+, -, \cdot, /$, are performed $elementwise$, that is the first element of bot vectors gets added/subtracted/multiplied/divided and so on. 
+
+```{r}
+vec1 <- c(1, 2)
+vec2 <- c(3, 4)
+
+vec1 + vec2
+vec1 - vec2
+vec1 * vec2
+vec1 / vec2
+```
+
+### Exercise 2
+
+We try running the code:
+
+```{r}
+#| error: true 
+vec1 <- c(1, 2)
+vec2 <- c(3, 4)
+vec3 <- c(3, "four")
+
+vec1 + vec2
+vec2 + vec3
+```
+
+We get an error for `vec2 + vec3`. Vectors must always contain the same data type, so in this case `vec3` becomes a vector of strings:
+
+```{r}
+vec3
+```
+
+We can see that 3 is now also a string by the quotes, `"3"`.
+
+## Data frames
+
+### Exercise 1
+
+We run the code and see that the output is similar to the `head` function.
+
+```{r}
+# We comment the installation to not run it twice on our machine
+# install.packages("palmerpenguins")
+library(palmerpenguins)
+penguins
+```
+
+### Exercise 2
+
+We type the dollar operator straight after the tibble and then the column name to print the values in it.
+
+```{r}
+penguins$flipper_length_mm
+```
+
+### Exercise 3
+
+When we press tab we see all the columns in the tibble as suggestions. In general you can use tab to autocomplete in R.
+
+### Exercise 4
+
+We see some output when loading `tidyverse` which you can ignore for now. If you have questions about the functions, run `?<function>`, e.g. `?glimpse` in the console.
+
+```{r}
+library(tidyverse)
+glimpse(penguins)
+summary(penguins)
+head(penguins)
+tail(penguins)
+nrow(penguins)
+ncol(penguins)
+names(penguins)
+```

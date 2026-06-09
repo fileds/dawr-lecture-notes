@@ -1,0 +1,50 @@
+# R4DS: Data tidying
+
+To run these solutions you need to load the necessary libraries.
+
+```{r}
+library(tidyverse)
+```
+
+## 6.2 Tidy data
+### Exercise 1
+
+* **table1**
+  - Observation: Tuberculosis and population for one country and one year.
+  - Columns:
+    - country, year, tuberculosis cases, population
+* **table2**
+  - Observation: Tuberculosis or population for one country and one year.
+  - Columns:
+    - country, year, type of observation, count of the type of observation
+* **table3**
+  - Observation: Tuberculosis per capita as a string for a country and one year.
+  - Columns:
+    - country, year, tuberculosis per capita as a string
+
+Observe that the rate in table three is stored as a string, which is not the value of tuberculosis per capita.
+
+### Exercise 2
+
+Not recommended, but here is a solution for table2, if you are interested. You do not need to be able to reproduce this.
+
+```{r}
+#| code-fold: true
+#| code-comment: Code
+table2 <- tibble(
+  country = c("Afghanistan", "Afghanistan", "Afghanistan", "Afghanistan", "Brazil", "Brazil"),
+  year = c(1999, 1999, 2000, 2000, 1999, 1999),
+  type = c("cases", "population", "cases", "population", "cases", "population"),
+  count = c(745, 19987071, 2666, 20595360, 37737, 172006362)
+)
+
+cases <- table2 |> 
+  filter(type == "cases") |>
+  pull(count)
+population <- table2 |> 
+  filter(type == "population") |>
+  pull(count)
+rate <- (cases / population) * 10000
+table2$rate <- rep(rate, each = 2)
+table2
+```

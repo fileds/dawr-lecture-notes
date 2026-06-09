@@ -1,0 +1,21 @@
+# Preface {.unnumbered}
+
+These lecture notes are supposed to cover all the relevant content for the course, along with the course literature, and a little bit more. The notes are divided into three parts: Preliminaries, where R is introduced along some basic statistics; Exploratory Data Analysis (EDA), which gives reading instructions for the course literature [R for Data Science](https://r4ds.hadley.nz/) (R4DS in short); and Statistical Inference and Prediction, which introduces how to gain insight from data to both understand and predict. In addition to these chapters there are solutions to the recommended exercises at the end of the book. The main focus of the course lies with EDA and inference and prediction, but the preliminaries are good (necessary) to be familiar with to be able to appreciate the rest of the course. 
+
+The notes take a pragmatic approach focusing on giving an intuition for concepts in data analysis rather than a rigorous theoretical account. This aligns with the scope of this course, to introduce you to Data Analytics in a practical way to give you the tools to learn more. 
+
+<span style="color: gray;">Sometimes we will allude to more advanced concepts by writing a paragraph in gray. The idea is to leave a small mental note for you that there is something more to a concept, but that it is beyond the scope of the course.</span>
+
+We hope you enjoy the course!
+
+## Version 0.05
+
+Version notes: 
+
+* Added chapter on missing values and imputation.
+
+These lecture notes are a work in progress. If you have any questions, spot any errors, or have any suggestions fro improvement in the lecture notes, please let us know by sending an email to one of the teachers on the course with the tag [DAwR-LN] in the subject.
+
+## Disclaimer
+
+These lecture notes are used in the Data Analytics with R course at Umeå University and is not intended to be spread outside of the context of the course.

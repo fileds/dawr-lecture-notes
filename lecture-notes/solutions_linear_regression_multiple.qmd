@@ -1,0 +1,516 @@
+# Multiple linear regression
+
+## Setup 
+
+First we load the dataset and have a `glimpse` at it.
+
+```{r}
+#| warning: false
+library(tidyverse)
+birth <- read_csv("datasets/birth.csv") # Remember to set the correct path
+# Recoding sex as factor
+birth <- birth |>  mutate(sex = as.factor(ifelse(sex == 1, "Male", "Female")))
+glimpse(birth)
+```
+
+## Birth weight dataset
+
+### Exercise 1
+
+We don't know anything else than that the sample was collected in Sweden, so our population is children born in Sweden. It would be useful to know more about where the children was born to better specify the population, and when they were born.
+
+Information about the father, ethnicity, and health related variables such as smoking and blood pressure would be interesting. 
+
+### Exercise 2
+
+The null and alternative hypotheses are
+
+> **$H_0$**: There is *no* linear relationship between the mothers age and the birth weight of the child.
+
+> **$H_a$**: There *is* a linear relationship between the mothers age and the birth weight of the child.
+
+We perform linear regression with `age` as our predictor. 
+
+```{r}
+model_summary <- birth |> 
+  lm(formula = birth_weight_g ~ age) |> 
+  summary()
+model_summary$coefficients
+```
+
+We see that the $p$-value is $\sim0.85$, so we conclude that there is no significant linear relationship between the birth weight and the mothers age. 
+
+### Exercise 3
+
+We fit the three linear models separately.
+
+```{r}
+# Mother length
+model_summary <- birth |> 
+  lm(formula = birth_weight_g ~ length_cm) |> 
+  summary()
+model_summary$coefficients
+# Mother weight
+model_summary <- birth |> 
+  lm(formula = birth_weight_g ~ weight_kg) |> 
+  summary()
+model_summary$coefficients
+# Mother BMI
+model_summary <- birth |> 
+  lm(formula = birth_weight_g ~ bmi) |> 
+  summary()
+model_summary$coefficients
+```
+
+We see that the $p$-values for length and weight are below the significance level 0.05 but not BMI.
+
+## Comparing models
+### Selecting between two simple linear regression models
+
+The linear relationship was not significant so we would not expect `age` to explain much of the variation of `birth_weight_g`.
+
+```{r}
+model_summary <- birth |> 
+  lm(formula = birth_weight_g ~ age) |> 
+  summary()
+model_summary$r.squared
+```
+
+In our plot we can see that the line is almost completely flat. 
+
+```{r}
+birth |> 
+  ggplot(aes(x = age, y = birth_weight_g)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Age",
+    y = "Birth weight (g)")
+```
+
+We can also look at a few selected points and look at their explained variation like in the chapter. We see that almost all variation is unexplained. Note: You were not asked to do this visualization on your own.
+
+```{r}
+#| warning: false
+#| code-fold: true
+#| comment: "Code"
+# Limits
+ylims <- c(3000, 4000)
+# Predictions
+model <- birth |> lm(formula = birth_weight_g ~ age)
+# Subset points to show
+set.seed(1337)
+subset_birth <- birth |> 
+  mutate(
+    pred = predict(model),
+    resid = resid(model)) |> 
+  filter(
+    (age < mean(birth$age) & birth_weight_g < pred - 100) |
+    (age > mean(birth$age) & birth_weight_g > pred + 100)) |>  
+  filter(birth_weight_g < 4000 & birth_weight_g > 3000) |> 
+  sample_n(20)
+# Calculate mean of birth weight
+mean_bw <- birth |> pull(birth_weight_g) |> mean()
+
+birth |> 
+  ggplot(aes(
+    x = age, 
+    y = birth_weight_g)) + 
+  geom_hline(
+    yintercept = mean_bw,
+    linetype = 3,
+    linewidth = 1) +
+  geom_point(alpha = 0.1) + 
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_segment( # Total variation
+    data = subset_birth,
+    aes(
+      x = age + 0.1,
+      xend = age + 0.1,
+      y =  mean_bw,
+      yend = birth_weight_g,
+      col = "Total"),
+    linetype = 2,
+    linewidth = 1.5,
+    alpha = 0.5) +
+    geom_segment( # Unexplained variation
+    data = subset_birth,
+    aes(
+      x = age,
+      xend = age,
+      y =  pred,
+      yend = birth_weight_g,
+      col = "Unexplained"),
+    linewidth = 1.5,
+    alpha = 0.7
+    ) +
+  geom_segment( # Explained variation
+    data = subset_birth,
+    aes(
+      x = age,
+      xend = age,
+      y =  mean_bw,
+      yend = pred,
+      col = "Explained"),
+    linewidth = 1.5,
+    alpha = 0.7
+    ) +
+  geom_point(data = subset_birth, size = 4) + 
+  labs(
+    col = "Variation") +
+  scale_color_manual(
+    values = c(
+      "Total" = "black",
+      "Explained" = "darkgreen", 
+      "Unexplained" = "darkorange"),
+    breaks = c(
+      "Total", "Explained", "Unexplained")) +
+  coord_cartesian(ylim = ylims)
+```
+
+### Exercise 2
+
+We fit a multiple linear regression model using the provided formula.
+
+```{r}
+model <- birth |> lm(formula = birth_weight_g ~ weight_kg + length_cm)
+model |> summary()
+```
+
+Including both `weight_kg` and `length_cm` increase R$^2$ by a little, 0.0874 compared to 0.0786 when using only `length_cm`. It is possible that a lot of the variation explained by weight is also explained by length, as it is reasonable to believe that longer women also weigh more, on average.
+
+### Exercise 3
+
+We see that our regression model is visualize as a *plane* in 3D space, where we can vary both `weight_kg` and `length_cm`. In general we will not visualize multiple linear regression models, and in fact any model containing more than two predictors is not possible to visualize. Understanding the visualization requires some geometrical intuition, and if you struggle to understand the visualization you can focus on interpreting the models instead, as it is more important.
+
+**Note:** We are working on rendering this for the published lecture notes. You can see the visualization in the Multiple linear regression module on Canvas.
+
+
+<!-- 
+```{r}
+#| code-fold: true
+#| comment: "Code"
+#| echo: false
+#| eval: false
+library(plotly)
+
+# Fit the multiple linear regression model
+model <- lm(birth_weight_g ~ weight_kg + length_cm, data = birth)
+
+# Create a grid of values for weight_kg and length_cm
+weight_kg_range <- seq(min(birth$weight_kg), max(birth$weight_kg), length.out = 50)
+length_cm_range <- seq(min(birth$length_cm), max(birth$length_cm), length.out = 50)
+grid <- expand.grid(weight_kg = weight_kg_range, length_cm = length_cm_range)
+
+# Predict birth_weight_g for the grid
+grid$birth_weight_g <- predict(model, newdata = grid)
+
+# Create 3D scatter plot
+p <- plot_ly(
+  birth,
+  x = ~length_cm, 
+  y = ~weight_kg, 
+  z = ~birth_weight_g, 
+  type = 'scatter3d', 
+  mode = 'markers', 
+  size = 1)
+
+# Add regression surface
+p <- p |> 
+  add_surface(
+    x = ~length_cm_range, 
+    y = ~weight_kg_range, 
+    z = ~matrix(grid$birth_weight_g, nrow = 50), 
+    opacity = 0.5)
+
+p <- p |> 
+  colorbar(title = "<b>Birth weight (g)</b>") |>
+  layout(
+    scene = list(
+      xaxis = list(title="Weight (kg)"), 
+      yaxis = list(title="Length (cm)"),
+      zaxis = list(title="Birth weight (g)")))
+
+# VIEW: birth_weight_g ~ length_cm perspective
+#p <- p |> 
+#  layout(scene = list(camera = list(eye = list(x = -1.25, y = 0, z = 0))))
+
+# VIEW: birth_weight_g ~ weight_kg perspective
+#p <- p |> 
+#  layout(scene = list(camera = list(eye = list(x = 0, y = 1.25, z = 0))))
+
+# VIEW: birth_weight_g ~ weight_kg perspective
+#p <- p |> 
+#  layout(scene = list(camera = list(eye = list(x = 0, y = 0, z = 1.25))))
+
+# Show the plot
+p
+```
+This is the best model (in terms of AIC) that we could find. -->
+## Fitting multiple linear regression models
+
+### Interpreting multiple linear regression
+
+#### Exercise 1
+
+We first run the code to simulate the data.
+```{r}
+# Simulating data
+set.seed(42) # Important to include this!
+n_days <- 153 
+n_years <- 5
+month <- rep(seq(4, 8, length.out = n_days), n_years)
+ice_cream_sales <- 2000 + 3000 * sin(pi * month / 14) + rnorm(length(month), 0, 200)
+snake_bites <- 20 * sin(pi * month / 14) + rnorm(length(month), 0, 8)
+
+ice_cream <- tibble(month = month, ice_cream_sales = ice_cream_sales, snake_bites = snake_bites)
+```
+
+We then visualize the relationship and see that there may be a linear relationship.
+
+```{r}
+ice_cream |> 
+  ggplot(aes(x = snake_bites, y = ice_cream_sales)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+We finally fit a regression model to see if the relationship is significant. 
+
+```{r}
+ice_cream |> 
+  lm(formula = ice_cream_sales ~ snake_bites) |> 
+  summary()
+```
+
+We see that the $p$-value is less than 0.05 and the relationship is significant with significance level 0.05.
+
+#### Exercise 2
+
+It doesn't seem likely that snake bites increases ice cream sales, i.e. the effect doesn't seem intuitively causal. Instead there may be another variable explaining why they correlate...
+
+#### Exercise 3
+
+We include `month` and fit a multiple linear regression model with hypotheses 
+
+> **$H_0$**: There is *no* linear relationship between snake bites and ice cream sales, given that month is part of the model.
+
+> **$H_a$**: There *is* a linear relationship between snake bites and ice cream sales, given that month is part of the model.
+
+```{r}
+ice_cream |> 
+  lm(formula = ice_cream_sales ~ snake_bites + month) |> 
+  summary()
+```
+
+We don't have evidence in our data that there is a linear relationship between snake bites and ice cream sales at significance level 0.05, given that the month is included in the model.
+
+**Beyond the scope of the course**
+
+If we look at the code that generated the data we can see that in fact `snake_bites` and `ice_cream_sales` are both generated based on `month`, but are otherwise unrelated. You do not need to understand the mathematical formula, just notice `month` appears on the right side of `<-`, indicating that the values of `ice_cream_sales` and `snake_bites` depend on `month`.
+
+```{r}
+#| eval: false
+ice_cream_sales <- 2000 + 3000 * sin(pi * month / 14) + rnorm(length(month), 0, 200)
+snake_bites <- 20 * sin(pi * month / 14) + rnorm(length(month), 0, 8)
+```
+
+## Model selection
+
+### Multicollinearity
+
+#### Exercise 1
+
+Visualizing shows the linear relationship.
+
+```{r}
+birth |> 
+  ggplot(aes(x= weight_kg, y = bmi)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+Unsurprisingly, the relationship is significant and R$^2$ is as high as 0.8. 
+
+```{r}
+birth |> 
+  lm(formula = bmi ~ weight_kg) |> 
+  summary()
+```
+
+#### Exercise 2
+
+We can solve this in two ways, either by avoiding using `.` in our formula or by removing `z` from `df`.
+
+```{r}
+#| code-fold: true
+#| comment: Code
+#| eval: false
+set.seed(42) # Setting seed for reproducibility
+x <- seq(1, 100) + rnorm(100, 0, 2)
+y <- 3 * x + rnorm(100, 0, 2)
+z <- rep(NA, 100)
+
+df <- data.frame(x = x, y = y, z = z)
+
+model1 <- df |> lm(formula = y ~ x)
+model1_summary <- model1 |> summary()
+model1_summary$r.squared
+model2 <- df |> 
+  select(!z) |> 
+  lm(formula = y ~ .)
+model2_summary <- model2 |> summary()
+model2_summary$r.squared
+```
+
+### Model selection strategies
+
+#### Exercise 1
+
+When performing forward selection we start by fitting simple linear regression models for each of the potential predictors and add the variable that improves the adjusted R$^2$ the most to our model. It is important to use adjusted R$^2$ since adding any variable will increase R$^2$ but adjusted R$^2$ will penalize adding more variables to the model, balancing model fit and model complexity.
+
+To keep the code as compact as possible, we will use the `;` operator that has the same effect as a new line when extracting the adjusted R$^2$ value from each model.
+
+```{r}
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ sex) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ age) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ length_cm) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ weight_kg) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ bmi) |> summary() ; ms$adj.r.squared
+```
+
+Unsurprisingly, `pregnancy_duration_wks` is the variable with the highest adjusted R$^2$. It seems reasonable since even when they are born infants grow very fast. In the next step we fit multiple linear regression models with two predictors, the first one being `pregnancy_duration_wks`.
+
+```{r}
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + sex) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + age) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + weight_kg) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + bmi) |> summary() ; ms$adj.r.squared
+```
+
+`length_cm` is now the variable that increases adjusted R$^2$ the most, so we include it in our model and continue by adding a third variable.
+
+```{r}
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + age) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + weight_kg) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + bmi) |> summary() ; ms$adj.r.squared
+```
+
+`sex` is now the variable that increases adjusted R$^2$ the most, so we include it in our model and continue with by a fourth variable.
+
+```{r}
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + age) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + weight_kg) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + bmi) |> summary() ; ms$adj.r.squared
+```
+
+`weight_kg` is now the variable that increases adjusted R$^2$ the most and is also statistically significant at significance level 0.05, so we include it in our model and continue by adding a fifth variable.
+
+```{r}
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + weight_kg + age) |> summary() ; ms$adj.r.squared
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + weight_kg + bmi) |> summary() ; ms$adj.r.squared
+```
+
+Adding either `age` or `bmi` decreased our adjusted R$^2$ and we have reached our stopping criteria. Using forward selection we found the same model as when we looked at multicollinearity and removed `bmi` based on domain knowledge.
+
+```{r}
+# Forward selection (fs) model
+model_fs <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + weight_kg)
+model_fs |> summary()
+```
+
+#### Exercise 2
+
+We can use our results from the previous exercise to see if mixed selection would have given us a different model. After each forward step we check the $p$-values. If any variable is not significant we can conclude that mixed selection would have given a different result. 
+
+```{r}
+# First forward step
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks) |> summary() ; ms$coefficients
+# Second forward step
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm) |> summary() ; ms$coefficients
+# Third forward step
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex) |> summary() ; ms$coefficients
+# Fourth forward step
+ms <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + length_cm + sex + weight_kg) |> summary() ; ms$coefficients
+```
+
+No variable became not significant after each forward step. We conclude that mixed selection would have given us the same model as forward selection in this case.
+
+#### Exercise 3
+
+We first remember the variables in the `penguins` dataset.
+
+```{r}
+library(palmerpenguins)
+glimpse(penguins)
+```
+
+We then start by fitting a regression model using all potential predictors.
+
+```{r}
+penguins |> lm(formula = body_mass_g ~ .) |> summary()
+```
+
+We see that both coefficients relating to `island` are not significant, so we remove `island` from our model.
+
+```{r}
+penguins |> lm(formula = body_mass_g ~ . - island) |> summary() 
+```
+
+## Prediction
+
+### Exercise 1
+
+We first note that `model_fs` and `model_de` are the same models.
+
+```{r}
+model_de <- birth |> 
+  lm(formula = birth_weight_g ~ . - bmi - age)
+prediction <- predict(
+  model_de, 
+  data.frame(
+    sex = "Female", 
+    pregnancy_duration_wks = 40, 
+    weight_kg = 68, 
+    bmi = 24, 
+    length_cm = 170, 
+    age = 0))
+prediction
+```
+
+We see that the prediction differs slightly compared to `model_bs` that predicted $\sim 3492$ grams compared to `model_de`s 3518 g. Would you say that the difference is relevant?
+
+### Exercise 2
+
+```{r}
+# Prediction interval by backward selection model
+model_bs <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + sex + weight_kg + bmi)
+predict(
+  model_bs, 
+  data.frame(
+    sex = "Female", 
+    pregnancy_duration_wks = 40, 
+    weight_kg = 68, 
+    bmi = 24),
+  interval = "prediction")
+
+# Prediction interval by backward selection model
+model_de <- birth |> 
+  lm(formula = birth_weight_g ~ . - bmi - age)
+predict(
+  model_de, 
+  data.frame(
+    sex = "Female", 
+    pregnancy_duration_wks = 40, 
+    weight_kg = 68, 
+    bmi = 24, 
+    length_cm = 170, 
+    age = 0),
+  interval = "prediction")
+```
+
+The predictions overlap quite a lot. In this case the models seem very similar and it shouldn't matter much which one we use, at least for this particular prediction.
+
