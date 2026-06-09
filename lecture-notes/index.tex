@@ -171,7 +171,7 @@
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Data Analytics with R},
-  pdfauthor={Filip Edström, Joakim Wallmark},
+  pdfauthor={Filip Edström, Joakim Wallmark, and Hugo Morvan},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -187,8 +187,8 @@
 }
 \makeatother
 \subtitle{Lecture notes}
-\author{Filip Edström, Joakim Wallmark}
-\date{2025-11-10}
+\author{Filip Edström, Joakim Wallmark, and Hugo Morvan}
+\date{2026-09-06}
 
 \begin{document}
 \maketitle
@@ -803,13 +803,13 @@ $ Favorite_Color <chr> "Blue", "Red", "Green"
 \end{Shaded}
 
 \begin{verbatim}
-     Name                Age        Favorite_Color    
- Length:3           Min.   :22.00   Length:3          
- Class :character   1st Qu.:23.50   Class :character  
- Mode  :character   Median :25.00   Mode  :character  
-                    Mean   :25.67                     
-                    3rd Qu.:27.50                     
-                    Max.   :30.00                     
+        Name        Age          Favorite_Color
+ Length   :3   Min.   :22.00   Length   :3     
+ N.unique :3   1st Qu.:23.50   N.unique :3     
+ N.blank  :0   Median :25.00   N.blank  :0     
+ Min.nchar:3   Mean   :25.67   Min.nchar:3     
+ Max.nchar:7   3rd Qu.:27.50   Max.nchar:5     
+               Max.   :30.00                   
 \end{verbatim}
 
 \begin{Shaded}
@@ -1807,15 +1807,15 @@ command. We take a look at the summary of the \texttt{penguins} dataset.
                                  Mean   :43.92   Mean   :17.15  
                                  3rd Qu.:48.50   3rd Qu.:18.70  
                                  Max.   :59.60   Max.   :21.50  
-                                 NA's   :2       NA's   :2      
+                                 NAs    :2       NAs    :2      
  flipper_length_mm  body_mass_g       sex           year     
  Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
  1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
- Median :197.0     Median :4050   NA's  : 11   Median :2008  
+ Median :197.0     Median :4050   NAs   : 11   Median :2008  
  Mean   :200.9     Mean   :4202                Mean   :2008  
  3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
  Max.   :231.0     Max.   :6300                Max.   :2009  
- NA's   :2         NA's   :2                                 
+ NAs    :2         NAs    :2                                 
 \end{verbatim}
 
 We see that we get the counts for the categorical variables (discrete
@@ -2073,6 +2073,14 @@ year               1.00000000
   \FunctionTok{ggcorrplot}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+i Please use tidy evaluation idioms with `aes()`.
+i See also `vignette("ggplot2-in-packages")` for more information.
+i The deprecated feature was likely used in the ggcorrplot package.
+  Please report the issue at <https://github.com/kassambara/ggcorrplot/issues>.
+\end{verbatim}
 
 \includegraphics{basic_statistics_files/figure-pdf/unnamed-chunk-15-1.pdf}
 
@@ -4004,6 +4012,14 @@ compute the pairwise correlations of the numeric variables using
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+i Please use tidy evaluation idioms with `aes()`.
+i See also `vignette("ggplot2-in-packages")` for more information.
+i The deprecated feature was likely used in the ggcorrplot package.
+  Please report the issue at <https://github.com/kassambara/ggcorrplot/issues>.
+\end{verbatim}
+
 \includegraphics{linear_regression_multiple_files/figure-pdf/unnamed-chunk-4-1.pdf}
 
 Looking at the row or column for \texttt{birth\_weight\_g} lets us
@@ -4931,6 +4947,22 @@ different data for fitting the model.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(palmerpenguins)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'palmerpenguins'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:datasets':
+
+    penguins, penguins_raw
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \CommentTok{\# Model fitted by using the dot operator in formula}
 \NormalTok{model\_dot }\OtherTok{\textless{}{-}}\NormalTok{ penguins }\SpecialCharTok{|\textgreater{}} \FunctionTok{lm}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ body\_mass\_g }\SpecialCharTok{\textasciitilde{}}\NormalTok{ . }\SpecialCharTok{{-}}\NormalTok{ species }\SpecialCharTok{{-}}\NormalTok{ island }\SpecialCharTok{{-}}\NormalTok{ bill\_length\_mm }\SpecialCharTok{{-}}\NormalTok{ bill\_depth\_mm }\SpecialCharTok{{-}}\NormalTok{ sex }\SpecialCharTok{{-}}\NormalTok{ year)}
 \NormalTok{model\_dot\_summary }\OtherTok{\textless{}{-}}\NormalTok{ model\_dot }\SpecialCharTok{|\textgreater{}} \FunctionTok{summary}\NormalTok{()}
@@ -5919,7 +5951,12 @@ Number of Fisher Scoring iterations: 4
 Again we see that both variables are significant at significance level
 0.05, but which model is the best? In linear regression we could use the
 adjusted R\(^2\), but it doesn't apply to logistic regression. Instead
-we are going to use the \emph{Akaike Information Criterion} (AIC).
+we are going to use the \emph{Akaike Information Criterion} (AIC). AIC
+scales with the number of observations, so, in contrast to R\(^2\), the
+AIC of a model on its own is not useful. Here we will use it to compare
+models and argue for one model over another. Later in this chapter we
+will introduce accuracy as a way of measuring the performance of a
+logistic regression model.
 
 To be able to tell which logistic regression model is better, we can
 look at the summary output and second to last line: ``AIC''. AIC
@@ -6336,15 +6373,15 @@ variables and see if it has any missing values.
                                  Mean   :43.92   Mean   :17.15  
                                  3rd Qu.:48.50   3rd Qu.:18.70  
                                  Max.   :59.60   Max.   :21.50  
-                                 NA's   :2       NA's   :2      
+                                 NAs    :2       NAs    :2      
  flipper_length_mm  body_mass_g       sex           year     
  Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
  1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
- Median :197.0     Median :4050   NA's  : 11   Median :2008  
+ Median :197.0     Median :4050   NAs   : 11   Median :2008  
  Mean   :200.9     Mean   :4202                Mean   :2008  
  3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
  Max.   :231.0     Max.   :6300                Max.   :2009  
- NA's   :2         NA's   :2                                 
+ NAs    :2         NAs    :2                                 
 \end{verbatim}
 
 We note that there are a few missing values in the dataset and we will
@@ -6388,8 +6425,8 @@ are usually categorized into three different patterns: Missing
 Completely At Random (MCAR), Missing At Random (MAR), and Not Missing At
 Random (NMAR). In this course we will only focus on the first form,
 MCAR, and assume that it holds. For those who are interested there is a
-short section at the end of this chapter that introduces the other
-types.
+short section at the end of this chapter that introduces the other types
+of missingess and methods to deal with them.
 
 \section{Handling missing values when
 MCAR}\label{handling-missing-values-when-mcar}
@@ -6436,10 +6473,31 @@ functions from \texttt{dplyr}.
 \begin{Highlighting}[]
 \NormalTok{mean\_flipper\_length }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(penguins}\SpecialCharTok{$}\NormalTok{flipper\_length\_mm, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
 \NormalTok{penguins\_imputed }\OtherTok{\textless{}{-}}\NormalTok{ penguins }\SpecialCharTok{|\textgreater{}} 
+  \CommentTok{\# Flipper length is integer, so we need to convert it to numeric}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{flipper\_length\_mm =} \FunctionTok{as.numeric}\NormalTok{(flipper\_length\_mm)) }\SpecialCharTok{|\textgreater{}}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{flipper\_length\_mm =} \FunctionTok{replace\_na}\NormalTok{(flipper\_length\_mm, mean\_flipper\_length))}
 \NormalTok{penguins\_imputed }\SpecialCharTok{|\textgreater{}} \FunctionTok{summary}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+      species          island    bill_length_mm  bill_depth_mm  
+ Adelie   :152   Biscoe   :168   Min.   :32.10   Min.   :13.10  
+ Chinstrap: 68   Dream    :124   1st Qu.:39.23   1st Qu.:15.60  
+ Gentoo   :124   Torgersen: 52   Median :44.45   Median :17.30  
+                                 Mean   :43.92   Mean   :17.15  
+                                 3rd Qu.:48.50   3rd Qu.:18.70  
+                                 Max.   :59.60   Max.   :21.50  
+                                 NAs    :2       NAs    :2      
+ flipper_length_mm  body_mass_g       sex           year     
+ Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
+ 1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
+ Median :197.0     Median :4050   NAs   : 11   Median :2008  
+ Mean   :200.9     Mean   :4202                Mean   :2008  
+ 3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
+ Max.   :231.0     Max.   :6300                Max.   :2009  
+                   NAs    :2                                 
+\end{verbatim}
 
 We see that the flipper length variable now has no missing values, while
 keeping the same mean value.
@@ -6464,14 +6522,33 @@ using mode imputation using the \texttt{replace\_na} function from
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+      species          island    bill_length_mm  bill_depth_mm  
+ Adelie   :152   Biscoe   :168   Min.   :32.10   Min.   :13.10  
+ Chinstrap: 68   Dream    :124   1st Qu.:39.23   1st Qu.:15.60  
+ Gentoo   :124   Torgersen: 52   Median :44.45   Median :17.30  
+                                 Mean   :43.92   Mean   :17.15  
+                                 3rd Qu.:48.50   3rd Qu.:18.70  
+                                 Max.   :59.60   Max.   :21.50  
+                                 NAs    :2       NAs    :2      
+ flipper_length_mm  body_mass_g       sex           year     
+ Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
+ 1st Qu.:190.0     1st Qu.:3550   male  :179   1st Qu.:2007  
+ Median :197.0     Median :4050                Median :2008  
+ Mean   :200.9     Mean   :4202                Mean   :2008  
+ 3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
+ Max.   :231.0     Max.   :6300                Max.   :2009  
+                   NAs    :2                                 
+\end{verbatim}
+
 We see that the \texttt{sex} variable now has no missing values. In this
 case, there was a small difference between females and males in the sex
 distribution and using the mode might not have been the best option. For
 more advanced methods of imputation, see the advanced section at the end
 of this chapter.
 
-\section{Extra: Other types of missing values and advanced
-imputation}\label{extra-other-types-of-missing-values-and-advanced-imputation}
+\section{Other types of missing values and advanced
+imputation}\label{other-types-of-missing-values-and-advanced-imputation}
 
 In this section we introduce the other types of missing values. This is
 beyond the scope of the course, but may be of interest to some students.
@@ -6495,13 +6572,11 @@ better make educated guesses while imputing.
 
 Not missing at random happens when values are systematically missing,
 but we have not observed the reason for why the specific values are
-missing. For example, if one researcher is responsible for taking
-measurements of chinstrap penguins on Dream Island and this researcher
-is not able to catch faster penguins then faster chinstrap penguins will
-be systematically excluded from our dataset. There is no information in
-the dataset that we can use to recover the information about the
-missingness since we have not observed any fast chinstrap penguins at
-all.
+missing. For example, if some of the penguins are of poor health the
+researchers may choose to not weigh the penguin to avoid the extra
+stress of being put in the weigh bag. This results in missing values of
+body weight but there is no record of penguin health in the data that
+can help us explain the missingness.
 
 This is the hardest type of missing values to handle as we have no way
 of repairing it using the available data and it may influence our
@@ -6526,16 +6601,17 @@ based on the other variables in the dataset.
 \end{Highlighting}
 \end{Shaded}
 
-Lets select only the significant variables to have a simpler model. This
-can be useful if we have more missing values in other columns, which
-would prevent us from using these columns for imputation. Once we have
-our model with only significant variables we can use it to predict the
-sex of the penguins with missing values.
+Lets select only the significant variables (0.05) using backward
+selection to have a simpler model. This can be useful if we have more
+missing values in other columns, which would prevent us from using these
+columns for imputation. Once we have our model with only significant
+variables we can use it to predict the sex of the penguins with missing
+values.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Fit new model}
-\NormalTok{sex\_model }\OtherTok{\textless{}{-}}\NormalTok{ penguins }\SpecialCharTok{|\textgreater{}} \FunctionTok{glm}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ sex }\SpecialCharTok{\textasciitilde{}}\NormalTok{ species }\SpecialCharTok{+}\NormalTok{ bill\_length\_mm }\SpecialCharTok{+}\NormalTok{ bill\_depth\_mm }\SpecialCharTok{+}\NormalTok{ body\_mass\_g, }\AttributeTok{family =}\NormalTok{ binomial)}
+\CommentTok{\# Fit new model after backward selection}
+\NormalTok{sex\_model }\OtherTok{\textless{}{-}}\NormalTok{ penguins }\SpecialCharTok{|\textgreater{}} \FunctionTok{glm}\NormalTok{(}\AttributeTok{formula =}\NormalTok{ sex }\SpecialCharTok{\textasciitilde{}}\NormalTok{ . }\SpecialCharTok{{-}}\NormalTok{ island }\SpecialCharTok{{-}}\NormalTok{ year }\SpecialCharTok{{-}}\NormalTok{ flipper\_length\_mm, }\AttributeTok{family =}\NormalTok{ binomial)}
 
 \CommentTok{\# Select penguins with missing sex}
 \NormalTok{penguins\_missing\_sex }\OtherTok{\textless{}{-}}\NormalTok{ penguins }\SpecialCharTok{|\textgreater{}}
@@ -6552,6 +6628,12 @@ sex of the penguins with missing values.
 \NormalTok{predicted\_sex}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+     1      2      3      4      5      6      7      8      9     10     11 
+  <NA> female   male female female female female female female female   <NA> 
+Levels: female male
+\end{verbatim}
 
 We see that one penguin still has a missing value. This observation has
 missing values in all variables in our \texttt{sex\_model} except
@@ -6592,6 +6674,12 @@ It is a conceptually more difficult method, but if you are interested
 you can have a look at the
 \href{https://cran.r-project.org/web/packages/mice/index.html}{mice
 package} in R.
+
+\section{Summary}\label{summary-3}
+
+In this chapter we have looked at missing values, types of missingness
+mechanisms, and how to impute missing values when values are MCAR and
+MAR.
 
 \part{Solutions to exercises}
 
@@ -6804,7 +6892,8 @@ We try running the code:
 \end{Shaded}
 
 \begin{verbatim}
-Error in vec2 + vec3: non-numeric argument to binary operator
+Error in `vec2 + vec3`:
+! non-numeric argument to binary operator
 \end{verbatim}
 
 We get an error for \texttt{vec2\ +\ vec3}. Vectors must always contain
@@ -6835,6 +6924,22 @@ function.
 \CommentTok{\# We comment the installation to not run it twice on our machine}
 \CommentTok{\# install.packages("palmerpenguins")}
 \FunctionTok{library}\NormalTok{(palmerpenguins)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'palmerpenguins'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:datasets':
+
+    penguins, penguins_raw
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \NormalTok{penguins}
 \end{Highlighting}
 \end{Shaded}
@@ -6911,11 +7016,11 @@ the console.
 
 \begin{verbatim}
 -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-v dplyr     1.1.4     v readr     2.1.5
-v forcats   1.0.0     v stringr   1.5.1
-v ggplot2   3.5.1     v tibble    3.2.1
-v lubridate 1.9.3     v tidyr     1.3.1
-v purrr     1.0.2     
+v dplyr     1.2.1     v readr     2.2.0
+v forcats   1.0.1     v stringr   1.6.0
+v ggplot2   4.0.3     v tibble    3.3.1
+v lubridate 1.9.5     v tidyr     1.3.2
+v purrr     1.2.2     
 -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()
@@ -6955,15 +7060,15 @@ $ year              <int> 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007~
                                  Mean   :43.92   Mean   :17.15  
                                  3rd Qu.:48.50   3rd Qu.:18.70  
                                  Max.   :59.60   Max.   :21.50  
-                                 NA's   :2       NA's   :2      
+                                 NAs    :2       NAs    :2      
  flipper_length_mm  body_mass_g       sex           year     
  Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
  1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
- Median :197.0     Median :4050   NA's  : 11   Median :2008  
+ Median :197.0     Median :4050   NAs   : 11   Median :2008  
  Mean   :200.9     Mean   :4202                Mean   :2008  
  3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
  Max.   :231.0     Max.   :6300                Max.   :2009  
- NA's   :2         NA's   :2                                 
+ NAs    :2         NAs    :2                                 
 \end{verbatim}
 
 \begin{Shaded}
@@ -7048,6 +7153,22 @@ loading \texttt{palmerpenguins}.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(palmerpenguins)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'palmerpenguins'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:datasets':
+
+    penguins, penguins_raw
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \FunctionTok{summary}\NormalTok{(penguins)}
 \end{Highlighting}
 \end{Shaded}
@@ -7060,15 +7181,15 @@ loading \texttt{palmerpenguins}.
                                  Mean   :43.92   Mean   :17.15  
                                  3rd Qu.:48.50   3rd Qu.:18.70  
                                  Max.   :59.60   Max.   :21.50  
-                                 NA's   :2       NA's   :2      
+                                 NAs    :2       NAs    :2      
  flipper_length_mm  body_mass_g       sex           year     
  Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
  1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
- Median :197.0     Median :4050   NA's  : 11   Median :2008  
+ Median :197.0     Median :4050   NAs   : 11   Median :2008  
  Mean   :200.9     Mean   :4202                Mean   :2008  
  3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
  Max.   :231.0     Max.   :6300                Max.   :2009  
- NA's   :2         NA's   :2                                 
+ NAs    :2         NAs    :2                                 
 \end{verbatim}
 
 We see that the continuous variables show summary statistics and the
@@ -7090,11 +7211,11 @@ indicated by the \texttt{\textless{}dbl\textgreater{}} in the
 
 \begin{verbatim}
 -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-v dplyr     1.1.4     v readr     2.1.5
-v forcats   1.0.0     v stringr   1.5.1
-v ggplot2   3.5.1     v tibble    3.2.1
-v lubridate 1.9.3     v tidyr     1.3.1
-v purrr     1.0.2     
+v dplyr     1.2.1     v readr     2.2.0
+v forcats   1.0.1     v stringr   1.6.0
+v ggplot2   4.0.3     v tibble    3.3.1
+v lubridate 1.9.5     v tidyr     1.3.2
+v purrr     1.2.2     
 -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()
@@ -7136,15 +7257,15 @@ $ year              <int> 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007~
                                  Mean   :43.92   Mean   :17.15  
                                  3rd Qu.:48.50   3rd Qu.:18.70  
                                  Max.   :59.60   Max.   :21.50  
-                                 NA's   :2       NA's   :2      
+                                 NAs    :2       NAs    :2      
  flipper_length_mm  body_mass_g       sex           year     
  Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
  1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
- Median :197.0     Median :4050   NA's  : 11   Median :2008  
+ Median :197.0     Median :4050   NAs   : 11   Median :2008  
  Mean   :200.9     Mean   :4202                Mean   :2008  
  3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
  Max.   :231.0     Max.   :6300                Max.   :2009  
- NA's   :2         NA's   :2                                 
+ NAs    :2         NAs    :2                                 
 \end{verbatim}
 
 \section{Descriptive statistics}\label{descriptive-statistics-1}
@@ -7276,6 +7397,14 @@ year               1.00000000
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+i Please use tidy evaluation idioms with `aes()`.
+i See also `vignette("ggplot2-in-packages")` for more information.
+i The deprecated feature was likely used in the ggcorrplot package.
+  Please report the issue at <https://github.com/kassambara/ggcorrplot/issues>.
+\end{verbatim}
+
 \includegraphics{solutions_basic_statistics_files/figure-pdf/unnamed-chunk-7-1.pdf}
 
 \chapter{R4DS: Data visualization}\label{r4ds-data-visualization}
@@ -7320,11 +7449,11 @@ First we need to load the necessary libraries.
 
 \begin{verbatim}
 -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-v dplyr     1.1.4     v readr     2.1.5
-v forcats   1.0.0     v stringr   1.5.1
-v ggplot2   3.5.1     v tibble    3.2.1
-v lubridate 1.9.3     v tidyr     1.3.1
-v purrr     1.0.2     
+v dplyr     1.2.1     v readr     2.2.0
+v forcats   1.0.1     v stringr   1.6.0
+v ggplot2   4.0.3     v tibble    3.3.1
+v lubridate 1.9.5     v tidyr     1.3.2
+v purrr     1.2.2     
 -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()
@@ -7336,6 +7465,15 @@ i Use the conflicted package (<http://conflicted.r-lib.org/>) to force all confl
 \FunctionTok{library}\NormalTok{(palmerpenguins)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'palmerpenguins'
+
+The following objects are masked from 'package:datasets':
+
+    penguins, penguins_raw
+\end{verbatim}
 
 It is also good practice to take a \texttt{glimpse} at the data before
 we begin, even if we are not looking at something in particular.
@@ -7460,7 +7598,7 @@ plots for the different species:
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \begin{verbatim}
@@ -7692,6 +7830,10 @@ suitable to colorblind people?
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+Warning: `scale_fill_colorblind()` was deprecated in ggthemes 5.2.0.
+\end{verbatim}
+
 \includegraphics{solutions_r4ds_data_visualization_files/figure-pdf/unnamed-chunk-14-1.pdf}
 
 \subsection{Exercise 3}\label{exercise-3-4}
@@ -7770,7 +7912,7 @@ Then we can create the histogram over \texttt{carat}:
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \includegraphics{solutions_r4ds_data_visualization_files/figure-pdf/unnamed-chunk-17-1.pdf}
@@ -8022,11 +8164,11 @@ To run these solutions you need to load the necessary libraries.
 
 \begin{verbatim}
 -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-v dplyr     1.1.4     v readr     2.1.5
-v forcats   1.0.0     v stringr   1.5.1
-v ggplot2   3.5.1     v tibble    3.2.1
-v lubridate 1.9.3     v tidyr     1.3.1
-v purrr     1.0.2     
+v dplyr     1.2.1     v readr     2.2.0
+v forcats   1.0.1     v stringr   1.6.0
+v ggplot2   4.0.3     v tibble    3.3.1
+v lubridate 1.9.5     v tidyr     1.3.2
+v purrr     1.2.2     
 -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()
@@ -8768,7 +8910,7 @@ the y aesthetic. We see that this works with \texttt{geom\_freqpoly} too
 
 \begin{verbatim}
 Warning in geom_histogram(stat = "identity"): Ignoring unknown parameters:
-`binwidth`, `bins`, and `pad`
+`binwidth` and `bins`
 \end{verbatim}
 
 \begin{verbatim}
@@ -8958,8 +9100,12 @@ The mean of \texttt{x} is calculated for all values of \texttt{y}.
 \end{Shaded}
 
 \begin{verbatim}
-`summarise()` has grouped output by 'y'. You can override using the `.groups`
-argument.
+`summarise()` has regrouped the output.
+i Summaries were computed grouped by y and z.
+i Output is grouped by y.
+i Use `summarise(.groups = "drop_last")` to silence this message.
+i Use `summarise(.by = c(y, z))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.
 \end{verbatim}
 
 \begin{verbatim}
@@ -9010,8 +9156,12 @@ and \texttt{z}. The output is \emph{not} grouped by \texttt{y}.
 \end{Shaded}
 
 \begin{verbatim}
-`summarise()` has grouped output by 'y'. You can override using the `.groups`
-argument.
+`summarise()` has regrouped the output.
+i Summaries were computed grouped by y and z.
+i Output is grouped by y.
+i Use `summarise(.groups = "drop_last")` to silence this message.
+i Use `summarise(.by = c(y, z))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.
 \end{verbatim}
 
 \begin{verbatim}
@@ -9061,11 +9211,11 @@ To run these solutions you need to load the necessary libraries.
 
 \begin{verbatim}
 -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-v dplyr     1.1.4     v readr     2.1.5
-v forcats   1.0.0     v stringr   1.5.1
-v ggplot2   3.5.1     v tibble    3.2.1
-v lubridate 1.9.3     v tidyr     1.3.1
-v purrr     1.0.2     
+v dplyr     1.2.1     v readr     2.2.0
+v forcats   1.0.1     v stringr   1.6.0
+v ggplot2   4.0.3     v tibble    3.3.1
+v lubridate 1.9.5     v tidyr     1.3.2
+v purrr     1.2.2     
 -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()
@@ -9227,11 +9377,11 @@ To run these solutions you need to load the necessary libraries.
 
 \begin{verbatim}
 -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
-v dplyr     1.1.4     v readr     2.1.5
-v forcats   1.0.0     v stringr   1.5.1
-v ggplot2   3.5.1     v tibble    3.2.1
-v lubridate 1.9.3     v tidyr     1.3.1
-v purrr     1.0.2     
+v dplyr     1.2.1     v readr     2.2.0
+v forcats   1.0.1     v stringr   1.6.0
+v ggplot2   4.0.3     v tibble    3.3.1
+v lubridate 1.9.5     v tidyr     1.3.2
+v purrr     1.2.2     
 -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()
@@ -9432,8 +9582,8 @@ We see that \texttt{coord\_cartesian()} works as zooming, while
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \begin{verbatim}
@@ -9493,7 +9643,7 @@ plotting a histogram.
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \begin{verbatim}
@@ -9881,7 +10031,7 @@ Histogram with \texttt{facet\_grid} and \texttt{scales\ =\ "free\_y"}.
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-22-1.pdf}
@@ -9901,7 +10051,7 @@ Histogram with \texttt{facet\_grid} and \texttt{scales\ =\ "free\_y"}.
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-23-1.pdf}
@@ -9922,6 +10072,11 @@ plotting densities.
     \AttributeTok{col =} \StringTok{"Cut"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+Ignoring unknown labels:
+* colour : "Cut"
+\end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-24-1.pdf}
 
@@ -10138,7 +10293,7 @@ First, we try to color by \texttt{cut\_width(carat,\ 0.25)}.
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-33-1.pdf}
@@ -10160,7 +10315,7 @@ the sa,e number of observations.
 \end{Shaded}
 
 \begin{verbatim}
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 \end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-34-1.pdf}
@@ -10203,6 +10358,11 @@ small diamonds, which are very concentrated.
     \AttributeTok{y =} \StringTok{"Price"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+Warning: Orientation is not uniquely specified when both the x and y aesthetics are
+continuous. Picking default orientation 'x'.
+\end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-36-1.pdf}
 
@@ -10264,6 +10424,11 @@ carat separately.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+Warning: Orientation is not uniquely specified when both the x and y aesthetics are
+continuous. Picking default orientation 'x'.
+\end{verbatim}
+
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-39-1.pdf}
 
 Combining the boxplot with a density plot gives the reader an idea of
@@ -10294,6 +10459,11 @@ the distribution of carat and price.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+Warning: Orientation is not uniquely specified when both the x and y aesthetics are
+continuous. Picking default orientation 'x'.
+\end{verbatim}
+
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-40-1.pdf}
 
 We can also use a one-dimensional scatter plot to make a really
@@ -10323,6 +10493,11 @@ compressed visualization.
 \NormalTok{p1 }\SpecialCharTok{/}\NormalTok{ p2 }\SpecialCharTok{+} \FunctionTok{plot\_layout}\NormalTok{(}\AttributeTok{heights =} \FunctionTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{, }\DecValTok{1}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+Warning: Orientation is not uniquely specified when both the x and y aesthetics are
+continuous. Picking default orientation 'x'.
+\end{verbatim}
 
 \includegraphics{solutions_r4ds_eda_files/figure-pdf/unnamed-chunk-41-1.pdf}
 
@@ -10495,6 +10670,22 @@ We then perform our t-test.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(palmerpenguins)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'palmerpenguins'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:datasets':
+
+    penguins, penguins_raw
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \FunctionTok{t.test}\NormalTok{(penguins}\SpecialCharTok{$}\NormalTok{flipper\_length\_mm, }\AttributeTok{mu =} \DecValTok{200}\NormalTok{, }\AttributeTok{alternative =} \StringTok{"greater"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -12211,6 +12402,22 @@ We first remember the variables in the \texttt{penguins} dataset.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(palmerpenguins)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'palmerpenguins'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:datasets':
+
+    penguins, penguins_raw
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \FunctionTok{glimpse}\NormalTok{(penguins)}
 \end{Highlighting}
 \end{Shaded}
