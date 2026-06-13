@@ -144,7 +144,7 @@ Regression imputation is a useful tool that you already know how to do if you ha
 
 ### Advanced imputation
 
-For missing data, more advanced approaches such as *multiple imputation* (MI) create several plausible datasets and combine the results. A common practical method is *multiple imputation by chained equations* (MICE), which imputes variables one at a time using simple models. See this [book chapter](https://stefvanbuuren.name/fimd/sec-nutshell.html) on MI for more information, and the rest of the book for further details on MICE and how to effectively it. The methods discussed there are implemented in R in the [mice package](https://cran.r-project.org/web/packages/mice/index.html).
+For missing data, more advanced approaches such as *multiple imputation* (MI) create several plausibly imputed datasets and combine the results, while retaining information on the uncertainty of the imputed missing values. A common practical method is *multiple imputation by chained equations* (MICE), which imputes variables one at a time using simple models. See this [book chapter](https://stefvanbuuren.name/fimd/sec-nutshell.html) on MI for more information, and the rest of the book for further details on MICE and how to effectively use it. The methods discussed there are implemented in R in the [mice package](https://cran.r-project.org/web/packages/mice/index.html).
 
 ## Summary
 
