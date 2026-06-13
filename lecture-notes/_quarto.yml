@@ -5,7 +5,7 @@ book:
   title: "Data Analytics with R"
   subtitle: "Lecture notes"
   author: "Filip Edström, Joakim Wallmark, and Hugo Morvan"
-  date: "06/09/2026"
+  date: "13/09/2026"
   chapters:
     - index.qmd
     - part: preliminaries.qmd
@@ -49,4 +49,5 @@ format:
     prefer-html: true
   pdf:
     documentclass: scrreprt
+    code-overflow: wrap
     prefer-html: true

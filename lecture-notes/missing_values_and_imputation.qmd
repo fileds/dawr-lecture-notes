@@ -26,7 +26,7 @@ Now that we have information about how the data was collected we can start to th
 
 When values are "missing completely at random" there is no systematic explanation for why a specific value is missing. In our example this may happen if for example the blood sample of a penguin was lost, resulting in a missing value in the `sex` variable, or if one of the researchers would spill coffee on the noted values, ruining the paper. These events are "completely random" and does not depend on characteristics of the penguins themselves. In this case we can use intuitive methods to handle the missing values since the missing values are not introducing any bias in our data.
 
-### Complete case analysis 
+### Complete case analysis
 
 If the missing values are believed to be missing completely at random (MCAR) and there are only a few missing values we may use the observations that are complete in our dataset. This is called *complete case analysis* and we can achieve it using the `drop_na` function
 
@@ -43,10 +43,12 @@ If we have several missing values such that we have to drop a substantial part o
 ```{r}
 #| warning: false
 mean_flipper_length <- mean(penguins$flipper_length_mm, na.rm = TRUE)
-penguins_imputed <- penguins |> 
+penguins_imputed <- penguins |>
   # Flipper length is integer, so we need to convert it to numeric
   mutate(flipper_length_mm = as.numeric(flipper_length_mm)) |>
-  mutate(flipper_length_mm = replace_na(flipper_length_mm, mean_flipper_length))
+  mutate(
+      flipper_length_mm = replace_na(flipper_length_mm, mean_flipper_length)
+  )
 penguins_imputed |> summary()
 ```
 
@@ -62,7 +64,7 @@ mode_sex <- penguins |>
   count(sex) |>
   filter(n == max(n)) |>
   pull(sex)
-penguins_imputed <- penguins_imputed |> 
+penguins_imputed <- penguins_imputed |>
   mutate(sex = replace_na(sex, mode_sex))
 penguins_imputed |> summary()
 ```
@@ -79,13 +81,13 @@ Values that are "missing at random" are missing because of some reason that is r
 
 ### Missing Not At Random (MNAR)
 
-Not missing at random happens when values are systematically missing, but we have not observed the reason for why the specific values are missing. For example, if some of the penguins are of poor health the researchers may choose to not weigh the penguin to avoid the extra stress of being put in the weigh bag. This results in missing values of body weight but there is no record of penguin health in the data that can help us explain the missingness.  
+Not missing at random happens when values are systematically missing, but we have not observed the reason for why the specific values are missing. For example, if some of the penguins are of poor health the researchers may choose to not weigh the penguin to avoid the extra stress of being put in the weigh bag. This results in missing values of body weight but there is no record of penguin health in the data that can help us explain the missingness.
 
 This is the hardest type of missing values to handle as we have no way of repairing it using the available data and it may influence our inference and prediction. If we suspect this type of missing values the best option is to collect more data, compensating for the missingness in the original data.
 
 ### Regression imputation
 
-If data is MAR we can use our dataset to make more informed imputations. One way that may be appealing after learning about linear and logistic regression is to use this methods to assign values instead, performing *regression imputation*. We illustrate a simple form of regression imputation to make a more educated guess for the missing values of the `sex` variable that we imputed by the mode earlier. First, we make a logistic regression model to predict the sex of the penguins based on the other variables in the dataset. 
+If data is MAR we can use our dataset to make more informed imputations. One way that may be appealing after learning about linear and logistic regression is to use this methods to assign values instead, performing *regression imputation*. We illustrate a simple form of regression imputation to make a more educated guess for the missing values of the `sex` variable that we imputed by the mode earlier. First, we make a logistic regression model to predict the sex of the penguins based on the other variables in the dataset.
 
 ```{r}
 #| warning: false
@@ -98,14 +100,17 @@ Lets select only the significant variables (0.05) using backward selection to ha
 ```{r}
 #| warning: false
 # Fit new model after backward selection
-sex_model <- penguins |> glm(formula = sex ~ . - island - year - flipper_length_mm, family = binomial)
+sex_model <- penguins |> glm(
+    formula = sex ~ . - island - year - flipper_length_mm,
+    family = binomial
+)
 
 # Select penguins with missing sex
-penguins_missing_sex <- penguins |>
-  filter(is.na(sex))
+penguins_missing_sex <- penguins |> filter(is.na(sex))
 
 # Predict sex probability
-predicted_sex_probability <- predict(sex_model, newdata = penguins_missing_sex, type = "response")
+predicted_sex_probability <- sex_model |>
+    predict(newdata = penguins_missing_sex, type = "response")
 
 # Convert probabilities to factor levels
 predicted_sex <- (predicted_sex_probability > 0.5) |>
@@ -115,13 +120,13 @@ predicted_sex <- (predicted_sex_probability > 0.5) |>
 predicted_sex
 ```
 
-We see that one penguin still has a missing value. This observation has missing values in all variables in our `sex_model` except species. Interestingly our model predict most penguins to be female. We can be fairly confident in our predictions as body measurements and species should make it quite easy to differentiate between the sexes of the penguins, as illustrated by the following density plots of body mass, also showing the missing values. 
- 
+We see that one penguin still has a missing value. This observation has missing values in all variables in our `sex_model` except species. Interestingly our model predict most penguins to be female. We can be fairly confident in our predictions as body measurements and species should make it quite easy to differentiate between the sexes of the penguins, as illustrated by the following density plots of body mass, also showing the missing values.
+
 ```{r}
 #| warning: false
 #| code-fold: true
-# Plot the distributions of the body weight and color by sex and facet by species
-penguins |> 
+# Plot the distributions of body weight and color by sex and facet by species
+penguins |>
   ggplot(aes(x = body_mass_g, fill = sex)) +
   geom_density(alpha = 0.5) +
   facet_wrap(~species) +
@@ -135,12 +140,12 @@ penguins |>
   guides(color = guide_legend(nrow = 1))
 ```
 
-Regression imputation is a useful tool that you already know how to do if you have completed the regression chapters. 
+Regression imputation is a useful tool that you already know how to do if you have completed the regression chapters.
 
 ### Advanced imputation
 
 For missing data, more advanced approaches such as *multiple imputation* (MI) create several plausible datasets and combine the results. A common practical method is *multiple imputation by chained equations* (MICE), which imputes variables one at a time using simple models. See this [book chapter](https://stefvanbuuren.name/fimd/sec-nutshell.html) on MI for more information, and the rest of the book for further details on MICE and how to effectively it. The methods discussed there are implemented in R in the [mice package](https://cran.r-project.org/web/packages/mice/index.html).
 
-## Summary 
+## Summary
 
 In this chapter we have looked at missing values, types of missingness mechanisms, and how to impute missing values when values are MCAR and MAR.

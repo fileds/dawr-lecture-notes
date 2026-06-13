@@ -8,11 +8,11 @@ The notes take a pragmatic approach focusing on giving an intuition for concepts
 
 We hope you enjoy the course!
 
-## Version 0.06
+## Version 0.07
 
 Version notes:
 
-* Improved chapter on missing values and imputation.
+* Minor edits to code blocks, including limiting linewidth to 79 characters for better rendering in PDF.
 
 These lecture notes are a work in progress. If you have any questions, spot any errors, or have any suggestions for improvement in the lecture notes, please let us know by opening a pull request at [GitHub](https://github.com/fileds/dawr-lecture-notes) or send an email to Filip with the subject starting with [DAwR-LN].
 

@@ -18,6 +18,7 @@ We see that the continuous variables show summary statistics and the categorical
 We see that the variables have both changed to `double`, indicated by the `<dbl>` in the `glimpse` output.
 
 ```{r}
+#| warning: false
 library(tidyverse)
 penguins$flipper_length_mm <- as.numeric(penguins$flipper_length_mm)
 penguins$body_mass_g <- as.numeric(penguins$body_mass_g)
@@ -29,7 +30,7 @@ summary(penguins)
 ## Descriptive statistics
 
 ### Exercise 1
-If we don't specify `na.rm = TRUE` the `mean` function will include the missing values and the function will return a missing value, `NA`. 
+If we don't specify `na.rm = TRUE` the `mean` function will include the missing values and the function will return a missing value, `NA`.
 
 ```{r}
 # Not specifying na.rm = TRUE
@@ -49,12 +50,12 @@ The median and the 50th percentile (or second quartile) are the same value! The 
 
 ```{r}
 # 50th percentile
-penguins |> 
-  pull(body_mass_g) |> 
+penguins |>
+  pull(body_mass_g) |>
   quantile(prob = 0.5, na.rm = TRUE)
 # Median
-penguins |> 
-  pull(body_mass_g) |> 
+penguins |>
+  pull(body_mass_g) |>
   median(na.rm = TRUE)
 ```
 
@@ -65,6 +66,7 @@ penguins |>
 
 ```{r}
 #| eval: false
+#| warning: false
 library(tidyverse)
 summary(diamonds)
 ```
@@ -72,7 +74,7 @@ summary(diamonds)
 ## Relationships between variables
 
 ### Exercise 1
-We see that the values in the matrix correspond to the colors in the correlation plot. High correlation is indicated by values close to either 1 (positive correlation) or -1 (negative correlation). 
+We see that the values in the matrix correspond to the colors in the correlation plot. High correlation is indicated by values close to either 1 (positive correlation) or -1 (negative correlation).
 
 ```{r}
 library(ggcorrplot)

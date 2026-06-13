@@ -21,16 +21,20 @@ recreate_valjarbarometern <- function(valjarbarometern_aggregate, n)
 {
   # Calculate number of observations of each party
   obs_per_party <- round(n * valjarbarometern_aggregate$percentage / 100)
-  
+
   # Create a list of party observations
-  party_observations <- mapply(rep, valjarbarometern_aggregate$party, obs_per_party)
-  
+  party_observations <- mapply(
+      rep,
+      valjarbarometern_aggregate$party,
+      obs_per_party
+  )
+
   # Flatten the list into a single vector
   sample_data <- unlist(party_observations)
-  
+
   # Create a data frame with the samples
   valjarbarometern <- tibble(party = sample_data)
-  
+
   return(valjarbarometern)
 }
 # Number of people in survey
@@ -46,7 +50,7 @@ valjarbarometern <- recreate_valjarbarometern(
   valjarbarometern_aggregate, n)
 ```
 
-We can take a look at the summary of our sample 
+We can take a look at the summary of our sample
 
 ```{r}
 summary(valjarbarometern)
@@ -55,11 +59,23 @@ summary(valjarbarometern)
 The summary tells us how many people would vote for each party if the election were today, in our sample. A more common way to look at this is using a bar chart and showing the y-axis in percentage. The dashed line indicates the [limit](https://www.informationsverige.se/en/om-sverige/att-paverka-i-sverige/det-svenska-valsystemet.html) for being included in the Swedish parliament (Sveriges riksdag), 4%.
 
 ```{r}
-# Define the colors in the order V, S, MP, C, L, KD, M, SD, Other. Make sure party column follows the same order!
-party_colors <- c("#800000", "#FF0000", "#90EE90", "#008000", "#0054A6", "#00008B", "#00AEEF", "#FFFF00", "#808080")
+# Define the colors in the order V, S, MP, C, L, KD, M, SD, Other. Make sure
+# party column follows the same order!
+party_colors <- c(
+    "#800000",  # V
+    "#FF0000",  # S
+    "#90EE90",  # MP
+    "#008000",  # C
+    "#0054A6",  # L
+    "#00008B",  # KD
+    "#00AEEF",  # M
+    "#FFFF00",  # SD
+    "#808080"   # Other
+)
 valjarbarometern |>
-  ggplot(aes(x = party, fill = party)) + 
-  geom_bar(aes(y = after_stat(count/sum(count) * 100))) + # Calculating percentages
+  ggplot(aes(x = party, fill = party)) +
+  # Calculate percentages
+  geom_bar(aes(y = after_stat(count/sum(count) * 100))) +
   geom_hline(
     yintercept = 4,
     col = "black",
@@ -67,8 +83,9 @@ valjarbarometern |>
   labs(
     x = "Party",
     y = "Percentage") +
-  guides(fill = "none") + # Remove fill legend
-  scale_fill_manual(values = party_colors) # Set colors to party colors
+  guides(fill = "none") +
+  # Set colors to party colors
+  scale_fill_manual(values = party_colors)
 ```
 
 In our bar chart we see that several parties seems to be at risk of ending up below 4% if there was an election today: MP (Miljöpartiet) seems to be just above the 4% limit and C (Centern) just below, while L (Liberalerna) and KD (Kristdemokraterna) seem worst off. Let's take a closer look at the percentages
@@ -80,16 +97,16 @@ valjarbarometern |>
     percentage = round(100 * n() / n, digits = 1), # Calculating percentage
     .by = party) # Grouping by party
 ```
-  
+
 The summary confirms what we could tell from the bar chart, MP is just above the 4% limit with 4.3% and C is just below the limit with 3.9%. But this result comes from a sample of 3072, what does that actually tell us about how the whole *population* of Sweden would vote? We would like to know what the value would be if the whole population voted. To learn about this from our sample, we need to perform statistical inference, and in particular hypothesis testing.
 
 
 ### Exercises
 
-1. Previously we worked with the `palmerpenguins` dataset. What is the population in that dataset? Use `?penguins` after loading the package (`library(palmerpenguins)`) to read more about the data. Where and when was the data collected? 
+1. Previously we worked with the `palmerpenguins` dataset. What is the population in that dataset? Use `?penguins` after loading the package (`library(palmerpenguins)`) to read more about the data. Where and when was the data collected?
 
 ## Hypothesis testing (proportions)
-Hypothesis testing is method that allows us to draw inferences about a population using a sample. In more simpler terms, hypothesis testing let's us use a sample to answer questions about the population with some uncertainty. The procedures follows four steps: 
+Hypothesis testing is method that allows us to draw inferences about a population using a sample. In more simpler terms, hypothesis testing let's us use a sample to answer questions about the population with some uncertainty. The procedures follows four steps:
 
 **1. Formulate hypotheses**
 
@@ -111,7 +128,7 @@ Run a function in R that performs a statistical hypothesis test that summarizes 
 
 **3. $p$-value**
 
-Calculate a $p$-value based on the evidence, which is done by the test function. The $p$-value is of great importance in hypothesis testing and it is important to have a basic understanding of it. In our case, the $p$-value is the probability of observing 4.3% or larger (further from the null hypothesis) in a sample of 3072 people, *if the null hypothesis was true*. $p$-values can always be formulated in terms of the null hypothesis and the observed parameter, in this case the percentage voting for MP, as: "The probability of observing the *observed value* or more extreme, i.e. 4.3% or larger, in a sample given that the null hypothesis is true".  
+Calculate a $p$-value based on the evidence, which is done by the test function. The $p$-value is of great importance in hypothesis testing and it is important to have a basic understanding of it. In our case, the $p$-value is the probability of observing 4.3% or larger (further from the null hypothesis) in a sample of 3072 people, *if the null hypothesis was true*. $p$-values can always be formulated in terms of the null hypothesis and the observed parameter, in this case the percentage voting for MP, as: "The probability of observing the *observed value* or more extreme, i.e. 4.3% or larger, in a sample given that the null hypothesis is true".
 
 **4. Decision**
 
@@ -133,12 +150,18 @@ n_mp_voters <- valjarbarometern |> # Number of participants who answered MP
   summarize(n = n()) |>
   pull(n)
 p_h0 <- 0.04 # Our null hypothesis
-# Conducting hypothesis test of proportions. Observe that we are testing if the proportion is *greater* than.
-result <- prop.test(n_mp_voters, n_participants, p_h0, alternative = "greater")
+# Conducting hypothesis test of proportions. Observe that we are testing if
+# the proportion is *greater* than.
+result <- prop.test(
+    n_mp_voters,
+    n_participants,
+    p_h0,
+    alternative = "greater"
+)
 result
 ```
 
-The result of our test contains a lot of information, but we only need to focus on the part that says "p-value" on the second line and read its value, rounded 0.21. Note that we should *not* read the p at the second to last line, as it is the proportion we observed in our sample. We compare the $p$-value with our significance level, 0.05 and conclude that 0.21 is *larger* than 0.05, and thus we *can not* reject our null hypothesis. This means we *do not* have evidence in the data that the percentage (proportion) of Sweden's population that would vote for MP is larger than 4% (0.04), i.e. we cannot reject the null hypothesis. So the conclusion of our test is that if there was an election today MP would not be "statistically significantly" safe. 
+The result of our test contains a lot of information, but we only need to focus on the part that says "p-value" on the second line and read its value, rounded 0.21. Note that we should *not* read the p at the second to last line, as it is the proportion we observed in our sample. We compare the $p$-value with our significance level, 0.05 and conclude that 0.21 is *larger* than 0.05, and thus we *can not* reject our null hypothesis. This means we *do not* have evidence in the data that the percentage (proportion) of Sweden's population that would vote for MP is larger than 4% (0.04), i.e. we cannot reject the null hypothesis. So the conclusion of our test is that if there was an election today MP would not be "statistically significantly" safe.
 
 We can also access the $p$-value directly by accessing the `p.value` using the dollar operator, `$`, from our result.
 
@@ -155,10 +178,10 @@ result$p.value
 A few important things to note in general about hypothesis testing:
 
 * We look for evidence *against* the null hypothesis $H_0$, but failing to reject the null hypothesis doesn't prove the null hypothesis is true. It only suggests that there isn't enough statistical evidence against it.
-* A significantly small p-value doesn't mean the difference between the mean under $H_0$ and the actual population mean is large, only that it's likely not due to chance. 
+* A significantly small p-value doesn't mean the difference between the mean under $H_0$ and the actual population mean is large, only that it's likely not due to chance.
 * The significance level should be set *beforehand*, not changed when the $p$-value is observed. Usually 0.05 is used in scientific analysis.
 * The significance level 0.05 is a strong indicator to reject the null hypothesis, but sometimes it may be too black and white. A $p$-value of 0.06 or 0.1 still indicates an interesting result, while a $p$-value of 0.9 does not. The $p$-value offers the opportunity for the reader to decide by themselves if they find the result interesting and worth further studies.
-* In practical applications, the outcome of hypothesis testing should be combined with domain knowledge and other information to make informed decisions or answer research questions. 
+* In practical applications, the outcome of hypothesis testing should be combined with domain knowledge and other information to make informed decisions or answer research questions.
 
 <span style="color: gray;">
 When performing hypothesis testing two different errors can be committed and if you want to further study hypothesis testing and/or statistics it is important to know them.
@@ -173,15 +196,15 @@ Up until now we have studied hypothesis test of proportions. A perhaps more comm
 ```{r}
 #| warning: false
 library(palmerpenguins)
-penguins |> 
-  ggplot(aes(x = body_mass_g)) + 
-  geom_density() + 
+penguins |>
+  ggplot(aes(x = body_mass_g)) +
+  geom_density() +
   geom_vline(
     xintercept = mean(penguins$body_mass_g, na.rm = TRUE),
     linetype = 2) +
   labs(
     x = "Body mass (g)",
-    y = "") + 
+    y = "") +
   theme(
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank())
@@ -190,7 +213,7 @@ penguins |>
 We see that there are quite a lot of observations with a smaller body mass than the mean. Can we be sure that the population mean, i.e. the mean of all penguins body weights, including those outside our sample, is above 4000 g? To test this we use a t-test. The t-test can be used we we want to ask questions about the population mean based on our sample. We formulate our hypothesis
 
 > **$H_0$**: The average body mass of all penguins in the Palmer Archipelago is 4000 g.
- 
+
 > **$H_a$**: The average body mass of all penguins in the Palmer Archipelago is *more* than 4000 g.
 
 We can perform this test in R using the `t.test` function.
@@ -213,7 +236,7 @@ penguins |>
   labs(
     x = "Body mass (g)",
     y = "",
-    fill = "Species") + 
+    fill = "Species") +
   theme(
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank())
@@ -231,7 +254,7 @@ penguins |>
   labs(
     x = "Body mass (g)",
     y = "",
-    fill = "Sex") + 
+    fill = "Sex") +
   theme(
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank())
@@ -269,7 +292,7 @@ male_gentoo_body_mass <- penguins |>
 t.test(male_gentoo_body_mass, female_gentoo_body_mass)
 ```
 
-We see that the $p$-value is very small, $2.2 \cdot 10^{-16}$. We conclude that we have evidence that the difference in average body weight of female and male Gentoo penguins is statistically significant at significance level 0.05. 
+We see that the $p$-value is very small, $2.2 \cdot 10^{-16}$. We conclude that we have evidence that the difference in average body weight of female and male Gentoo penguins is statistically significant at significance level 0.05.
 
 Now we have looked at two different ways of performing hypothesis testing about different variables, either proportions or means. In the next chapter we will look at *linear regression*, a method that we can use to understand if there is an effect of one variable on another and to make powerful predictions.
 
@@ -300,17 +323,17 @@ adelie_flipper_length <- penguins |>
 #| code-comment: "Hint"
 #| execute: false
 # Visualization
-penguins |> 
-  ggplot(aes(x = island, fill = species)) + 
+penguins |>
+  ggplot(aes(x = island, fill = species)) +
   geom_bar()
 # Total number of penguins on Dream island
-n_total <- penguins |> 
+n_total <- penguins |>
   filter(island == "Dream") |>
-  summarize(n = n()) |> 
+  summarize(n = n()) |>
   pull()
 # Number of chinstrap penguins on Dream island
-n_chinstrap <- penguins |> 
+n_chinstrap <- penguins |>
   filter(species == "Chinstrap" & island == "Dream") |>
-  summarize(n = n()) |> 
+  summarize(n = n()) |>
   pull()
 ```

@@ -24,16 +24,20 @@ recreate_valjarbarometern <- function(valjarbarometern_aggregate, n)
 {
   # Calculate number of observations of each party
   obs_per_party <- round(n * valjarbarometern_aggregate$percentage / 100)
-  
+
   # Create a list of party observations
-  party_observations <- mapply(rep, valjarbarometern_aggregate$party, obs_per_party)
-  
+  party_observations <- mapply(
+      rep,
+      valjarbarometern_aggregate$party,
+      obs_per_party
+  )
+
   # Flatten the list into a single vector
   sample_data <- unlist(party_observations)
-  
+
   # Create a data frame with the samples
   valjarbarometern <- tibble(party = sample_data)
-  
+
   return(valjarbarometern)
 }
 # Number of people in survey
@@ -57,7 +61,7 @@ We simply replace MP with C:
 > **$H_a$**: The proportion of people who would vote for MP is *larger* than 0.04.
 
 ### Exercise 2
-We do the test for the C party instead. 
+We do the test for the C party instead.
 
 ```{r}
 n_participants <- 3072 # Number of participants in survey
@@ -104,7 +108,7 @@ library(palmerpenguins)
 t.test(penguins$flipper_length_mm, mu = 200, alternative = "greater")
 ```
 
-Our test shows that we do not have evidence in the data that the mean flipper length of all penguins in the Palmer Archipelago during 2007-2009 was not greater than 200 mm at significance level 0.05. 
+Our test shows that we do not have evidence in the data that the mean flipper length of all penguins in the Palmer Archipelago during 2007-2009 was not greater than 200 mm at significance level 0.05.
 
 
 ### Exercise 2
@@ -140,11 +144,11 @@ We have evidence that the flipper lengths are different between all species of p
 
 ### Exercise 3
 
-We start by visualizing using a bar chart. 
+We start by visualizing using a bar chart.
 
 ```{r}
-penguins |> 
-  ggplot(aes(x = island, fill = species)) + 
+penguins |>
+  ggplot(aes(x = island, fill = species)) +
   geom_bar()
 ```
 
@@ -157,16 +161,16 @@ We see that there are a few more Chinstrap penguins than Adelie, but is the diff
 Then we perform the proportions test using `prop.test` with the number of chinstrap penguins and the total number of penguins at Dream island, p = 0.5 (our null hypothesis), and alternative hypothesis "greater".
 
 ```{r}
-n_total <- penguins |> 
+n_total <- penguins |>
   filter(island == "Dream") |>
-  summarize(n = n()) |> 
+  summarize(n = n()) |>
   pull()
-  
-n_chinstrap <- penguins |> 
+
+n_chinstrap <- penguins |>
   filter(species == "Chinstrap" & island == "Dream") |>
-  summarize(n = n()) |> 
+  summarize(n = n()) |>
   pull()
-  
+
 prop.test(n_chinstrap, n_total, p = 0.5, alternative = "greater")
 ```
 

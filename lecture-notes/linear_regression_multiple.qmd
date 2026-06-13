@@ -1,8 +1,8 @@
 # Multiple linear regression {#sec-multlinreg}
 
-In the last chapter we got a taste of multiple linear regression when we included `species` to fit the relationship between `body_mass_g` and `bill_depth_mm`. In this chapter we will continue fitting regression models with multiple predictors, capable of explaining more of the variation in the response (dependent variable). Multiple linear regression is a powerful tool, but it requires some care in order to create a model that is both good at prediction and *interpretable*, i.e. a model that we can easily understand with coefficients that make sense and that the model doesn't get too big to understand. Sometimes we have to/should sacrifice explanatory power in benefit of a simpler model. 
+In the last chapter we got a taste of multiple linear regression when we included `species` to fit the relationship between `body_mass_g` and `bill_depth_mm`. In this chapter we will continue fitting regression models with multiple predictors, capable of explaining more of the variation in the response (dependent variable). Multiple linear regression is a powerful tool, but it requires some care in order to create a model that is both good at prediction and *interpretable*, i.e. a model that we can easily understand with coefficients that make sense and that the model doesn't get too big to understand. Sometimes we have to/should sacrifice explanatory power in benefit of a simpler model.
 
-To study multiple linear regression we will use an anonymized dataset on the birth weight of children, given to us from the medical faculty at Umeå University. Our goal is to analyze what affects the birth weight of children given the variables in the dataset, which is available on Canvas if you want to do the exercises or reproduce any analysis made in this chapter. 
+To study multiple linear regression we will use an anonymized dataset on the birth weight of children, given to us from the medical faculty at Umeå University. Our goal is to analyze what affects the birth weight of children given the variables in the dataset, which is available on Canvas if you want to do the exercises or reproduce any analysis made in this chapter.
 
 ## Birth weight dataset
 
@@ -15,7 +15,7 @@ birth <- read_csv("datasets/birth.csv") # Remember to set the correct path
 glimpse(birth)
 ```
 
-Our response variable is birth weight in grams and the predictors are: pregnancy duration in weeks, the sex of the child, and age, length, weight, and BMI of the mother. We can see that `sex` is coded as a numerical variable (`double`) and we should start by recoding it as a factor. In the dataset males are encoded as 1 and females as 2. 
+Our response variable is birth weight in grams and the predictors are: pregnancy duration in weeks, the sex of the child, and age, length, weight, and BMI of the mother. We can see that `sex` is coded as a numerical variable (`double`) and we should start by recoding it as a factor. In the dataset males are encoded as 1 and females as 2.
 
 ```{r}
 #| warning: false
@@ -23,7 +23,7 @@ Our response variable is birth weight in grams and the predictors are: pregnancy
 birth <- birth |>  mutate(sex = as.factor(ifelse(sex == 1, "Male", "Female")))
 ```
 
-Lets explore our data using EDA. Since we are interested in linear regression, we can start by plotting the response against the predictors. We use scatter plots for the numerical variables and a box plot for sex. 
+Lets explore our data using EDA. Since we are interested in linear regression, we can start by plotting the response against the predictors. We use scatter plots for the numerical variables and a box plot for sex.
 
 ```{r}
 #| warning: false
@@ -31,58 +31,58 @@ Lets explore our data using EDA. Since we are interested in linear regression, w
 #| comment: "Code"
 library(patchwork)
 
-p0 <- birth |> 
-  ggplot(aes(x = sex, y = birth_weight_g, fill = sex)) + 
+p0 <- birth |>
+  ggplot(aes(x = sex, y = birth_weight_g, fill = sex)) +
   geom_boxplot() +
   guides(fill = FALSE)
 
-p1 <- birth |> 
+p1 <- birth |>
   ggplot(aes(
-    x = pregnancy_duration_wks, 
-    y = birth_weight_g)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) 
-
-p2 <- birth |> 
-  ggplot(aes(
-    x = age, 
-    y = birth_weight_g)) + 
-  geom_point() + 
+    x = pregnancy_duration_wks,
+    y = birth_weight_g)) +
+  geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
-p3 <- birth |> 
+p2 <- birth |>
   ggplot(aes(
-    x = length_cm, 
-    y = birth_weight_g)) + 
-  geom_point() + 
+    x = age,
+    y = birth_weight_g)) +
+  geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
-p4 <- birth |> 
+p3 <- birth |>
   ggplot(aes(
-    x = weight_kg, 
-    y = birth_weight_g)) + 
-  geom_point() + 
+    x = length_cm,
+    y = birth_weight_g)) +
+  geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
-p5 <- birth |> 
+p4 <- birth |>
   ggplot(aes(
-    x = bmi, 
-    y = birth_weight_g)) + 
-  geom_point() + 
+    x = weight_kg,
+    y = birth_weight_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+p5 <- birth |>
+  ggplot(aes(
+    x = bmi,
+    y = birth_weight_g)) +
+  geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
 (p0 + p1 + p2) / (p3 + p4 + p5)
 ```
 
-It seems like there is a linear relationship between birth weight and pregnancy duration and mother length, weight, and possibly BMI. The distribution of birth weight over the two sexes also seems to be different, indicating that the mean birth weight may differ between females and males. Another way of quickly assessing the strength of the linear relationships between variables is a correlation plot. First we compute the pairwise correlations of the numeric variables using `cor`. 
+It seems like there is a linear relationship between birth weight and pregnancy duration and mother length, weight, and possibly BMI. The distribution of birth weight over the two sexes also seems to be different, indicating that the mean birth weight may differ between females and males. Another way of quickly assessing the strength of the linear relationships between variables is a correlation plot. First we compute the pairwise correlations of the numeric variables using `cor`.
 
 ```{r}
 library(ggcorrplot)
-# You can also use 
+# You can also use
 #library(corrplot)
-birth |> 
-  select(where(is.numeric)) |> 
-  cor() |> 
+birth |>
+  select(where(is.numeric)) |>
+  cor() |>
   ggcorrplot()
 ```
 
@@ -130,13 +130,13 @@ plot1 <- ggplot(data = corr_df, aes(x = x, y = y1)) +
   geom_smooth(method = "lm", se = F, col = "purple") +
   theme_minimal() +
   labs(
-    y = "y", 
+    y = "y",
     subtitle = round(cor(corr_df$x, corr_df$y1), digits = 2) ) +
   theme(
     aspect.ratio = 1,
     axis.text = element_blank(),
     axis.ticks = element_blank(),
-    plot.title = element_text(hjust = 0.5)  # Center the title horizontally
+    plot.title = element_text(hjust = 0.5)
   )
 
 plot2 <- ggplot(data = corr_df, aes(x = x, y = y2)) +
@@ -149,7 +149,7 @@ plot2 <- ggplot(data = corr_df, aes(x = x, y = y2)) +
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     axis.title.y = element_blank(),
-    plot.title = element_text(hjust = 0.5)  # Center the title horizontally
+    plot.title = element_text(hjust = 0.5)
   )
 
 plot3 <- ggplot(data = corr_df, aes(x = x, y = y3)) +
@@ -164,7 +164,7 @@ plot3 <- ggplot(data = corr_df, aes(x = x, y = y3)) +
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     axis.title.y = element_blank(),
-    plot.title = element_text(hjust = 0.5)  # Center the title horizontally
+    plot.title = element_text(hjust = 0.5)
   )
 
 plot4 <- ggplot(data = corr_df, aes(x = x, y = y4)) +
@@ -177,7 +177,7 @@ plot4 <- ggplot(data = corr_df, aes(x = x, y = y4)) +
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     axis.title.y = element_blank(),
-    plot.title = element_text(hjust = 0.5)  # Center the title horizontally
+    plot.title = element_text(hjust = 0.5)
   )
 
 plot5 <- ggplot(data = corr_df, aes(x = x, y = y5)) +
@@ -190,16 +190,16 @@ plot5 <- ggplot(data = corr_df, aes(x = x, y = y5)) +
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     axis.title.y = element_blank(),
-    plot.title = element_text(hjust = 0.5)  # Center the title horizontally
+    plot.title = element_text(hjust = 0.5)
   )
 
 # Using patchwork to arrange plots side by side
 (plot1 | plot2 | plot3 | plot4 | plot5) + plot_layout(ncol = 5)
 ```
 
-Now that we know linear regression we are better equipped to understand what correlation really means: two variables are highly correlated if they *linearly describe* each other well. They correlate perfectly if all the points fall in a line, as for correlation -1 and 1. In this case, estimating a linear regression model will yield a very small $p$-value, while fitting a regression model where the correlation is closer to zero is more likely to yield an non-significant linear relationship. It is important to remember that the correlation does not tell us anything about the strength of the relationship, i.e. the size of the coefficient, but only how well the points fall on the regression line and if the coefficient is positive or negative.  
+Now that we know linear regression we are better equipped to understand what correlation really means: two variables are highly correlated if they *linearly describe* each other well. They correlate perfectly if all the points fall in a line, as for correlation -1 and 1. In this case, estimating a linear regression model will yield a very small $p$-value, while fitting a regression model where the correlation is closer to zero is more likely to yield an non-significant linear relationship. It is important to remember that the correlation does not tell us anything about the strength of the relationship, i.e. the size of the coefficient, but only how well the points fall on the regression line and if the coefficient is positive or negative.
 
-Correlation sounds like a good candidate to assert which one of our two models are the best at describing our outcome, and indeed correlation can be used for this in simple linear regression, but for multiple linear regression there is no one correlation for the whole model. Instead, the *coefficient of determination*, or R$^2$ pronounced "R-squared" is used. In the case of simple linear regression it has a simple relation ship with correlation, as R$^2$ = Correlation$^2$. In both simple and multiple linear regression the interpretation of R$^2$ is very intuitive, which makes it a very good measure of how well a model describes the outcome. 
+Correlation sounds like a good candidate to assert which one of our two models are the best at describing our outcome, and indeed correlation can be used for this in simple linear regression, but for multiple linear regression there is no one correlation for the whole model. Instead, the *coefficient of determination*, or R$^2$ pronounced "R-squared" is used. In the case of simple linear regression it has a simple relation ship with correlation, as R$^2$ = Correlation$^2$. In both simple and multiple linear regression the interpretation of R$^2$ is very intuitive, which makes it a very good measure of how well a model describes the outcome.
 
 ### Coefficient of determination, R$^2$
 
@@ -215,27 +215,27 @@ ylims <- c(3000, 4000)
 model <- birth |> lm(formula = birth_weight_g ~ length_cm)
 # Subset points to show
 set.seed(1337)
-subset_birth <- birth |> 
+subset_birth <- birth |>
   mutate(
     pred = predict(model),
-    resid = resid(model)) |> 
+    resid = resid(model)) |>
   filter(
     (length_cm < mean(birth$length_cm) - 5 & birth_weight_g < pred - 100) |
-    (length_cm > mean(birth$length_cm) + 5 & birth_weight_g > pred + 100)) |>  
-  filter(birth_weight_g < 4000 & birth_weight_g > 3000) |> 
+    (length_cm > mean(birth$length_cm) + 5 & birth_weight_g > pred + 100)) |>
+  filter(birth_weight_g < 4000 & birth_weight_g > 3000) |>
   sample_n(3)
 # Calculate mean of birth weight
 mean_bw <- birth |> pull(birth_weight_g) |> mean()
 
-variation_plot <- birth |> 
+variation_plot <- birth |>
   ggplot(aes(
-    x = length_cm, 
-    y = birth_weight_g)) + 
+    x = length_cm,
+    y = birth_weight_g)) +
   geom_hline(
     yintercept = mean_bw,
     linetype = 3,
     linewidth = 1) +
-  geom_point(alpha = 0.1) + 
+  geom_point(alpha = 0.1) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_segment( # Total variation
     data = subset_birth,
@@ -248,7 +248,7 @@ variation_plot <- birth |>
     linetype = 2,
     linewidth = 1,
     alpha = 1) +
-  geom_point(data = subset_birth, size = 4) + 
+  geom_point(data = subset_birth, size = 4) +
   labs(
     x = "Length (cm)",
     y = "Birth weight (g)",
@@ -256,7 +256,7 @@ variation_plot <- birth |>
   scale_color_manual(
     values = c(
       "Total" = "black",
-      "Explained" = "darkgreen", 
+      "Explained" = "darkgreen",
       "Unexplained" = "darkorange"),
     breaks = c(
       "Total", "Explained", "Unexplained")) +
@@ -271,7 +271,7 @@ We see the total variation as the distance from the mean value to the points in 
 #| warning: false
 #| code-fold: true
 #| comment: "Code"
-variation_plot + 
+variation_plot +
   geom_segment( # Unexplained variation
     data = subset_birth,
     aes(
@@ -299,7 +299,7 @@ variation_plot +
 
 In this figure we see that part of the variation is explained by the line (green), but not all (orange). R$^2$ is calculated by summing together the squared explained variation (green) and dividing by the squared total variation (dashed, black) for all points, mathematically R$^2$ = $\sum_{i}$ Explained$_i^2$ / Total$_i^2$, where $i$ indicates each observation, i.e. each point. If the explained variation is the same as the total variation, R$^2$ is 1 and the predictor explains 100% of the variation in the response (compare with the correlation). If the predictor doesn't explain anything, i.e. the line is flat, R$^2$ is 0. You are not expected to be able to calculate R$^2$, as we will let `lm` do that for us, but you are expected to be able to interpret the value of R$^2$.
 
-For a more detailed explanation of R$^2$, [Wikipedia](https://en.wikipedia.org/wiki/Coefficient_of_determination) offers a good alternative with both visualizations and mathematical formulas. 
+For a more detailed explanation of R$^2$, [Wikipedia](https://en.wikipedia.org/wiki/Coefficient_of_determination) offers a good alternative with both visualizations and mathematical formulas.
 
 ### Selecting between two simple linear regression models
 
@@ -307,8 +307,8 @@ Armed with R$^2$ as a measure of how well a model describes the variation in the
 
 ```{r}
 # Mother weight
-birth |> 
-  lm(formula = birth_weight_g ~ weight_kg) |> 
+birth |>
+  lm(formula = birth_weight_g ~ weight_kg) |>
   summary()
 ```
 
@@ -316,8 +316,8 @@ In the second line from the bottom we find "Multiple R-squared" and find that it
 
 ```{r}
 # Mother length
-birth |> 
-  lm(formula = birth_weight_g ~ length_cm) |> 
+birth |>
+  lm(formula = birth_weight_g ~ length_cm) |>
   summary()
 ```
 
@@ -325,13 +325,13 @@ The mothers length explains a little bit more of the variation in infant birth w
 
 ```{r}
 # Mother weight
-weight_model_summary <- birth |> 
-  lm(formula = birth_weight_g ~ weight_kg) |> 
+weight_model_summary <- birth |>
+  lm(formula = birth_weight_g ~ weight_kg) |>
   summary()
 weight_model_summary$r.squared
 # Mother length
-length_model_summary <- birth |> 
-  lm(formula = birth_weight_g ~ length_cm) |> 
+length_model_summary <- birth |>
+  lm(formula = birth_weight_g ~ length_cm) |>
   summary()
 length_model_summary$r.squared
 ```
@@ -354,8 +354,16 @@ library(plotly)
 model <- birth |> lm(formula = birth_weight_g ~ weight_kg + length_cm)
 
 # Create a grid of values for weight_kg and length_cm
-weight_kg_range <- seq(min(birth$weight_kg), max(birth$weight_kg), length.out = 50)
-length_cm_range <- seq(min(birth$length_cm), max(birth$length_cm), length.out = 50)
+weight_kg_range <- seq(
+    min(birth$weight_kg),
+    max(birth$weight_kg),
+    length.out = 50
+)
+length_cm_range <- seq(
+    min(birth$length_cm),
+    max(birth$length_cm),
+    length.out = 50
+)
 grid <- expand.grid(weight_kg = weight_kg_range, length_cm = length_cm_range)
 
 # Predict birth_weight_g for the grid
@@ -363,40 +371,40 @@ grid$birth_weight_g <- predict(model, newdata = grid)
 
 # Create 3D scatter plot
 p <- plot_ly(
-  birth, 
-  x = ~length_cm, 
-  y = ~weight_kg, 
-  z = ~birth_weight_g, 
-  type = 'scatter3d', 
-  mode = 'markers', 
+  birth,
+  x = ~length_cm,
+  y = ~weight_kg,
+  z = ~birth_weight_g,
+  type = 'scatter3d',
+  mode = 'markers',
   size = 1)
 
 # Add regression surface
-p <- p |> 
+p <- p |>
   add_surface(
-    x = ~length_cm_range, 
-    y = ~weight_kg_range, 
-    z = ~matrix(grid$birth_weight_g, nrow = 50), 
+    x = ~length_cm_range,
+    y = ~weight_kg_range,
+    z = ~matrix(grid$birth_weight_g, nrow = 50),
     opacity = 0.5)
 
-p <- p |> 
+p <- p |>
   colorbar(title = "<b>Birth weight (g)</b>") |>
   layout(
     scene = list(
-      xaxis = list(title="Weight (kg)"), 
+      xaxis = list(title="Weight (kg)"),
       yaxis = list(title="Length (cm)"),
       zaxis = list(title="Birth weight (g)")))
 
 # VIEW: birth_weight_g ~ length_cm perspective
-#p <- p |> 
+#p <- p |>
 #  layout(scene = list(camera = list(eye = list(x = -2.25, y = 0, z = 0))))
 
 # VIEW: birth_weight_g ~ weight_kg perspective
-#p <- p |> 
+#p <- p |>
 #  layout(scene = list(camera = list(eye = list(x = 0, y = 2.25, z = 0))))
 
 # VIEW: weight_kg ~ length_cm perspective
-#p <- p |> 
+#p <- p |>
 #  layout(scene = list(camera = list(eye = list(x = 0, y = 0, z = 2.25))))
 
 # Show the plot
@@ -412,7 +420,7 @@ Now that we can compare models we are ready to jump into multiple linear regress
 More predictors will explain more of the variation, so we start by naively using all possible predictors in our dataset. To include all variables except the outcome we can use dot, `.`, in the formula. It stands for "all variables in the `data.frame` except for the outcome", which is perfect when we want to include all possible predictors.
 
 ```{r}
-model <- birth |> 
+model <- birth |>
   lm(formula = birth_weight_g ~ .)
 model |> summary()
 ```
@@ -427,31 +435,37 @@ When we perform multiple linear regression the significance and coefficient esti
 
 > **$H_a$**: There *is* a linear relationship between the mothers length and the birth weight of the child, given that pregnancy duration, ..., and BMI are also part of the model.
 
-Both the values of the coefficients and the $p$-values depend on the other variables included in the model. The interpretation of the coefficients follows the hypotheses in depending on the other variables in the model: 
+Both the values of the coefficients and the $p$-values depend on the other variables included in the model. The interpretation of the coefficients follows the hypotheses in depending on the other variables in the model:
 
-> When the mothers length increases by 1 cm the birth weight of the child decreases by 2.782 grams on average, *given that the other variables in the model are held fixed*. 
+> When the mothers length increases by 1 cm the birth weight of the child decreases by 2.782 grams on average, *given that the other variables in the model are held fixed*.
 
 Looking at our model, this statement becomes an issue: BMI is a function of both weight and length, BMI = Weight / Length$^2$. The interpretation of the coefficient for BMI is then
 
 > When the mothers BMI increases by 1 the birth weight decreases by $\sim$67 g, given that the other variables in the model, *including weight and length*, are held fixed.
 
-But this cannot be, as if length and weight are held fixed, BMI cannot change! The interpretation of the model breaks down when all three of these variables are included in the model, causing the un-intuitive $p$ values and coefficient values. When the predictors are (strongly) correlated, as in this case with `bmi`, `weight_kg`, and `length_cm`, the model suffers from *multicollinearity*, invalidating the inference of the model, i.e. interpretation of coefficients and $p$-values. 
+But this cannot be, as if length and weight are held fixed, BMI cannot change! The interpretation of the model breaks down when all three of these variables are included in the model, causing the un-intuitive $p$ values and coefficient values. When the predictors are (strongly) correlated, as in this case with `bmi`, `weight_kg`, and `length_cm`, the model suffers from *multicollinearity*, invalidating the inference of the model, i.e. interpretation of coefficients and $p$-values.
 
 #### Exercises
 
-1. The code below simulates data for ice cream sales and snake bites during the summer months. Copy the code and visualize the relationship between `ice_cream_sales` and `snake_bites` (using `geom_point` and `geom_smooth` with `method = "lm"`) and fit a linear regression model of `ice_cream_sales ~ snake_bites`. Do we have a linear relationship? Is it significant? 
+1. The code below simulates data for ice cream sales and snake bites during the summer months. Copy the code and visualize the relationship between `ice_cream_sales` and `snake_bites` (using `geom_point` and `geom_smooth` with `method = "lm"`) and fit a linear regression model of `ice_cream_sales ~ snake_bites`. Do we have a linear relationship? Is it significant?
 ```{r}
 #| eval: false
 # Simulating data
 set.seed(42) # Important to include this!
-n_days <- 153 
+n_days <- 153
 n_years <- 5
 # Daily observations stored as a decimal number of the month
-month <- rep(seq(4, 8, length.out = n_days), n_years) 
-ice_cream_sales <- 2000 + 3000 * sin(pi * month / 14) + rnorm(length(month), 0, 200)
+month <- rep(seq(4, 8, length.out = n_days), n_years)
+ice_cream_sales <- (2000 + 3000 * sin(pi * month / 14)
+    + rnorm(length(month), 0, 200)
+)
 snake_bites <- 20 * sin(pi * month / 14) + rnorm(length(month), 0, 8)
 
-ice_cream <- tibble(month = month, ice_cream_sales = ice_cream_sales, snake_bites = snake_bites)
+ice_cream <- tibble(
+    month = month,
+    ice_cream_sales = ice_cream_sales,
+    snake_bites = snake_bites
+)
 ```
 2. Would you recommend an ice cream company to increase snake bites in order to increase ice cream sales? In other words, do you think that the effect of snake bites on ice cream sales is a causal effect? Causal effect in this case means that if we increase the number of snake bites we will also increase the number of ice cream sales.
 3. Now fit a model including `month` as well, i.e. `ice_cream_sales ~ .` and state the hypotheses for the coefficient for `snake_bites`. What changed? Is the coefficient for `snake_bites` still significantly different from 0 with significance level 0.05?
@@ -461,14 +475,14 @@ ice_cream <- tibble(month = month, ice_cream_sales = ice_cream_sales, snake_bite
 If the coefficients and $p$-values change drastically from simple linear regression models or from visualizations in scatter plots or correlation plots we should suspect multicollinearity in our model. It is also possible to look at the potential predictors in the dataset and their correlation in a scatter plot or in the correlation plot to try to anticipate multicollinearity.
 
 ```{r}
-p1 <- birth |> 
+p1 <- birth |>
   ggplot(aes(x = weight_kg, y = bmi)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE)
-p2 <- birth |> 
-  select(bmi, weight_kg, length_cm) |> 
-  select(where(is.numeric)) |> 
-  cor() |> 
+p2 <- birth |>
+  select(bmi, weight_kg, length_cm) |>
+  select(where(is.numeric)) |>
+  cor() |>
   ggcorrplot()
 
 p1 + p2
@@ -482,13 +496,13 @@ library(car)
 vif(model)
 ```
 
-VIF-values around 5 should alert you to potential issues with multicollinearity, and values above 10 suggest that the model suffers from multicollinearity. As we can see our model has VIF-values over 200 for `weight_kg` and `bmi`! In this scenario we have already understood why, because of the relationship between BMI and weight and length. 
+VIF-values around 5 should alert you to potential issues with multicollinearity, and values above 10 suggest that the model suffers from multicollinearity. As we can see our model has VIF-values over 200 for `weight_kg` and `bmi`! In this scenario we have already understood why, because of the relationship between BMI and weight and length.
 
 Fitting a model with all possible predictors improved our R$^2$, but at the cost of interpretability. In addition to loosing interpretablility, a more complex model is more prone to [*overfitting*](https://en.wikipedia.org/wiki/Overfitting) to the data in the sample, leading to worse predictions about the population. Using our model to predict new, unobserved data points, i.e. birth weights in this example, is what we want to use the model for if we are interested in prediction. So even if we don't care about the inference and the interpretability of the model, it may be a bad idea to include all variables. Instead we should do *model selection*, looking at several models with different predictors and different number of predictors to find a model that is both interpretable and offers good predictive power, i.e. high R$^2$.
 
 ## Model selection
 
-To select a model that is both interpretable and useful for prediction is a difficult task, and a good quote to remember by statistician [George Box](https://en.wikipedia.org/wiki/All_models_are_wrong) is "All models are wrong, but some are useful". When fitting models it is up to you to argue why the model is useful. Many times it is a good idea to use expert (domain) knowledge to motivate decisions in model selection. If you have access to knowledge about the data, either by your own reasoning, by knowledge about how the data was collected, or from an expert in the domain, you can include or excluding variables that you know are not useful. For example in the `penguins` dataset you may assume that the year the penguin was observed will not have an effect on the birth weight of the penguin. A reasonable assumption if we believe that the conditions haven't changed from year to year. If you don't have any background knowledge accessible there are systematic methods that allow us to select which variables to include. 
+To select a model that is both interpretable and useful for prediction is a difficult task, and a good quote to remember by statistician [George Box](https://en.wikipedia.org/wiki/All_models_are_wrong) is "All models are wrong, but some are useful". When fitting models it is up to you to argue why the model is useful. Many times it is a good idea to use expert (domain) knowledge to motivate decisions in model selection. If you have access to knowledge about the data, either by your own reasoning, by knowledge about how the data was collected, or from an expert in the domain, you can include or excluding variables that you know are not useful. For example in the `penguins` dataset you may assume that the year the penguin was observed will not have an effect on the birth weight of the penguin. A reasonable assumption if we believe that the conditions haven't changed from year to year. If you don't have any background knowledge accessible there are systematic methods that allow us to select which variables to include.
 
 ### Using domain knowledge
 
@@ -496,7 +510,7 @@ Returning to our birth weight model with all variables in the dataset as predict
 
 ```{r}
 # Domain expertise (de) model
-model_de <- birth |> 
+model_de <- birth |>
   lm(formula = birth_weight_g ~ . - bmi)
 model_summary <- model_de |> summary()
 model_summary
@@ -506,7 +520,7 @@ vif(model_de)
 Now we see that there is no problem with multicollinearity (lowest possible VIF is 1), all the coefficient estimates have the expected sign, and all relationships are statistically significant except for `age`. This means that `age` has no significant linear relationship with the outcome, given the other variables in the model, which is a good reason to remove it from the model.
 
 ```{r}
-model_de <- birth |> 
+model_de <- birth |>
   lm(formula = birth_weight_g ~ . - bmi - age)
 model_summary <- model_de |> summary()
 model_summary
@@ -520,14 +534,17 @@ In this example we could use our knowledge of the relationship between BMI and w
 
 ### Using `.` in formula {#sec-multlinreg-usingdot}
 
-When using `.` in the formula for fitting a regression model, `lm` implicitly includes all variables, including those removed by `-`. This has two implications: the model is trained (fitted) only on the observations where *all* the variables are complete, i.e. all rows with no missing values and, when the model is used, it expects a value for the removed variables as well, even if it doesn't use them during the prediction (see below for prediction). This is good when comparing models, as it ensures that the same data is used for all possible models, but when fitting the final model it is better to *not* use `.` in your formula, as it ensures the model is fitted on as much data as possible. 
+When using `.` in the formula for fitting a regression model, `lm` implicitly includes all variables, including those removed by `-`. This has two implications: the model is trained (fitted) only on the observations where *all* the variables are complete, i.e. all rows with no missing values and, when the model is used, it expects a value for the removed variables as well, even if it doesn't use them during the prediction (see below for prediction). This is good when comparing models, as it ensures that the same data is used for all possible models, but when fitting the final model it is better to *not* use `.` in your formula, as it ensures the model is fitted on as much data as possible.
 
 This example illustrates how `lm` handles missing values when using the `.` and not. We use `palmerpenguins` because it contains missing values and output only the R$^2$ from the `summary` to illustrate the difference between the models. Both models are modeling `body_mass_g ~ flipper_length_mm`, but use different data for fitting the model.
 
 ```{r}
 library(palmerpenguins)
 # Model fitted by using the dot operator in formula
-model_dot <- penguins |> lm(formula = body_mass_g ~ . - species - island - bill_length_mm - bill_depth_mm - sex - year)
+model_dot <- penguins |> lm(
+    formula = body_mass_g ~ . - species - island - bill_length_mm
+              - bill_depth_mm - sex - year
+)
 model_dot_summary <- model_dot |> summary()
 model_dot_summary$r.squared
 # Model fitted by explicitly listing the predictor
@@ -539,9 +556,10 @@ model_no_dot_summary$r.squared
 We can recreate the R$^2$ of `model_dot` using only `flipper_length_mm` as a predictor by dropping all the observations (rows) with missing values before fitting `model_no_dot`. The model is then fitted using the same data as for `model_dot`.
 
 ```{r}
-# Model fitted by explicitly listing the predictor, dropping missing values first
-model_no_dot <- penguins |> 
-  drop_na() |> 
+# Model fitted by explicitly listing the predictor, dropping missing values
+# first
+model_no_dot <- penguins |>
+  drop_na() |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 model_no_dot_summary <- model_no_dot |> summary()
 model_no_dot_summary$r.squared
@@ -630,23 +648,25 @@ Predicting using multiple linear regression models follows the same structure as
 ```{r}
 # Setting length_cm and age to 0 and using previously fitted model
 prediction <- predict(
-  model_bs, 
+  model_bs,
   data.frame(
-    sex = "Female", 
-    pregnancy_duration_wks = 40, 
-    weight_kg = 68, 
-    bmi = 24, 
-    length_cm = 170, 
+    sex = "Female",
+    pregnancy_duration_wks = 40,
+    weight_kg = 68,
+    bmi = 24,
+    length_cm = 170,
     age = 0))
 prediction
 # Refitting model with only included predictors in the formula
-model_bs2 <- birth |> lm(formula = birth_weight_g ~ pregnancy_duration_wks + sex + weight_kg + bmi)
+model_bs2 <- birth |> lm(
+    formula = birth_weight_g ~ pregnancy_duration_wks + sex + weight_kg + bmi
+)
 prediction2 <- predict(
-  model_bs2, 
+  model_bs2,
   data.frame(
-    sex = "Female", 
-    pregnancy_duration_wks = 40, 
-    weight_kg = 68, 
+    sex = "Female",
+    pregnancy_duration_wks = 40,
+    weight_kg = 68,
     bmi = 24))
 prediction2
 ```
@@ -660,10 +680,10 @@ We see that the prediction turns out the same either way.
 
 ## Summary
 
-In this chapter we have looked at how to compare simple and multiple linear regression models using R$^2$, the explained variance in the outcome. We have learned how to deal with multicollinearity and several strategies for systematic model selection, which we can use when no domain knowledge is available. Finally we looked at how to use the `predict` function for multiple linear regression models. 
+In this chapter we have looked at how to compare simple and multiple linear regression models using R$^2$, the explained variance in the outcome. We have learned how to deal with multicollinearity and several strategies for systematic model selection, which we can use when no domain knowledge is available. Finally we looked at how to use the `predict` function for multiple linear regression models.
 
 This chapter is quite substantial, but the most important takeaway is:
 
 > Building models is hard and there are many good models but even more bad models. Motivate your choice of model based on domain knowledge if possible and be transparent in how the model was selected.
 
-As long as the reader is able to follow how you made your decisions when selecting your model you have done a good job. 
+As long as the reader is able to follow how you made your decisions when selecting your model you have done a good job.

@@ -15,48 +15,77 @@ We start by visualizing the relationship between flipper length and body mass us
 library(tidyverse)
 library(palmerpenguins)
 
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
   labs(
-    x = "Flipper length (mm)", 
-    y = "Body mass (g)")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)"
+  )
 ```
 
-We can clearly see that the body mass increases with flipper length: penguins with longer flippers have larger body mass, *on average*. It is important to note that this relationship holds on average and not for every penguin, as then every point as we take a step to the right would be higher up, but this is not the case. We illustrate what this means below as we draw two vertical lines, creating three bins, then calculate the mean body weight within the interval and plot it as red, horizontal lines. 
+We can clearly see that the body mass increases with flipper length: penguins with longer flippers have larger body mass, *on average*. It is important to note that this relationship holds on average and not for every penguin, as then every point as we take a step to the right would be higher up, but this is not the case. We illustrate what this means below as we draw two vertical lines, creating three bins, then calculate the mean body weight within the interval and plot it as red, horizontal lines.
 
 ```{r}
 #| code-fold: true
 #| code-comment: "Code"
 #| warning: false
-mu_190 <- mean(penguins |> filter(flipper_length_mm < 190) |> pull(body_mass_g))
-mu_210 <- mean(penguins |> filter(flipper_length_mm > 190 & flipper_length_mm < 210) |> pull(body_mass_g))
-mu_230 <- mean(penguins |> filter(flipper_length_mm > 210) |> pull(body_mass_g))
+mu_190 <- penguins |>
+    filter(flipper_length_mm < 190) |>
+    pull(body_mass_g) |>
+    mean()
+mu_210 <- penguins |>
+    filter(flipper_length_mm > 190 & flipper_length_mm < 210) |>
+    pull(body_mass_g) |>
+    mean()
+mu_230 <- penguins |>
+    filter(flipper_length_mm > 210) |>
+    pull(body_mass_g) |>
+    mean()
 
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
-  geom_point() + 
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
   geom_vline(xintercept = 190, col = "black", linetype = 3) +
   geom_vline(xintercept = 210, col = "black", linetype = 3) +
-  geom_segment(x = 170, xend = 190,  y = mu_190, yend = mu_190, color = "red") +
-  geom_segment(x = 190, xend = 210,  y = mu_210, yend = mu_210, color = "red") +
-  geom_segment(x = 210, xend = 230,  y = mu_230, yend = mu_230, color = "red") +
+  geom_segment(
+      x = 170,
+      xend = 190,
+      y = mu_190,
+      yend = mu_190,
+      color = "red"
+  ) +
+  geom_segment(
+      x = 190,
+      xend = 210,
+      y = mu_210,
+      yend = mu_210,
+      color = "red"
+  ) +
+  geom_segment(
+      x = 210,
+      xend = 230,
+      y = mu_230,
+      yend = mu_230,
+      color = "red"
+  ) +
   labs(
-    x = "Flipper length (mm)", 
-    y = "Body mass (g)")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)"
+  )
 ```
 
-Here we can clearly see that the average of our dependent variable, body mass, increases as our independent variable, flipper length, increases. We could follow the approach of the previous chapter and divide the penguins into three groups and perform t-tests between the groups to see if the difference is statistically significant. 
+Here we can clearly see that the average of our dependent variable, body mass, increases as our independent variable, flipper length, increases. We could follow the approach of the previous chapter and divide the penguins into three groups and perform t-tests between the groups to see if the difference is statistically significant.
 
 ```{r}
-flippers_190 <- penguins |> 
-  filter(flipper_length_mm < 190) |> 
+flippers_190 <- penguins |>
+  filter(flipper_length_mm < 190) |>
   pull(body_mass_g)
-flippers_210 <- penguins |> 
-  filter(flipper_length_mm > 190 & flipper_length_mm < 210) |> 
+flippers_210 <- penguins |>
+  filter(flipper_length_mm > 190 & flipper_length_mm < 210) |>
   pull(body_mass_g)
-flippers_230 <- penguins |> 
-  filter(flipper_length_mm > 210) |> 
+flippers_230 <- penguins |>
+  filter(flipper_length_mm > 210) |>
   pull(body_mass_g)
 
 t.test(flippers_190, flippers_210)$p.value
@@ -67,15 +96,16 @@ We see that both $p$-values are significant at significance level 0.05. This is 
 
 ```{r}
 #| warning: false
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
-  geom_point() + 
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
-    x = "Flipper length (mm)", 
-    y = "Body mass (g)")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)"
+  )
 ```
-  
+
 The line you see describes how `body_mass_g` increases with `flipper_length_mm`, on average. If you want to know the average body mass for a specific flipper length you just have to follow a vertical line from that value on the x axis to the line, as in the example below where we use the line to get the average body mass of a penguin with flipper length 200 mm.
 
 ```{r}
@@ -83,24 +113,41 @@ The line you see describes how `body_mass_g` increases with `flipper_length_mm`,
 #| code-comment: "Code"
 #| warning: false
 x <- 200
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 prediction <- data.frame(
   flipper_length_mm = x,
   body_mass_g = model |> predict(data.frame(flipper_length_mm = x)))
 
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  geom_segment(x = prediction$flipper_length_mm, xend = prediction$flipper_length_mm,  y = 0, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
-  geom_segment(x = 0, xend = prediction$flipper_length_mm,  y = prediction$body_mass_g, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_segment(
+      x = prediction$flipper_length_mm,
+      xend = prediction$flipper_length_mm,
+      y = 0,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
+  geom_segment(
+      x = 0,
+      xend = prediction$flipper_length_mm,
+      y = prediction$body_mass_g,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
   scale_x_continuous(breaks = c(prediction$flipper_length_mm)) +
   scale_y_continuous(breaks = round(c(prediction$body_mass_g))) +
-  geom_point(data = prediction, col = "red", size = 3) + 
+  geom_point(data = prediction, col = "red", size = 3) +
   labs(
-    x = "Flipper length (mm)", 
-    y = "Body mass (g)")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)"
+  )
 ```
 
 ### Exercises
@@ -112,24 +159,41 @@ penguins |>
 #| warning: false
 #| eval: false
 x <- 200
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 prediction <- data.frame(
   flipper_length_mm = x,
   body_mass_g = model |> predict(data.frame(flipper_length_mm = x)))
 
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  geom_segment(x = prediction$flipper_length_mm, xend = prediction$flipper_length_mm,  y = 0, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
-  geom_segment(x = 0, xend = prediction$flipper_length_mm,  y = prediction$body_mass_g, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_segment(
+      x = prediction$flipper_length_mm,
+      xend = prediction$flipper_length_mm,
+      y = 0,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
+  geom_segment(
+      x = 0,
+      xend = prediction$flipper_length_mm,
+      y = prediction$body_mass_g,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
   scale_x_continuous(breaks = c(prediction$flipper_length_mm)) +
   scale_y_continuous(breaks = round(c(prediction$body_mass_g))) +
-  geom_point(data = prediction, col = "red", size = 3) + 
+  geom_point(data = prediction, col = "red", size = 3) +
   labs(
-    x = "Flipper length (mm)", 
-    y = "Body mass (g)")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)"
+  )
 ```
 2. Change the `x`-value to 100. What is the predicted body mass? Is this a reasonable result? Why is this happening?
 
@@ -139,7 +203,7 @@ Now when we have seen what a linear model looks like we are ready to understand 
 
 ```{r}
 #| warning: false
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 model
 ```
@@ -173,7 +237,7 @@ If the $p$-value is smaller than 0.05 we say that there is a statistically signi
 model_summary$coefficients
 ```
 
-Hypothesis testing gives linear regression a powerful interpretation: if the $p$-value for the coefficient for the dependent variable we have evidence of a linear relationship between the variables. Sometimes this can also be interpreted as a *causal effect*, that the predictor is a cause of the outcome, however this requires more assumptions and we should be careful drawing causal conclusions based on correlations. For example, in medical studies this is of particular importance: we ideally want a drug to have a causal effect on the outcome of a disease. 
+Hypothesis testing gives linear regression a powerful interpretation: if the $p$-value for the coefficient for the dependent variable we have evidence of a linear relationship between the variables. Sometimes this can also be interpreted as a *causal effect*, that the predictor is a cause of the outcome, however this requires more assumptions and we should be careful drawing causal conclusions based on correlations. For example, in medical studies this is of particular importance: we ideally want a drug to have a causal effect on the outcome of a disease.
 
 ### Exercises
 
@@ -207,7 +271,7 @@ male_gentoo_body_mass <- penguins |>
 t.test(male_gentoo_body_mass, female_gentoo_body_mass)
 
 # Linear regression
-penguins |> 
+penguins |>
   filter(species == "Gentoo") |>
   lm(formula = body_mass_g ~ sex) |>
   summary()
@@ -221,12 +285,12 @@ In the previous exercises we saw that we can fit a linear model with a categoric
 #| warning: false
 #| code-fold: true
 #| comment: "Code"
-mean_bws <- penguins |> 
+mean_bws <- penguins |>
   summarize(
     body_mass_g = mean(body_mass_g, na.rm = TRUE),
     .by = species)
-penguins |> 
-  ggplot(aes(x = body_mass_g, fill = species, col = species)) + 
+penguins |>
+  ggplot(aes(x = body_mass_g, fill = species, col = species)) +
   geom_density(alpha = 0.3) +
   geom_vline(
     aes(
@@ -242,15 +306,17 @@ penguins |>
     y = "",
     col = "Species",
     fill = "Species") +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())
+  theme(
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+  )
 ```
 
 We see that Gentoo penguins are in general larger, with most of the density situated above the other two species and the mean body mass more than one kg heavier than the other two species. Chinstrap and Adelie penguins on the other hand have very similar body masses, with the Chinstraps being a little heavier on average. A natural question is if this difference is significant, is it only present in our sample or can we say that there is a difference between the populations? Before we used t-test, but now we will fit a linear model with `species` as our independent variable. We immediately store the summary output and look only at the coefficients.
 
 ```{r}
-model_summary <- penguins |> 
-  lm(formula = body_mass_g ~ species) |> 
+model_summary <- penguins |>
+  lm(formula = body_mass_g ~ species) |>
   summary()
 model_summary$coefficients
 ```
@@ -263,7 +329,7 @@ We see that we have three coefficients, the intercept, one for "speciesChinstrap
 
 > **$H_a$**: There *is* a difference in the mean body weight of Adelie and Chinstrap penguins.
 
-and likewise for 
+and likewise for
 
 **speciesGentoo**
 
@@ -286,11 +352,11 @@ penguins_re <- penguins |> mutate(island = relevel(island, ref = "Torgersen"))
 
 ## A surprising result (Simpson's paradox)
 
-After seeing the versatility of linear regression it may be tempting to go ahead and fit linear models for any possible relationship in our data without much hesitation. However, it is often a good idea to perform EDA before any regression analysis to understand what relationships we can/should model and if the result from the regression makes sense according to our intuition. Sometimes a relationship will appear strange or surprising when performing linear regression. We fit a linear model on `body_mass_g ~ bill_depth_mm`, expecting that bigger penguins have bigger bills, i.e. bill depth. 
+After seeing the versatility of linear regression it may be tempting to go ahead and fit linear models for any possible relationship in our data without much hesitation. However, it is often a good idea to perform EDA before any regression analysis to understand what relationships we can/should model and if the result from the regression makes sense according to our intuition. Sometimes a relationship will appear strange or surprising when performing linear regression. We fit a linear model on `body_mass_g ~ bill_depth_mm`, expecting that bigger penguins have bigger bills, i.e. bill depth.
 
 ```{r}
-model_summary <- penguins |> 
-  lm(formula = body_mass_g ~ bill_depth_mm) |> 
+model_summary <- penguins |>
+  lm(formula = body_mass_g ~ bill_depth_mm) |>
   summary()
 model_summary$coefficients
 ```
@@ -299,34 +365,36 @@ We see that the coefficient for `bill_depth_mm` is negative, saying that body ma
 
 ```{r}
 #| warning: false
-penguins |> 
-  ggplot(aes(x = bill_depth_mm, y = body_mass_g)) + 
+penguins |>
+  ggplot(aes(x = bill_depth_mm, y = body_mass_g)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
-    x = "Bill depth (mm)", 
-    y = "Body mass (g)")
+      x = "Bill depth (mm)",
+      y = "Body mass (g)"
+  )
 ```
 
 Our plot confirms our result, but something seems "fishy": there are two clear "point clouds" in our plot and the line goes through both of them. We can suspect the clouds represents different groups or *categories*. We have learned before that the body mass is very different between the different species, so we can color the points based on the species and fit individual lines for each species and see if we can disentangle this strange relationship.
 
 ```{r}
 #| warning: false
-penguins |> 
-  ggplot(aes(x = bill_depth_mm, y = body_mass_g)) + 
+penguins |>
+  ggplot(aes(x = bill_depth_mm, y = body_mass_g)) +
   geom_point(aes(col = species)) +
   geom_smooth(aes(col = species), method = "lm", se = FALSE) +
   labs(
-    x = "Bill depth (mm)", 
-    y = "Body mass (g)",
-    col = "Species")
+      x = "Bill depth (mm)",
+      y = "Body mass (g)",
+      col = "Species"
+  )
 ```
 
 We see that the different species of penguins are responsible for the negative slope, and within each species it seems that the slope is indeed positive. This is an example of [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson's_paradox), where a relationship is different within subgroups. We can include `species` in our linear model using a + sign in the formula, `body_mass_g ~ bill_depth_mm + species` to account for the difference.
 
 ```{r}
-model_summary <- penguins |> 
-  lm(formula = body_mass_g ~ bill_depth_mm + species) |> 
+model_summary <- penguins |>
+  lm(formula = body_mass_g ~ bill_depth_mm + species) |>
   summary()
 model_summary$coefficients
 ```
@@ -340,14 +408,15 @@ In our new model we see that we have a positive relationship between bill depth 
 #| warning: false
 #| code-fold: true
 #| comment: "Code"
-penguins |> 
+penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(col = species)) +
   geom_smooth(method = "lm", se = FALSE, col = "black") +
   labs(
-    x = "Flipper length (mm)",
-    y = "Body mass (g)",
-    col = "Species")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)",
+      col = "Species"
+  )
 ```
 2. Fit the model `body_mass_g ~ flipper_length_mm + species` to find out!
 
@@ -357,48 +426,53 @@ We already predicted body mass based on flipper length using the fitted line and
 
 ```{r}
 #| warning: false
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 model |> predict(data.frame(flipper_length_mm = 200))
 ```
 
-We see that we get the same value as before (remember that we rounded the value in the plot). The line represents the average body weight for a given flipper length, but there is no guarantee that any one penguin will fall precisely on the line. We can calculate a *prediction interval* using the `predict` function to say something about the uncertainty in the prediction. To add a prediction interval we use the argument `interval = "prediction"` and *confidence level* `level = 0.95`. 
+We see that we get the same value as before (remember that we rounded the value in the plot). The line represents the average body weight for a given flipper length, but there is no guarantee that any one penguin will fall precisely on the line. We can calculate a *prediction interval* using the `predict` function to say something about the uncertainty in the prediction. To add a prediction interval we use the argument `interval = "prediction"` and *confidence level* `level = 0.95`.
 
 ```{r}
 #| warning: false
-model |> predict(data.frame(flipper_length_mm = 200), interval = "prediction", level = 0.95)
+model |> predict(
+    data.frame(flipper_length_mm = 200),
+    interval = "prediction",
+    level = 0.95
+)
 ```
 
-We now get two more outputs, the lower (lwr) and upper (upr) limits of our prediction. We see that the interval is quite big, and there is a lot of uncertainty regarding *one* penguin. The prediction interval can then be interpreted as "we are 95% *confident* that a new prediction will fall inside this interval", i.e. that if we observe a previously unseen penguin with flippers 200 mm long, we are 95% confident its body mass will be within the interval. We can visualize the prediction interval for all the flipper lengths observed in our sample. 
+We now get two more outputs, the lower (lwr) and upper (upr) limits of our prediction. We see that the interval is quite big, and there is a lot of uncertainty regarding *one* penguin. The prediction interval can then be interpreted as "we are 95% *confident* that a new prediction will fall inside this interval", i.e. that if we observe a previously unseen penguin with flippers 200 mm long, we are 95% confident its body mass will be within the interval. We can visualize the prediction interval for all the flipper lengths observed in our sample.
 
 ```{r}
 #| code-fold: true
 #| code-comment: "Code"
 #| warning: false
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 predictions <- model |> predict(penguins |> select(flipper_length_mm), interval = "prediction", level = 0.95) |> as.data.frame()
-penguins_pred <- penguins |> 
+penguins_pred <- penguins |>
   mutate(
     pred = predictions$fit,
     lwr = predictions$lwr,
     upr = predictions$upr)
 
-penguins_pred |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
+penguins_pred |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), col = "gray", alpha = 0.2) +
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
-    x = "Flipper length (mm)", 
-    y = "Body mass (g)")
+      x = "Flipper length (mm)",
+      y = "Body mass (g)"
+  )
 ```
 
-We see that most of our observations fall within the prediction interval, but on some occasions outside. With more data, the interval becomes tighter as the model is more "sure" about its predictions. 
+We see that most of our observations fall within the prediction interval, but on some occasions outside. With more data, the interval becomes tighter as the model is more "sure" about its predictions.
 
 <span style="color: gray;">Another common interval is the *confidence interval*. It informs about the uncertainty of the line itself, i.e. the *average* value of body mass for a give flipper length. It is always tighter than the prediction interval and you can visualize it by setting `se = TRUE` in `geom_smooth`. In this course we will focus on prediction intervals.</span>
 
-### Exercises 
+### Exercises
 
 1. Redo the predictions for flipper lengths 201 mm and 100 mm, this time using `predict` with `interval = "prediction", level = 0.95`.
 2. What happens with the interval if you set it to 0.5? Does it become bigger or smaller? Try it out!
@@ -412,6 +486,6 @@ So far we have only talked about the assumption that there is a linear relations
 -   **Normality**: The residuals of the model are normally distributed. This is also needed for inference.
 -   **Independence**: The observations are independent of each other (values of one observation do not influence the values of another). If they are not independent, the model may not generalize well to new data not used to fit the model.
 
-When performing linear regression outside of this course you should understand these assumptions in order to make valid analyses. 
+When performing linear regression outside of this course you should understand these assumptions in order to make valid analyses.
 
-In this chapter we have introduced simple linear regression with one predictor, except for when we included species along with bill depth. In the next chapter we will explore using multiple predictors and selecting between different models based on different variables in multiple linear regression. 
+In this chapter we have introduced simple linear regression with one predictor, except for when we included species along with bill depth. In the next chapter we will explore using multiple predictors and selecting between different models based on different variables in multiple linear regression.

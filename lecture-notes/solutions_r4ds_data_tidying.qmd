@@ -32,9 +32,23 @@ Not recommended, but here is a solution for table2, if you are interested. You d
 #| code-fold: true
 #| code-comment: Code
 table2 <- tibble(
-  country = c("Afghanistan", "Afghanistan", "Afghanistan", "Afghanistan", "Brazil", "Brazil"),
+  country = c(
+      "Afghanistan",
+      "Afghanistan",
+      "Afghanistan",
+      "Afghanistan",
+      "Brazil",
+      "Brazil"
+  ),
   year = c(1999, 1999, 2000, 2000, 1999, 1999),
-  type = c("cases", "population", "cases", "population", "cases", "population"),
+  type = c(
+      "cases",
+      "population",
+      "cases",
+      "population",
+      "cases",
+      "population"
+  ),
   count = c(745, 19987071, 2666, 20595360, 37737, 172006362)
 )
 

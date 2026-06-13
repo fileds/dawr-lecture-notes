@@ -1,7 +1,7 @@
-# Multiple logistic regression 
+# Multiple logistic regression
 Just as we expanded linear regression to multiple linear rgression, we will now study multiple logistic regression. You will see that the step from knowing multiple linear regression and logistic regression to multiple logistic regression will be a very small step. When performing multiple logistic regression the hypotheses and interpretations are similar to that of multiple linear regression, they also depend on the other variables included in the model. So any conclusions that we draw based on multiple regression is *always* conditioned on the other variables in the model.
 
-## Blood pressure and diabetes 
+## Blood pressure and diabetes
 We will again use the `PimaIndianDiabetes2` dataset, but this time we will start by looking at `pressure`, the diastolic blood pressure, as our predictor. We start by looking at the distribution over `pressure`.
 
 ```{r}
@@ -14,7 +14,7 @@ library(mlbench)
 data("PimaIndiansDiabetes2") # Using 2 because it is a corrected version.
 library(patchwork)
 p1 <- PimaIndiansDiabetes2 |>
-  ggplot(aes(y = pressure)) + 
+  ggplot(aes(y = pressure)) +
   facet_grid(~ diabetes) +
   geom_boxplot() +
   theme(
@@ -23,7 +23,7 @@ p1 <- PimaIndiansDiabetes2 |>
   ) +
   labs(y = "Diastolic blood pressure (mmHg)")
 p2 <- PimaIndiansDiabetes2 |>
-  ggplot(aes(x = pressure, fill = diabetes)) + 
+  ggplot(aes(x = pressure, fill = diabetes)) +
   geom_density(alpha = 0.5) +
   theme(
     legend.position = "top",
@@ -41,12 +41,16 @@ p1 + p2
 We see that there seems to be a slight relationship between blood pressure and diabetes, but the difference is not as clear as with glucose. Let's see if the result is significant in a simple logistic regression.
 
 ```{r}
-model <- glm(diabetes ~ pressure, data = PimaIndiansDiabetes2, family = "binomial")
+model <- glm(
+    diabetes ~ pressure,
+    data = PimaIndiansDiabetes2,
+    family = "binomial"
+)
 model_summary <- model |> summary()
 model_summary$coefficients
 ```
 
-We see that there is a statistically significant, positive relationship between blood pressure and having diabetes ($p = 5.72 \cdot 10^{-6}$) at significance level 0.05. What if we include more variables in our model, can there be some other explanation for the relationship between blood pressure and diabetes? 
+We see that there is a statistically significant, positive relationship between blood pressure and having diabetes ($p = 5.72 \cdot 10^{-6}$) at significance level 0.05. What if we include more variables in our model, can there be some other explanation for the relationship between blood pressure and diabetes?
 
 ## Fitting multiple logistic regression models
 Now we will create our multiple logistic regression model, including both `pressure` and `mass`, BMI. In the previous chapter we saw that `pressure` and `mass` have a positive linear correlation, indicating that BMI may have an effect on blood pressure, so how will it affect our logistic regression model? We state the hypotheses for the coefficient of both `mass` and `pressure`:
@@ -61,38 +65,38 @@ and
 
 > **$H_a$**: There *is* a relationship between blood pressure level and being diagnosed with diabetes, given that *BMI* is part of the model.*
 
-Now we are ready to fit our multiple logistic regression model. 
+Now we are ready to fit our multiple logistic regression model.
 
 ```{r}
-model <- PimaIndiansDiabetes2 |> 
+model <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ pressure + mass, family = "binomial")
 model |> summary()
 ```
 
 We see that both `mass` and `pressure` ar statistically significant when included in the model and that both increase the probability of diabetes, i.e. their coefficients are both positive.
 
-## Model selection 
+## Model selection
 
-We may also choose to include the variable `triceps`, which measures the triceps skin fold thickness that correlates with body fat. Let's fit a model using `triceps` instead of `mass`. 
+We may also choose to include the variable `triceps`, which measures the triceps skin fold thickness that correlates with body fat. Let's fit a model using `triceps` instead of `mass`.
 
 ```{r}
-model <- PimaIndiansDiabetes2 |> 
+model <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ pressure + triceps, family = "binomial")
 model |> summary()
 ```
 
-Again we see that both variables are significant at significance level 0.05, but which model is the best? In linear regression we could use the adjusted R$^2$, but it doesn't apply to logistic regression. Instead we are going to use the *Akaike Information Criterion* (AIC). AIC scales with the number of observations, so, in contrast to R$^2$, the AIC of a model on its own is not useful. Here we will use it to compare models and argue for one model over another. Later in this chapter we will introduce accuracy as a way of measuring the performance of a logistic regression model. 
+Again we see that both variables are significant at significance level 0.05, but which model is the best? In linear regression we could use the adjusted R$^2$, but it doesn't apply to logistic regression. Instead we are going to use the *Akaike Information Criterion* (AIC). AIC scales with the number of observations, so, in contrast to R$^2$, the AIC of a model on its own is not useful. Here we will use it to compare models and argue for one model over another. Later in this chapter we will introduce accuracy as a way of measuring the performance of a logistic regression model.
 
 To be able to tell which logistic regression model is better, we can look at the summary output and second to last line: "AIC". AIC estimates the prediction error of the model, where a lower AIC is better. We can compare the two models that we fitted before, either by looking at the summary output (see above), or using the `$` operator and `aic`.
 
 ```{r}
 # Triceps model
-model_triceps <- PimaIndiansDiabetes2 |> 
+model_triceps <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ pressure + triceps, family = "binomial")
 model_triceps_summary <- model_triceps |> summary()
 model_triceps_summary$aic
 # Mass
-model_bmi <- PimaIndiansDiabetes2 |> 
+model_bmi <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ pressure + mass, family = "binomial")
 model_bmi_summary <- model_bmi |> summary()
 model_bmi_summary$aic
@@ -100,7 +104,7 @@ model_bmi_summary$aic
 
 We see that the model including `triceps` and `pressure` has a lower AIC and is thus a preferable model.
 
-AIC is more similar to R$^2$ adjusted than R$^2$ in that it also penalizes more complex models. There is a "cost" to adding a new variable to the model and if it doesn't increase how well the model describes the data, the AIC will increase. 
+AIC is more similar to R$^2$ adjusted than R$^2$ in that it also penalizes more complex models. There is a "cost" to adding a new variable to the model and if it doesn't increase how well the model describes the data, the AIC will increase.
 
 ### Exercises
 
@@ -111,10 +115,10 @@ AIC is more similar to R$^2$ adjusted than R$^2$ in that it also penalizes more 
 
 When creating a multiple logistic regression model you may use any model selection strategy discussed in @sec-multlinreg-modelselectionstrategies. Whenever possible it is good to use domain or expert knowledge (D/E knowledge), and otherwise it is good to try either backward, forwards, or mixed selection and motivate the final model either based on AIC and significance or D/E knowledge.
 
-Adding more variables tend to reduce the AIC, as long as they improve the model more than the penalty of adding a variable. We saw this when comparing the models of with `triceps`, `mass`, and `pressure` alone vs the models including two or more variables. We can add all the variables in the dataset using the dot, `.`, and build a model using backward selection. 
+Adding more variables tend to reduce the AIC, as long as they improve the model more than the penalty of adding a variable. We saw this when comparing the models of with `triceps`, `mass`, and `pressure` alone vs the models including two or more variables. We can add all the variables in the dataset using the dot, `.`, and build a model using backward selection.
 
 ```{r}
-model <- PimaIndiansDiabetes2 |> 
+model <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ ., family = "binomial")
 model |> summary()
 ```
@@ -122,7 +126,7 @@ model |> summary()
 The AIC value reduced to 362.02, which is much lower than the previous models. But we have several variables that are not significantly related to `diabetes`, with `pressure` now having a $p$-value larger than 0.9. We remove `pressure` from our model using the formula `diabetes ~ . - pressure`.
 
 ```{r}
-model <- PimaIndiansDiabetes2 |> 
+model <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ . - pressure, family = "binomial")
 model_summary <- model |> summary()
 model_summary$aic
@@ -142,16 +146,20 @@ Just as with simple logistic regression we can use our model to predict. We need
 
 ```{r}
 # Triceps model
-model_triceps <- PimaIndiansDiabetes2 |> 
+model_triceps <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ pressure + triceps, family = "binomial")
-model_triceps |> predict(data.frame(pressure = 75, triceps = 30), type = "response")
+model_triceps |> predict(
+    data.frame(pressure = 75, triceps = 30),
+    type = "response"
+)
 ```
 
 The probability of the onset of diabetes within five years for a women of the Pima Indian population with diastolic blood pressure 75 mm Hg and 30 mm triceps skin fold thickness is $\sim 0.35$ according to our model. If we want our prediction to fall into the classes "diabetes positive" or "diabetes negative", we may use 0.5 as a cutoff. Then any predicted probability of more than 0.5 will be considered as positive and below 0.5 as negative. We can use the `ifelse` function to achieve this.
 
 ```{r}
 # Triceps model
-prediction_prob <- model_triceps |> predict(data.frame(pressure = 75, triceps = 30), type = "response")
+prediction_prob <- model_triceps |>
+    predict(data.frame(pressure = 75, triceps = 30), type = "response")
 ifelse(prediction_prob > 0.5, "pos", "neg")
 ```
 
@@ -162,16 +170,19 @@ In this case, the prediction is negative, since the probability was below 0.5.
 In addition to AIC, we can evaluate the performance of our model using prediction by measuring the *accuracy* of our model. Accuracy is the ratio of correct predictions over the total number of predictions, $\text{Accuracy} = \#\text{Correct predictions} / \#\text{Total predictions}$. We can calculate the accuracy of the model above on our dataset by predicting the probability of diabetes for all (complete) observations and then comparing to the observed values of `diabetes`. To compare with `diabetes`, we set the predicted outcome to positive, `pos`, if the predicted probability is larger than 0.5.
 
 ```{r}
-model <- PimaIndiansDiabetes2 |> 
+model <- PimaIndiansDiabetes2 |>
   glm(formula = diabetes ~ . - pressure, family = "binomial")
 # Calculating the accuracy
-accuracy <- PimaIndiansDiabetes2 |> 
+accuracy <- PimaIndiansDiabetes2 |>
   # Calculated the predicted probabilities for all observations
-  mutate(predicted_prob = model |> predict(PimaIndiansDiabetes2, type = "response")) |> 
+  mutate(
+      predicted_prob = model |>
+          predict(PimaIndiansDiabetes2, type = "response")
+  ) |>
   # Predicting the outcome
-  mutate(predicted_outcome = ifelse(predicted_prob > 0.5, "pos", "neg")) |> 
+  mutate(predicted_outcome = ifelse(predicted_prob > 0.5, "pos", "neg")) |>
   # Dropping predictions with missing values
-  filter(!is.na(predicted_outcome)) |> 
+  filter(!is.na(predicted_outcome)) |>
   # Summarizing Accuracy = # Correct predictions / # Total predictions
   summarize(accuracy = mean(predicted_outcome == diabetes)) |>
   # Pull accuracy to get the value
@@ -190,16 +201,27 @@ We see that our model has an accuracy of $\sim 0.78$, predicting the observed ou
 library(scales)
 hex <- hue_pal()(3)
 set.seed(42) # For reproducibility
-PimaIndiansDiabetes2 |> 
+PimaIndiansDiabetes2 |>
   # Calculated the predicted probabilities for all observations
-  mutate(predicted_prob = model |> predict(PimaIndiansDiabetes2, type = "response")) |> 
+  mutate(
+      predicted_prob = model |>
+          predict(PimaIndiansDiabetes2, type = "response")
+  ) |>
   # Dropping predictions with missing values
-  drop_na() |> 
+  drop_na() |>
   # Predicting the outcome
-  mutate(predicted_outcome = factor(ifelse(predicted_prob > 0.5, "pos", "neg"))) |> 
-  mutate(correct_prediction = factor(ifelse(predicted_outcome == diabetes, "yes", "no"))) |> 
-  mutate(index = row_number(), .by = diabetes) |> 
-  arrange(index) |> 
+  mutate(
+      predicted_outcome = factor(ifelse(predicted_prob > 0.5, "pos", "neg"))
+  ) |>
+  mutate(
+      correct_prediction = factor(ifelse(
+          predicted_outcome == diabetes,
+          "yes",
+          "no"
+      ))
+  ) |>
+  mutate(index = row_number(), .by = diabetes) |>
+  arrange(index) |>
   ggplot(aes(x = diabetes, y = index, col = correct_prediction)) +
   geom_jitter(alpha = 0.7) +
   labs(
@@ -218,47 +240,47 @@ We see that our model is better at predicting negative outcomes than positive ou
 
 <span style="color: gray;">Usually when calculating accuracy the data is split in a training and test set, where the model is trained on the training set and then the accuracy is tested on the test set. This way the models overfitting to the sample is evaluated as well.</span>
 
-### Exercises 
+### Exercises
 
-1. Calculate the accuracy of the model including all potential predictors, i.e. include `pressure`. Is the accuracy better? 
+1. Calculate the accuracy of the model including all potential predictors, i.e. include `pressure`. Is the accuracy better?
 2. Calculate the accuracy of the best model you found before (i.e. lowest AIC). How does it compare to the model including all variables?
-3. Run the code below to test the accuracy of the models with and without `pressure` using a training and test set. Try varying the seed. Do you think we should include pressure or not? Note: You don't have to use a training and test set in the assignments in this course. 
+3. Run the code below to test the accuracy of the models with and without `pressure` using a training and test set. Try varying the seed. Do you think we should include pressure or not? Note: You don't have to use a training and test set in the assignments in this course.
 ```{r}
 #| code-fold: true
 #| comment: Code
 #| eval: false
 # Set seed for reproducibility
-set.seed(42) 
+set.seed(42)
 
 # Create an index to keep track of subjects
-pima <- PimaIndiansDiabetes2 |> 
+pima <- PimaIndiansDiabetes2 |>
   drop_na() |> # Using only complete observations
   mutate(index = 1:n())
 
 # Create training and testing set
-training_set <- pima |> 
+training_set <- pima |>
   sample_frac(0.8) # Use 80% of the data in training set
-test_set <- pima |> 
+test_set <- pima |>
   anti_join(training_set, by = "index")
 
 # Train model on training set
-model <- training_set |> 
+model <- training_set |>
   glm(formula = diabetes ~ ., family = "binomial")
 
 # Evaluate model by accuracy on test set
-predictions <- model |> 
+predictions <- model |>
   predict(test_set, type = "response")
-test_set |> 
-  mutate(prediction = ifelse(predictions > 0.5, "pos", "neg")) |> 
+test_set |>
+  mutate(prediction = ifelse(predictions > 0.5, "pos", "neg")) |>
   summarize(accuracy = mean(prediction == diabetes))
 ```
 4. Consider a very unbalanced dataset of 100 observations with a binary outcome, "yes" or "no". In the dataset, 90% of the observations have outcome "yes". What accuracy would a model that always predicts "yes" get? Hint: This exercise is better done with pen and paper, using the formula for accuracy.
 
 ## Summary
 
-This concludes the part on logistic regression. We have seen that logistic regression is suitable when our outcome is a *binary* categorical variable, how to compare logistic regression models, and how to compute accuracy. 
+This concludes the part on logistic regression. We have seen that logistic regression is suitable when our outcome is a *binary* categorical variable, how to compare logistic regression models, and how to compute accuracy.
 
-When faced with a modelling problem, it is important to understand if it is a regression problem or classification problem and select an appropriate method, e.g. linear or logistic regression, where regression problems deal with continuous outcomes and classification problems categorical outcomes. 
+When faced with a modelling problem, it is important to understand if it is a regression problem or classification problem and select an appropriate method, e.g. linear or logistic regression, where regression problems deal with continuous outcomes and classification problems categorical outcomes.
 
 After these chapters you should be able to identify the type of problem and apply the appropriate method.
 

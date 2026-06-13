@@ -5,7 +5,7 @@ For a more technical/mathematical introduction to logistic regression, please co
 
 ## The Pima Indians dataset
 
-To demonstrate logistic regression we will use the `PimaIndiansDiabetes2` dataset from the `mlbench` package. The dataset is commonly used to test classification algorithms, predicting the onset of diabetes. The subjects consists of women aged 21 or older of the [Pima Indian](https://en.wikipedia.org/wiki/Akimel_O'odham) population. Measurements of the potential predictors were made every other year, but only one measurement per person is included in our dataset. A subject was classified as diabetic, according to WHO's criteria, if a subject had a [Glucose Tolerance Test (GTT)](https://www.ncbi.nlm.nih.gov/books/NBK532915/) show more than 200 mg/dl 2 hours after ingesting 75 g of carbohydrate solution within five years of the included measurement. To better understand the case selection, look at section 2.3 in the [original paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2245318/). Below is a table of the potential predictors and the outcome, `diabetes`, and their descriptions from running `?PimaIndiansDiabetes2`. 
+To demonstrate logistic regression we will use the `PimaIndiansDiabetes2` dataset from the `mlbench` package. The dataset is commonly used to test classification algorithms, predicting the onset of diabetes. The subjects consists of women aged 21 or older of the [Pima Indian](https://en.wikipedia.org/wiki/Akimel_O'odham) population. Measurements of the potential predictors were made every other year, but only one measurement per person is included in our dataset. A subject was classified as diabetic, according to WHO's criteria, if a subject had a [Glucose Tolerance Test (GTT)](https://www.ncbi.nlm.nih.gov/books/NBK532915/) show more than 200 mg/dl 2 hours after ingesting 75 g of carbohydrate solution within five years of the included measurement. To better understand the case selection, look at section 2.3 in the [original paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2245318/). Below is a table of the potential predictors and the outcome, `diabetes`, and their descriptions from running `?PimaIndiansDiabetes2`.
 
 | Variable  | Description                                  |
 |-----------|----------------------------------------------|
@@ -19,9 +19,9 @@ To demonstrate logistic regression we will use the `PimaIndiansDiabetes2` datase
 | age       | Age (years)                                  |
 | diabetes  | Class variable, pos/neg                      |
 
-We can see that the information doesn't tell us about how diabetes was classified, risking confusion as `glucose` represents a GTT at *an earlier time* than when diabetes was classified. If it would have been the at the same time `glucose` would have been a perfect predictor for diabetes, as `glucose` $> 200$ would imply diabetic and `glucose` $< 200$ not diabetic. This highlights the importance of understanding the dataset and the context, as presenting these results to a diabetes researcher without this information would be embarrassing.  
+We can see that the information doesn't tell us about how diabetes was classified, risking confusion as `glucose` represents a GTT at *an earlier time* than when diabetes was classified. If it would have been the at the same time `glucose` would have been a perfect predictor for diabetes, as `glucose` $> 200$ would imply diabetic and `glucose` $< 200$ not diabetic. This highlights the importance of understanding the dataset and the context, as presenting these results to a diabetes researcher without this information would be embarrassing.
 
-Now when we know how the dataset was created, let's take a `glimpse` at it. 
+Now when we know how the dataset was created, let's take a `glimpse` at it.
 
 ```{r}
 #| warning: false
@@ -37,7 +37,7 @@ We see that we have some missing values and that all potential predictors are nu
 ```{r}
 #| warning: false
 PimaIndiansDiabetes2 |>
-  ggplot(aes(x = diabetes, y = glucose)) + 
+  ggplot(aes(x = diabetes, y = glucose)) +
   geom_boxplot() +
   labs(
     x = "Diabetes",
@@ -59,8 +59,8 @@ We may try to `mutate` diabetes to a numerical variable, where having diabetes i
 #| error: true
 PimaIndiansDiabetes2_numeric <- PimaIndiansDiabetes2 |>
   mutate(diabetes_num = ifelse(diabetes == "pos", 1, 0))
-PimaIndiansDiabetes2_numeric |>  
-  lm(formula = diabetes_num ~ glucose) |> 
+PimaIndiansDiabetes2_numeric |>
+  lm(formula = diabetes_num ~ glucose) |>
   summary()
 ```
 
@@ -76,7 +76,7 @@ PimaIndiansDiabetes2_numeric |>
    y = "Probability of diabetes",
    col = "Diabetes")
 ```
-  
+
 Some glucose levels seem to give a negative probability for having diabetes, which is not possible, so the interpretation of the model as assigning a probability of diabetes to a given glucose level doesn't work either. Linear regression is not suitable for either categorical outcomes or for estimating probabilities. Instead we should use *logistic regression*.
 
 ### Exercises
@@ -86,7 +86,7 @@ Some glucose levels seem to give a negative probability for having diabetes, whi
 
 ## Using logistic regression
 
-Unlike linear regression, logistic regression models the probability of having diabetes for a given glucose level. It models the relationships between the explanatory variables and the outcome through the *logistic function*. In this course we will not go into details of the function itself, but we can visualize it 
+Unlike linear regression, logistic regression models the probability of having diabetes for a given glucose level. It models the relationships between the explanatory variables and the outcome through the *logistic function*. In this course we will not go into details of the function itself, but we can visualize it
 
 <span style="color: gray;">Technically logistic regression models the log-odds, but we can always transform the log-odds to probabilities.</span>
 
@@ -94,9 +94,14 @@ Unlike linear regression, logistic regression models the probability of having d
 ```{r}
 #| warning: false
 PimaIndiansDiabetes2 |>
-  mutate(diabetes_num = ifelse(diabetes == "pos", 1, 0)) |> # Necessary for the geom_smooth
+  # Mutate diabetes to 0, 1 instead of pos, neg (necessary for geom_smooth)
+  mutate(diabetes_num = ifelse(diabetes == "pos", 1, 0)) |>
   ggplot(aes(x = glucose, y = diabetes_num)) +
-  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) +
+  geom_smooth(
+      method = "glm",
+      method.args = list(family = "binomial"),
+      se = FALSE
+  ) +
   geom_point(aes(col = diabetes)) +
   labs(
    x = "Glucose level (mg/dl)",
@@ -113,7 +118,11 @@ Using logistic regression, all probabilities fall nicely within 0 and 1, and we 
 Now we are ready to fit our logistic model.
 
 ```{r}
-model <- glm(diabetes ~ glucose, data = PimaIndiansDiabetes2, family = "binomial")
+model <- glm(
+    diabetes ~ glucose,
+    data = PimaIndiansDiabetes2,
+    family = "binomial"
+)
 summary(model)
 ```
 
@@ -134,9 +143,9 @@ According to our model, the probability of having diabetes of a woman in the Pim
 
 Now we have studied the relationship between one continuous variable and the outcome. Just as with linear regression before, we can study the relationship between multiple predictors and `diabetes` using multiple logistic regression, which is the topic of the next chapter.
 
-### Exercises 
+### Exercises
 
-1. Use your previously fitted models of `diabetes ~ pressure` and `diabetes ~ mass` to predict probabilities of getting diabetes given `pressure = 90` and `mass = 25`. 
+1. Use your previously fitted models of `diabetes ~ pressure` and `diabetes ~ mass` to predict probabilities of getting diabetes given `pressure = 90` and `mass = 25`.
 2. Based on the following plot, what glucose level would generate a prediction of above 0.9 probability of diabetes? Verify using `predict`.
 ```{r}
 #| warning: false
@@ -145,7 +154,11 @@ Now we have studied the relationship between one continuous variable and the out
 PimaIndiansDiabetes2 |>
   mutate(diabetes_num = ifelse(diabetes == "pos", 1, 0)) |>
   ggplot(aes(x = glucose, y = diabetes_num)) +
-  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) +
+  geom_smooth(
+      method = "glm",
+      method.args = list(family = "binomial"),
+      se = FALSE
+  ) +
   geom_point(aes(col = diabetes)) +
   geom_hline(
     yintercept = 0.9,

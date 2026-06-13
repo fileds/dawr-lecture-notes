@@ -7,7 +7,7 @@ penguins |>
   ggplot(aes(...))
 ```
 
-instead of 
+instead of
 
 ```r
 ggplot(data = penguins, mapping = aes(...))
@@ -21,6 +21,7 @@ and it doesn't matter which one you choose to do for this exercise. However, as 
 First we need to load the necessary libraries.
 
 ```{r}
+#| warning: false
 library(tidyverse)
 library(palmerpenguins)
 ```
@@ -69,7 +70,7 @@ penguins |>
   geom_histogram(alpha = 0.5)
 ```
 
-Note that we set `alpha = 0.5` to make the bins slightly transparent. Which one to do you prefer? 
+Note that we set `alpha = 0.5` to make the bins slightly transparent. Which one to do you prefer?
 
 ### Exercise 5
 We haven't defined any aesthetic mappings! Plots need at least an x or y aestethic mapped.
@@ -114,7 +115,7 @@ ggplot(
   geom_smooth(se = FALSE)
 ```
 
-We now color based on the categorical variable *island* instead. Now we see that our `geom_smooth` indeed is affected, as it now creates one line for each of the different islands. 
+We now color based on the categorical variable *island* instead. Now we see that our `geom_smooth` indeed is affected, as it now creates one line for each of the different islands.
 
 We have also set `se = FALSE`, which means that we do not see the shaded area around the curve. *se* stands for Standard Error and tells us about the uncertainty of the line at different points. We do not expect you to fully understand or know this concept now, but it can be useful to at least get an idea of whats going on.
 
@@ -143,7 +144,7 @@ p2 <- ggplot() +
 p1 + p2
 ```
 
-We see that it doesn't make a difference. We can define aesthetics globally in `ggplot` or locally in each `geom_`. However, it is better to define as much as possible in `ggplot`, as it makes it clear for you writing the code and someone reading the code what the plot will show. 
+We see that it doesn't make a difference. We can define aesthetics globally in `ggplot` or locally in each `geom_`. However, it is better to define as much as possible in `ggplot`, as it makes it clear for you writing the code and someone reading the code what the plot will show.
 
 Here we used `library(patchwork` to put the plots next to each other. You can try it out, but you don't have to use it!
 
@@ -156,7 +157,7 @@ penguins |>
   geom_bar()
 ```
 
-The bars now extend horizontally. 
+The bars now extend horizontally.
 
 ### Exercise 2
 ```{r}
@@ -171,22 +172,22 @@ p2 <- penguins |>
 p1 + p2
 ```
 
-`fill` is usually the more interesting property to adjust when it is applicable. Colors and fills are useful to play around with to make it easier for the reader, and sometimes ourselves. Maybe a more useful coloring is one color for each species and a colorscheme that is suitable to colorblind people? 
+`fill` is usually the more interesting property to adjust when it is applicable. Colors and fills are useful to play around with to make it easier for the reader, and sometimes ourselves. Maybe a more useful coloring is one color for each species and a colorscheme that is suitable to colorblind people?
 
 ```{r}
 # We import the ggthemes package to get the scale_fill_colorblind
 library(ggthemes)
 penguins |>
   ggplot(aes(y = species, fill = species)) +
-  geom_bar() + 
+  geom_bar() +
   scale_fill_colorblind()
 ```
 
 
 ### Exercise 3
-To find out, we can look at `?geom_histogram`. 
+To find out, we can look at `?geom_histogram`.
 
-> bins	
+> bins
 > Number of bins. Overridden by binwidth. Defaults to 30.
 
 Selecting number of bins can affect the perception of the histogram, and of the data.
@@ -206,7 +207,7 @@ p1 + p2
 Which one is better depends on the data and what features you are interested in. If the histogram doesn't look like you would expect, changing number of bins may be a good idea. Try using `binwidth` as well, as that may be more intuitive to derive from the data.
 
 ### Exercise 4
-First it's a good idea to get a `glimpse` of the `diamonds` data. `glimpse` is a function that gives a quick overview, a *glimpse*, of a data frame. 
+First it's a good idea to get a `glimpse` of the `diamonds` data. `glimpse` is a function that gives a quick overview, a *glimpse*, of a data frame.
 
 ```{r}
 glimpse(diamonds)
@@ -234,7 +235,7 @@ An example of multiple densities, colored by `cut`.
 ```{r}
 diamonds |>
   ggplot(aes(x = carat, col = cut)) +
-  geom_density() 
+  geom_density()
 ```
 
 
@@ -269,7 +270,12 @@ It is possible to map the same variable to multiple aesthetics and it can even b
 
 ```{r}
 mpg |>
-  ggplot(aes(x = hwy, y = displ, col = as.factor(cyl), shape = as.factor(cyl))) +
+  ggplot(aes(
+      x = hwy,
+      y = displ,
+      col = as.factor(cyl),
+      shape = as.factor(cyl)
+  )) +
   geom_point()
 ```
 
@@ -282,9 +288,9 @@ penguins |>
   geom_point()
 ```
 
-Now it becomes obvious that the different species in our data was responsible for different patterns. 
+Now it becomes obvious that the different species in our data was responsible for different patterns.
 
-Interesting fact: This is an example of Simpson's paradox: when a relationship between two variables doesn't show up for the whole population (all penguins) but shows up in sub-populations (the different species). 
+Interesting fact: This is an example of Simpson's paradox: when a relationship between two variables doesn't show up for the whole population (all penguins) but shows up in sub-populations (the different species).
 
 We will try faceting as well
 ```{r}
@@ -294,10 +300,10 @@ penguins |>
   facet_wrap(~species)
 ```
 
-Which one do you think is most useful? 
+Which one do you think is most useful?
 
 ### Exercise 6
-Legends take the name from the aesthetic mapping that creates them, in this case `species`. When we manually rename a legend, as in `labs(color = "Species")`, it only affects the specified aesthetic, i.e. `color`. We can remedy this by specifying the same label for shape, as below. 
+Legends take the name from the aesthetic mapping that creates them, in this case `species`. When we manually rename a legend, as in `labs(color = "Species")`, it only affects the specified aesthetic, i.e. `color`. We can remedy this by specifying the same label for shape, as below.
 
 ```{r}
 penguins |>
@@ -326,7 +332,7 @@ In the first plot, `p1`, we can answer what fraction of the total number of peng
 Note that it is good practice to save you plots as PDF whenever it is possible. PDF is a form of *vector graphics*, this enables you to zoom as much as you want without the image becoming "pixely". It is also good practice to always reflect on and specify `width` and `height` of your plots to make sure the format suits your needs.
 
 ### Exercise 1 & 2
-The last plot is always the one to be saved. If you have multiple plots and want to save all of them, put a `ggsave` after each plot. To save as pdf, specify `.pdf` in the filename. 
+The last plot is always the one to be saved. If you have multiple plots and want to save all of them, put a `ggsave` after each plot. To save as pdf, specify `.pdf` in the filename.
 
 ```r
 penguins |>

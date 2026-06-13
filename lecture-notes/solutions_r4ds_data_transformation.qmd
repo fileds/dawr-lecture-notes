@@ -3,6 +3,7 @@
 To run these solutions you need to load the necessary libraries.
 
 ```{r}
+#| warning: false
 library(tidyverse)
 library(nycflights13)
 ```
@@ -13,7 +14,7 @@ As always, its good to take a `glimpse` at the data
 glimpse(flights)
 ```
 
-That's a lot of flights! Anyway... 
+That's a lot of flights! Anyway...
 
 ## 4.2 Rows
 ### Exercise 1
@@ -38,18 +39,18 @@ flights |>
 
 # Departed in summer (July, August, and September)
 flights |>
-  filter(month %in% c(7, 8, 9)) 
+  filter(month %in% c(7, 8, 9))
 
 # Arrived more than two hours late, but didn’t leave late
 flights |>
-  filter(arr_delay > 120 & dep_delay <= 0) 
+  filter(arr_delay > 120 & dep_delay <= 0)
 
 # Were delayed by at least an hour, but made up over 30 minutes in flight
 flights |>
-  filter(dep_delay > 60 & arr_delay < 30) 
+  filter(dep_delay > 60 & arr_delay < 30)
 ```
 
-In this solution we used both `|` and `%in%`. When you have multiple conditions the `%in%` operator can be more concise and easier to understand. `|` or more specifically `||` is a more traditional way of indicating *or* conditions, but this is outside of the scope of this course. 
+In this solution we used both `|` and `%in%`. When you have multiple conditions the `%in%` operator can be more concise and easier to understand. `|` or more specifically `||` is a more traditional way of indicating *or* conditions, but this is outside of the scope of this course.
 
 ### Exercise 2
 Here we fist `arrange` by `dep_delay` in `desc`-ending order to find the flights with the longest delay. We also use `relocate`, which is introduced in 4.2.6 to move the column to the left in the tibble so it is visible in our output.
@@ -78,7 +79,7 @@ flights |>
 ```
 
 ### Exercise 3
-Here we remember our high school physics, speed = distance / time. Remember to use `desc` to get the 
+Here we remember our high school physics, speed = distance / time. Remember to use `desc` to get the
 
 ```{r}
 flights |>
@@ -105,8 +106,8 @@ flights |>
 
 We see that there are 365 distinct values and 2013 was not a leap year, so there were flights everyday of 2013. It is not necessary to use `count`, but the output is more concise.
 
-### Exercise 5 
-We simply `arrange` with (longest flights) or without (shortest flights) `desc`. 
+### Exercise 5
+We simply `arrange` with (longest flights) or without (shortest flights) `desc`.
 
 ```{r}
 flights |>
@@ -177,9 +178,9 @@ flights |>
 # A unintuitive and not recommended solution, using mutate and .keep = used
 flights |>
   mutate(
-    dep_time = dep_time, 
-    dep_delay = dep_delay, 
-    arr_time = arr_time, 
+    dep_time = dep_time,
+    dep_delay = dep_delay,
+    arr_time = arr_time,
     arr_delay = arr_delay,
     .keep = "used") |>
   names()
@@ -194,16 +195,23 @@ flights |>
 ```
 
 ### Exercise 4
-`any_of` can be used to select any matching variables in the vector. 
+`any_of` can be used to select any matching variables in the vector.
 ```{r}
 variables <- c("year", "month", "day", "dep_delay", "arr_delay")
 flights |>
   select(any_of(variables)) |>
   head(3)
 ```
-produces the same result as 
+produces the same result as
 ```{r}
-variables <- c("bill_depth_mm", "year", "month", "day", "dep_delay", "arr_delay")
+variables <- c(
+    "bill_depth_mm",
+    "year",
+    "month",
+    "day",
+    "dep_delay",
+    "arr_delay"
+)
 flights |>
   select(any_of(variables)) |>
   head(3)
@@ -211,7 +219,14 @@ flights |>
 while `all_of` would produce an error
 ```{r}
 #| error: true
-variables <- c("bill_depth_mm", "year", "month", "day", "dep_delay", "arr_delay")
+variables <- c(
+    "bill_depth_mm",
+    "year",
+    "month",
+    "day",
+    "dep_delay",
+    "arr_delay"
+)
 flights |>
   select(all_of(variables)) |>
   head(3)
@@ -221,7 +236,7 @@ These functions may be useful if you select variables across multiple data frame
 
 ### Exercise 5
 ```{r}
-flights |> 
+flights |>
   select(contains("TIME")) |>
   head(3)
 ```
@@ -229,14 +244,14 @@ flights |>
 The default behavior is to ignore case, `ignore.case = TRUE`. Set it to `FALSE` to match case
 
 ```{r}
-flights |> 
+flights |>
   select(contains("TIME", ignore.case = FALSE)) |>
   head(3)
 ```
 
 ### Exercise 6
 ```{r}
-flights |> 
+flights |>
   rename(air_time_min = air_time) |>
   relocate(air_time_min) |>
   head(3)
@@ -246,7 +261,7 @@ flights |>
 By `select`-ing `tailnum` we drop all other columns. Thus there is no column called `arr_delay` anymore.
 
 ```{r}
-flights |> 
+flights |>
   select(tailnum) |>
   head(3)
 ```
@@ -282,7 +297,7 @@ flights |>
   summarize(
     n = n(),
     .groups = "drop") |>
-  ggplot(aes(x = dest, y = carrier, col = n)) + 
+  ggplot(aes(x = dest, y = carrier, col = n)) +
   geom_tile()
 ```
 
@@ -314,7 +329,7 @@ First we average `dep_delay` grouped by `hour`. Remember to use `na.rm =TRUE` to
 ```{r}
 avg_delays <- flights |>
   summarize(
-    avg_dep_delay = mean(dep_delay, na.rm = TRUE), 
+    avg_dep_delay = mean(dep_delay, na.rm = TRUE),
     .by = hour) |>
   arrange(desc(avg_dep_delay))
 avg_delays |> head(5)
@@ -327,8 +342,8 @@ Since both `hour` and `dep_delay` are numerical variables, we may use a scatter 
 ```{r}
 avg_delays |>
   arrange(hour) |>
-  ggplot(aes(x = hour, y = avg_dep_delay)) + 
-  geom_histogram(stat = "identity") + 
+  ggplot(aes(x = hour, y = avg_dep_delay)) +
+  geom_histogram(stat = "identity") +
   geom_freqpoly(stat = "identity")
 ```
 
@@ -340,17 +355,17 @@ When we `slice` using e negative value we *drop* rows instead of selecting them.
 ```{r}
 avg_delays |>
   slice_min(
-    avg_dep_delay, 
+    avg_dep_delay,
     n = -17)
 ```
 
 ### Exercise 5
-`count` counts the number of occurences of a value of a variable. If we set the `sort` parameter to `TRUE` the resulting tibble will be sorted according to the counts. Compare with `distinct`. Below we count the number of flights departing at each `hour`. 
+`count` counts the number of occurences of a value of a variable. If we set the `sort` parameter to `TRUE` the resulting tibble will be sorted according to the counts. Compare with `distinct`. Below we count the number of flights departing at each `hour`.
 
 ```{r}
 flights |>
   count(
-    hour, 
+    hour,
     sort = TRUE) |>
   head(3)
 ```
@@ -361,7 +376,7 @@ We see that most flights depart in the morning. An interesting question is why t
 flights |>
   mutate(arr_hour = floor(arr_time / 100)) |>
   count(
-    arr_hour, 
+    arr_hour,
     sort = TRUE) |>
   head(5)
 ```
@@ -433,4 +448,4 @@ df |>
   mutate(mean_x = mean(x))
 ```
 
-In the first piece of code we `summarize` over `z` and the resulting tibble only has the unique values of `z`. In the second piece of code we create a new variable with the mean value of `x` for each combination of `y` and `z`. 
+In the first piece of code we `summarize` over `z` and the resulting tibble only has the unique values of `z`. In the second piece of code we create a new variable with the mean value of `x` for each combination of `y` and `z`.

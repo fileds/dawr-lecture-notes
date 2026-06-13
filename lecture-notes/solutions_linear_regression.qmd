@@ -1,6 +1,6 @@
 # Linear regression
 
-## Setup 
+## Setup
 
 First we load the dataset and have a `glimpse` at it.
 
@@ -19,23 +19,39 @@ We see that the average body weight for a penguin with flipper length of 201 mm 
 ```{r}
 #| warning: false
 x <- 201
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 prediction <- data.frame(
   flipper_length_mm = x,
   body_mass_g = model |> predict(data.frame(flipper_length_mm = x)))
 
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  geom_segment(x = prediction$flipper_length_mm, xend = prediction$flipper_length_mm,  y = 0, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
-  geom_segment(x = 0, xend = prediction$flipper_length_mm,  y = prediction$body_mass_g, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_segment(
+      x = prediction$flipper_length_mm,
+      xend = prediction$flipper_length_mm,
+      y = 0,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
+  geom_segment(
+      x = 0,
+      xend = prediction$flipper_length_mm,
+      y = prediction$body_mass_g,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
   scale_x_continuous(breaks = c(prediction$flipper_length_mm)) +
   scale_y_continuous(breaks = round(c(prediction$body_mass_g))) +
-  geom_point(data = prediction, col = "red", size = 3) + 
+  geom_point(data = prediction, col = "red", size = 3) +
   labs(
-    x = "Flipper length (mm)", 
+    x = "Flipper length (mm)",
     y = "Body mass (g)")
 ```
 
@@ -46,23 +62,39 @@ The predicted average body mass is -812 g, which doesn't seem to make any sense!
 ```{r}
 #| warning: false
 x <- 100
-model <- penguins |> 
+model <- penguins |>
   lm(formula = body_mass_g ~ flipper_length_mm)
 prediction <- data.frame(
   flipper_length_mm = x,
   body_mass_g = model |> predict(data.frame(flipper_length_mm = x)))
 
-penguins |> 
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  geom_segment(x = prediction$flipper_length_mm, xend = prediction$flipper_length_mm,  y = 0, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
-  geom_segment(x = 0, xend = prediction$flipper_length_mm,  y = prediction$body_mass_g, yend = prediction$body_mass_g, color = "black", linetype = 2, linewidth = 0.2) +
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_segment(
+      x = prediction$flipper_length_mm,
+      xend = prediction$flipper_length_mm,
+      y = 0,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
+  geom_segment(
+      x = 0,
+      xend = prediction$flipper_length_mm,
+      y = prediction$body_mass_g,
+      yend = prediction$body_mass_g,
+      color = "black",
+      linetype = 2,
+      linewidth = 0.2
+  ) +
   scale_x_continuous(breaks = c(prediction$flipper_length_mm)) +
   scale_y_continuous(breaks = round(c(prediction$body_mass_g))) +
-  geom_point(data = prediction, col = "red", size = 3) + 
+  geom_point(data = prediction, col = "red", size = 3) +
   labs(
-    x = "Flipper length (mm)", 
+    x = "Flipper length (mm)",
     y = "Body mass (g)")
 ```
 
@@ -70,7 +102,7 @@ penguins |>
 ### Exercise 1
 
 ```{r}
-model <- penguins |> 
+model <- penguins |>
   lm(formula = flipper_length_mm ~ body_mass_g)
 summary(model)
 ```
@@ -79,12 +111,12 @@ The linear model doesn't care which variable is the dependent and independent va
 
 ```{r}
 #| warning: false
-penguins |> 
-  ggplot(aes(x = body_mass_g, y = flipper_length_mm)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
+penguins |>
+  ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
-    x = "Flipper length (mm)", 
+    x = "Flipper length (mm)",
     y = "Body mass (g)")
 ```
 
@@ -98,10 +130,10 @@ day <- seq(0, 12, length.out = 356)
 sales <- 400 * sin(pi * day / 12)
 ice_cream <- tibble(day = day, sales = sales)
 
-ice_cream |> 
-  ggplot(aes(x = day, y = sales)) + 
-  geom_point() + 
-  geom_smooth(method = "lm") + 
+ice_cream |>
+  ggplot(aes(x = day, y = sales)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
   scale_x_continuous(
     breaks = seq(0, 12)) +
   labs(
@@ -112,8 +144,8 @@ ice_cream |>
 We see that the $p$-value is 1, there is no significant relationship. It is important to remember that we are looking for a *linear* relationship when performing linear regression. It will not detect any other relationship.
 
 ```{r}
-ice_cream |> 
-  lm(formula = sales ~ day) |> 
+ice_cream |>
+  lm(formula = sales ~ day) |>
   summary()
 ```
 
@@ -122,7 +154,7 @@ ice_cream |>
 We see that we get one coefficient for Chinstrap and one for Gentoo. The value, under "Estimate" is the difference from the Adelie penguins in average body weight, compare with the values computed below.
 
 ```{r}
-penguins |> 
+penguins |>
   lm(formula = body_mass_g ~ species) |>
   summary()
 ```
@@ -131,16 +163,16 @@ We can check this
 
 ```{r}
 # Calculating mean body weight for each species
-adelie_mean <- penguins |> 
-  filter(species == "Adelie") |> 
+adelie_mean <- penguins |>
+  filter(species == "Adelie") |>
   pull(body_mass_g) |>
   mean(na.rm = TRUE)
-chinstrap_mean <- penguins |> 
-  filter(species == "Chinstrap") |> 
+chinstrap_mean <- penguins |>
+  filter(species == "Chinstrap") |>
   pull(body_mass_g) |>
   mean(na.rm = TRUE)
-gentoo_mean <- penguins |> 
-  filter(species == "Gentoo") |> 
+gentoo_mean <- penguins |>
+  filter(species == "Gentoo") |>
   pull(body_mass_g) |>
   mean(na.rm = TRUE)
 
@@ -149,7 +181,7 @@ chinstrap_mean - adelie_mean
 gentoo_mean - adelie_mean
 ```
 
-In addition to comparing the means the linear regression outputs $p$-values that tests if there is a significant difference between the species. Only the difference between Adelie and Gentoos is significant. 
+In addition to comparing the means the linear regression outputs $p$-values that tests if there is a significant difference between the species. Only the difference between Adelie and Gentoos is significant.
 
 ### Exercise 4
 
@@ -169,7 +201,7 @@ male_gentoo_body_mass <- penguins |>
 t.test(male_gentoo_body_mass, female_gentoo_body_mass)
 
 # Linear regression
-penguins |> 
+penguins |>
   filter(species == "Gentoo") |>
   lm(formula = body_mass_g ~ sex) |>
   summary()
@@ -182,8 +214,8 @@ penguins |>
 We start with the linear model.
 
 ```{r}
-penguins |> 
-  lm(formula = body_mass_g ~ island) |> 
+penguins |>
+  lm(formula = body_mass_g ~ island) |>
   summary()
 ```
 
@@ -193,12 +225,12 @@ We see that the coefficients for both Dream and Torgersen are significant, but l
 #| warning: false
 #| code-fold: true
 #| comment: "Code"
-mean_bws <- penguins |> 
+mean_bws <- penguins |>
   summarize(
     body_mass_g = mean(body_mass_g, na.rm = TRUE),
     .by = island)
-penguins |> 
-  ggplot(aes(x = body_mass_g, fill = island)) + 
+penguins |>
+  ggplot(aes(x = body_mass_g, fill = island)) +
   geom_density(alpha = 0.3) +
   geom_vline(
     aes(
@@ -214,7 +246,7 @@ penguins |>
         axis.ticks.y = element_blank())
 ```
 
-We see that `lm` choose Biscoe as the reference island, making the coefficients for both the other islands significant. The result would have been different if Dream or Torgersen would've been the reference. 
+We see that `lm` choose Biscoe as the reference island, making the coefficients for both the other islands significant. The result would have been different if Dream or Torgersen would've been the reference.
 
 ### Exercise 2
 
@@ -222,9 +254,10 @@ We set Torgersen as reference and rerun the linear regression.
 
 ```{r}
 #| eval: false
-penguins_re <- penguins |> mutate(island = relevel(island, ref = "Torgersen"))
-model_summary <- penguins_re |> 
-  lm(formula = body_mass_g ~ island) |> 
+penguins_re <- penguins |>
+    mutate(island = relevel(island, ref = "Torgersen"))
+model_summary <- penguins_re |>
+  lm(formula = body_mass_g ~ island) |>
   summary()
 model_summary$coefficients
 ```
@@ -236,7 +269,7 @@ We see that now only Biscoe is significant.
 Gentoos only exists on Biscoe, which is the island with the significant difference in body weight. It is fair to assume that species is more responsible than island for the effect we see on body mass.
 
 ```{r}
-penguins |> 
+penguins |>
   ggplot(aes(x = island, fill = species)) +
   geom_bar() +
   labs(
@@ -247,12 +280,12 @@ penguins |>
 
 ### Exercise 4
 
-We see that island doesn't have a significant effect on the Adelie penguins body mass and the coefficients are quite small in comparison to the total body mass of the average penguin. 
+We see that island doesn't have a significant effect on the Adelie penguins body mass and the coefficients are quite small in comparison to the total body mass of the average penguin.
 
 ```{r}
-model_summary <- penguins |> 
-  filter(species == "Adelie") |>  
-  lm(formula = body_mass_g ~ island) |> 
+model_summary <- penguins |>
+  filter(species == "Adelie") |>
+  lm(formula = body_mass_g ~ island) |>
   summary()
 model_summary$coefficients
 ```
@@ -260,14 +293,14 @@ model_summary$coefficients
 We can visualize the result to see that it seems to make sense.
 
 ```{r}
-mean_bws <- penguins |> 
-  filter(species == "Adelie") |>  
+mean_bws <- penguins |>
+  filter(species == "Adelie") |>
   summarize(
     body_mass_g = mean(body_mass_g, na.rm = TRUE),
     .by = island)
-penguins |> 
-  filter(species == "Adelie") |>  
-  ggplot(aes(x = body_mass_g, fill = island, col = island)) + 
+penguins |>
+  filter(species == "Adelie") |>
+  ggplot(aes(x = body_mass_g, fill = island, col = island)) +
   geom_density(alpha = 0.3) +
   geom_vline(
     aes(xintercept = body_mass_g,
@@ -283,21 +316,21 @@ penguins |>
 ```
 
 ## A surprising result (Simpson's paradox)
-### Exercise 2 
+### Exercise 2
 
 We see that the $p$-values are low for both species, even if it is just above 0.05 for Gentoos. Even if the points seemingly line up well, the difference is still statistically significant, at least for one species. This shows that it is hard to determine statistical significance by eye only.
 
 ```{r}
-model_summary <- penguins |> 
-  lm(formula = body_mass_g ~ flipper_length_mm + species) |> 
+model_summary <- penguins |>
+  lm(formula = body_mass_g ~ flipper_length_mm + species) |>
   summary()
 model_summary$coefficients
 ```
 
 ```{r}
-penguins |> 
+penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g, col = species)) +
-  geom_point() + 
+  geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
     x = "Flipper length (mm)",
@@ -313,8 +346,16 @@ penguins |>
 ```{r}
 #| warning: false
 model <- penguins |>  lm(formula = body_mass_g ~ flipper_length_mm)
-model |> predict(data.frame(flipper_length_mm = 201), interval = "prediction", level = 0.95)
-model |> predict(data.frame(flipper_length_mm = 100), interval = "prediction", level = 0.95)
+model |> predict(
+    data.frame(flipper_length_mm = 201),
+    interval = "prediction",
+    level = 0.95
+)
+model |> predict(
+    data.frame(flipper_length_mm = 100),
+    interval = "prediction",
+    level = 0.95
+)
 ```
 
 ### Exercise 2
@@ -323,5 +364,9 @@ The interval becomes smaller. The confidence level specifies our confidence in a
 
 ```{r}
 #| warning: false
-model |> predict(data.frame(flipper_length_mm = 200), interval = "prediction", level = 0.5)
+model |> predict(
+    data.frame(flipper_length_mm = 200),
+    interval = "prediction",
+    level = 0.5
+)
 ```

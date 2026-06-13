@@ -49,7 +49,7 @@ Now we will take a look at the `penguins` dataset
 | sex               | Penguin sex (female, male)                                          | Categorical   | `factor`   |
 | year              | Study year (2007, 2008, 2009)                                       | Integer       | `integer`  |
 
-We see that the dataset contains integer, continuous, and categorical variables, but some variables doesn't seem to add up with what we would expect. The variables `flipper_length_mm` and `body_mass_g` are stored as integers but should be continuous, as flipper lengths and body mass can assume any continuous value. Sometimes this happens when variables are recorded using *rounded* numbers. Most of the time the difference between `integer` and `numeric` doesn't affect our analysis since R is smart to figure out the *encoding* by itself, but for other variable types it is important to *code* them correctly. We may *recode* the variables using functions such as `as.integer` to code something as an integer, `as.numeric` to continuous, or `as.factor` to categorical. Recoding is especially important if a categorical variable is stored as a `integer` or `numeric` instead of a `factor`, or vice-versa, as it will change what analysis you can do with the variable. 
+We see that the dataset contains integer, continuous, and categorical variables, but some variables doesn't seem to add up with what we would expect. The variables `flipper_length_mm` and `body_mass_g` are stored as integers but should be continuous, as flipper lengths and body mass can assume any continuous value. Sometimes this happens when variables are recorded using *rounded* numbers. Most of the time the difference between `integer` and `numeric` doesn't affect our analysis since R is smart to figure out the *encoding* by itself, but for other variable types it is important to *code* them correctly. We may *recode* the variables using functions such as `as.integer` to code something as an integer, `as.numeric` to continuous, or `as.factor` to categorical. Recoding is especially important if a categorical variable is stored as a `integer` or `numeric` instead of a `factor`, or vice-versa, as it will change what analysis you can do with the variable.
 
 Now that we know the variables in our dataset we can look at them in R by using the `glimpse` function.
 
@@ -68,7 +68,7 @@ Now that we have seen the different variable types and an example, we can start 
 ### Exercises
 
 1.  Use the `summary` function to learn more about the variables in the `penguins` dataset. How does the `summary` output differ for categorical and numerical variables? How many `NA's` are there for each variable (Hint: Look at the last line below each variable). Don't worry if you don't understand every detail of the output yet, just note the differences.
-2. Run the code below to recode the variables `flipper_length_mm` and `body_mass_g`. Run the functions `glimpse` and `summary` on the `penguins` dataset to check that the variables have indeed changed. 
+2. Run the code below to recode the variables `flipper_length_mm` and `body_mass_g`. Run the functions `glimpse` and `summary` on the `penguins` dataset to check that the variables have indeed changed.
 ```{r}
 #| eval: false
 penguins$flipper_length_mm <- as.numeric(penguins$flipper_length_mm)
@@ -137,7 +137,7 @@ We will now take a look at the flipper lengths using these descriptive statistic
 
 ### Mean and median of flipper length
 
-Both the mean and the median are measures of the center of the distribution. To calculate these values in R we use the `mean` and `median` functions. Note that here we use `na.rm` to handle the `NA`s, the missing values. 
+Both the mean and the median are measures of the center of the distribution. To calculate these values in R we use the `mean` and `median` functions. Note that here we use `na.rm` to handle the `NA`s, the missing values.
 
 ```{r}
 # Mean
@@ -159,7 +159,7 @@ median_flipper_length <- median(penguins$flipper_length_mm, na.rm = TRUE)
 p1 <- penguins |>
   ggplot(aes(x = flipper_length_mm, y = 0)) +
   geom_jitter(
-    alpha = 0.1, 
+    alpha = 0.1,
     size = 5,
     height = 0) +
   geom_vline(
@@ -186,8 +186,8 @@ p1 <- penguins |>
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank())
 
-p2 <- penguins |> 
-  ggplot(aes(x = flipper_length_mm)) + 
+p2 <- penguins |>
+  ggplot(aes(x = flipper_length_mm)) +
   geom_histogram(col = "white") +
   geom_vline(
     xintercept = mean_flipper_length,
@@ -202,7 +202,7 @@ p2 <- penguins |>
     x = "Flipper length (mm)",
     y = "Count") +
   theme(
-    axis.title.x = element_blank(), 
+    axis.title.x = element_blank(),
     axis.text.x = element_blank(),
     axis.ticks.x = element_blank())
 
@@ -218,12 +218,20 @@ Percentiles and quartiles are a statistical measures used to describe the relati
 #| warning: false
 #| code-fold: true
 #| code-summary: "Code"
-percentile_10 <- quantile(penguins$flipper_length_mm, prob = 0.1, na.rm = TRUE)
-percentile_90 <- quantile(penguins$flipper_length_mm, prob = 0.9, na.rm = TRUE)
+percentile_10 <- quantile(
+    penguins$flipper_length_mm,
+    prob = 0.1,
+    na.rm = TRUE
+)
+percentile_90 <- quantile(
+    penguins$flipper_length_mm,
+    prob = 0.9,
+    na.rm = TRUE
+)
 p1 <- penguins |>
   ggplot(aes(x = flipper_length_mm, y = 0)) +
   geom_jitter(
-    alpha = 0.1, 
+    alpha = 0.1,
     size = 5,
     height = 0) +
   geom_vline(
@@ -250,8 +258,8 @@ p1 <- penguins |>
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank())
 
-p2 <- penguins |> 
-  ggplot(aes(x = flipper_length_mm)) + 
+p2 <- penguins |>
+  ggplot(aes(x = flipper_length_mm)) +
   geom_histogram(col = "white") +
   geom_vline(
     xintercept = percentile_10,
@@ -268,7 +276,7 @@ p2 <- penguins |>
     x = "Flipper length (mm)",
     y = "Count") +
   theme(
-    axis.title.x = element_blank(), 
+    axis.title.x = element_blank(),
     axis.text.x = element_blank(),
     axis.ticks.x = element_blank())
 
@@ -279,7 +287,11 @@ p2 / p1 + plot_layout(height = c(20, 1))
 We see that the 10th percentile is 185, i.e. that 10% of the penguins have flippers shorter than 185 mm, and likewise for the 90th percentile, 90% of the penguins have flippers shorter than 221 mm. We can calculate percentiles using the `quantile` function in R, specifying the percentile as a proportion, percentile / 100.
 
 ```{r}
-flipper_length_90th_percentile <- quantile(penguins$flipper_length_mm, prob = 0.9, na.rm = TRUE)
+flipper_length_90th_percentile <- quantile(
+    penguins$flipper_length_mm,
+    prob = 0.9,
+    na.rm = TRUE
+)
 flipper_length_90th_percentile
 ```
 
@@ -291,12 +303,20 @@ Quartiles are like percentiles, but they divide the data into 4 equally sized pa
 #| warning: false
 #| code-fold: true
 #| code-summary: "Code"
-first_quartile <- quantile(penguins$flipper_length_mm, prob = 0.25, na.rm = TRUE)
-third_quartile <- quantile(penguins$flipper_length_mm, prob = 0.75, na.rm = TRUE)
+first_quartile <- quantile(
+    penguins$flipper_length_mm,
+    prob = 0.25,
+    na.rm = TRUE
+)
+third_quartile <- quantile(
+    penguins$flipper_length_mm,
+    prob = 0.75,
+    na.rm = TRUE
+)
 p1 <- penguins |>
   ggplot(aes(x = flipper_length_mm, y = 0)) +
   geom_jitter(
-    alpha = 0.1, 
+    alpha = 0.1,
     size = 5,
     height = 0) +
   geom_vline(
@@ -328,8 +348,8 @@ p1 <- penguins |>
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank())
 
-p2 <- penguins |> 
-  ggplot(aes(x = flipper_length_mm)) + 
+p2 <- penguins |>
+  ggplot(aes(x = flipper_length_mm)) +
   geom_histogram(col = "white") +
   geom_vline(
     xintercept = median_flipper_length,
@@ -348,7 +368,7 @@ p2 <- penguins |>
     x = "Flipper length (mm)",
     y = "Count") +
   theme(
-    axis.title.x = element_blank(), 
+    axis.title.x = element_blank(),
     axis.text.x = element_blank(),
     axis.ticks.x = element_blank())
 
@@ -356,7 +376,7 @@ p2 <- penguins |>
 p2 / p1 + plot_layout(height = c(20, 1))
 ```
 
-We visualize the second quartile in green because it is the same as the median, it is the value that is larger than half of all the values. 
+We visualize the second quartile in green because it is the same as the median, it is the value that is larger than half of all the values.
 
 ### The `summary` function
 
@@ -370,7 +390,7 @@ We see that we get the counts for the categorical variables (discrete distributi
 
 ### Exercises
 
-1.  What happens if you run the `mean` function without `na.rm = TRUE`? 
+1.  What happens if you run the `mean` function without `na.rm = TRUE`?
 2.  Try calculating the mean and median of some other variables in the `penguins` dataset. What happens if you try to calculate the mean of a factor?
 3.  Use the `quantile` function with the parameter `prob = 0.5` for the variable `body_mass_g` to calculate the 50th percentile of the penguin body masses. Compare it with the output of the `median` function for the same variable.
 4.  Run the code below to show the summary of the variables in the `diamonds` dataset. Which variables are categorical vs. numerical? Are there any missing values?
@@ -383,7 +403,7 @@ summary(diamonds)
 
 ## Relationships between variables {#sec-basicstat-correlation}
 
-So far we have only worked with one variable at a time and we have seen how to study the variation of one variable, but often it is interesting to know about the *correlation* of two variables. Correlation tells us about how much two variables *linearly* correlate. If two variables are positively (negatively) correlated, large values of one variable often correspond to large (small) values of the other variable. Correlation is always a number between -1 (negative correlation) and 1 (positive correlation). 0 indicates that the variables are not correlated. The figure below shows the relationship between two variables and the correlation between them. 
+So far we have only worked with one variable at a time and we have seen how to study the variation of one variable, but often it is interesting to know about the *correlation* of two variables. Correlation tells us about how much two variables *linearly* correlate. If two variables are positively (negatively) correlated, large values of one variable often correspond to large (small) values of the other variable. Correlation is always a number between -1 (negative correlation) and 1 (positive correlation). 0 indicates that the variables are not correlated. The figure below shows the relationship between two variables and the correlation between them.
 
 ```{r}
 #| warning: false
@@ -411,7 +431,7 @@ plot1 <- ggplot(data = corr_df, aes(x = x, y = y1)) +
   geom_smooth(method = "lm", se = F, col = "purple") +
   theme_minimal() +
   labs(
-    y = "y", 
+    y = "y",
     subtitle = round(cor(corr_df$x, corr_df$y1), digits = 2) ) +
   theme(
     aspect.ratio = 1,
@@ -481,7 +501,7 @@ plot5 <- ggplot(data = corr_df, aes(x = x, y = y5)) +
 
 We see that the more the points form a line, the closer to -1 or 1 the correlation is. We will come back to correlation when we deal with multiple linear regression later in the course.
 
-In the `penguins` dataset we would expect that bigger penguins have bigger flippers, that is we would expect `flipper_length_mm` to be positively correlated with `body_mass_g`. The easiest way to investigate this is through a *scatter plot* and a line. 
+In the `penguins` dataset we would expect that bigger penguins have bigger flippers, that is we would expect `flipper_length_mm` to be positively correlated with `body_mass_g`. The easiest way to investigate this is through a *scatter plot* and a line.
 
 ```{r}
 #| warning: false
@@ -519,7 +539,7 @@ library(ggcorrplot)
 # Correlation matrix
 penguins |>
   select(where(is.numeric)) |>
-  cor(use = "complete.obs") 
+  cor(use = "complete.obs")
 
 # Correlation plot
 penguins |>
