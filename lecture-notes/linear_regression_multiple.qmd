@@ -470,7 +470,7 @@ ice_cream <- tibble(
 2. Would you recommend an ice cream company to increase snake bites in order to increase ice cream sales? In other words, do you think that the effect of snake bites on ice cream sales is a causal effect? Causal effect in this case means that if we increase the number of snake bites we will also increase the number of ice cream sales.
 3. Now fit a model including `month` as well, i.e. `ice_cream_sales ~ .` and state the hypotheses for the coefficient for `snake_bites`. What changed? Is the coefficient for `snake_bites` still significantly different from 0 with significance level 0.05?
 
-### Multicollinearity
+### Multicollinearity and Variance Inflation Factor (VIF)
 
 If the coefficients and $p$-values change drastically from simple linear regression models or from visualizations in scatter plots or correlation plots we should suspect multicollinearity in our model. It is also possible to look at the potential predictors in the dataset and their correlation in a scatter plot or in the correlation plot to try to anticipate multicollinearity.
 
